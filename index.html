@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>かな 받아쓰기 — 히라가나·가타카나 퀴즈</title>
+<title>にほんご 학습 — 메뉴</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
@@ -13,18 +13,14 @@
     --paper-deep: #EFEBE1;
     --ink: #2A3550;
     --ink-soft: #5A6379;
-    --shu: #C24036;          /* 朱色 — 선생님 빨간 펜 */
-    --shu-soft: #F3DAD5;
+    --shu: #C24036;
     --line: #DCD6C8;
     --grid: #CFC8B6;
-    --ok-bg: #FDF3EF;
     --radius: 14px;
     --jp: 'Zen Maru Gothic', sans-serif;
     --kr: 'IBM Plex Sans KR', sans-serif;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   body {
     font-family: var(--kr);
     background: var(--paper);
@@ -32,633 +28,114 @@
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    /* 은은한 원고지 배경 결 */
     background-image:
       linear-gradient(var(--paper-deep) 1px, transparent 1px),
       linear-gradient(90deg, var(--paper-deep) 1px, transparent 1px);
     background-size: 28px 28px;
   }
+  .app { width: 100%; max-width: 560px; padding: 40px 20px 56px; }
 
-  .app {
-    width: 100%;
-    max-width: 560px;
-    padding: 28px 20px 48px;
-  }
-
-  /* ── 헤더 ───────────────────────── */
-  header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
-  header h1 {
+  header { margin-bottom: 28px; }
+  .brand {
     font-family: var(--jp);
     font-weight: 900;
-    font-size: 22px;
+    font-size: 30px;
     letter-spacing: 0.02em;
+    line-height: 1.25;
   }
-  header h1 .kana { color: var(--shu); }
-  .section-badge {
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    padding: 5px 12px;
-    border: 1.5px solid var(--ink);
-    border-radius: 999px;
-    background: #fff;
-  }
-  .section-badge.kata { border-color: var(--shu); color: var(--shu); }
+  .brand .shu { color: var(--shu); }
+  .tagline { margin-top: 8px; font-size: 14px; color: var(--ink-soft); line-height: 1.7; }
 
-  /* ── 진행도: 원고지 20칸 ───────────── */
-  .progress-grid {
-    display: grid;
-    grid-template-columns: repeat(10, 1fr);
-    gap: 4px;
-    margin-bottom: 24px;
-  }
-  .cell {
-    aspect-ratio: 1;
-    border: 1.5px solid var(--grid);
-    border-radius: 5px;
-    background: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--jp);
-    font-weight: 900;
-    font-size: clamp(13px, 3.4vw, 18px);
-    color: var(--shu);
-    transition: background .2s;
-  }
-  .cell.current { border-color: var(--ink); background: var(--paper-deep); }
-  .cell.wrong { color: var(--ink-soft); }
-
-  /* ── 카드 공통 ─────────────────── */
-  .card {
-    background: #fff;
-    border: 1.5px solid var(--line);
-    border-radius: var(--radius);
-    padding: 32px 26px;
-    box-shadow: 0 2px 0 var(--line);
-  }
-
-  .eyebrow {
+  .list-label {
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.16em;
     color: var(--ink-soft);
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
 
-  /* ── 문제 화면 ─────────────────── */
-  .word-kr {
-    font-size: 34px;
-    font-weight: 700;
-    line-height: 1.25;
-    margin-bottom: 6px;
-  }
-  .hint-line {
-    min-height: 26px;
-    margin-bottom: 18px;
-    font-size: 15px;
-    color: var(--ink-soft);
-  }
-  .hint-line .pron {
-    font-weight: 700;
-    color: var(--ink);
-    letter-spacing: 0.06em;
-  }
-
-  .tools { display: flex; gap: 8px; margin-bottom: 22px; }
-  .chip {
-    font-family: var(--kr);
-    font-size: 13.5px;
-    font-weight: 500;
-    padding: 8px 14px;
-    border: 1.5px solid var(--line);
-    border-radius: 999px;
-    background: var(--paper);
-    color: var(--ink);
-    cursor: pointer;
-    transition: border-color .15s, background .15s;
-  }
-  .chip:hover { border-color: var(--ink); }
-  .chip:active { background: var(--paper-deep); }
-  .chip:focus-visible, button:focus-visible, input:focus-visible {
-    outline: 2px solid var(--shu);
-    outline-offset: 2px;
-  }
-
-  /* 원고지풍 입력칸 */
-  .answer-wrap { position: relative; margin-bottom: 18px; }
-  input.answer {
-    width: 100%;
-    font-family: var(--jp);
-    font-size: 26px;
-    font-weight: 700;
-    letter-spacing: 0.35em;
-    padding: 14px 16px;
-    color: var(--ink);
-    background:
-      repeating-linear-gradient(90deg, transparent 0 47px, var(--paper-deep) 47px 48px),
-      #FFFDF8;
-    border: 1.5px solid var(--grid);
-    border-radius: 10px;
-    caret-color: var(--shu);
-  }
-  input.answer::placeholder {
-    font-family: var(--kr);
-    font-size: 15px;
-    font-weight: 400;
-    letter-spacing: 0;
-    color: #B4AC9C;
-  }
-  input.answer:disabled { opacity: .65; }
-
-  .btn {
-    font-family: var(--kr);
-    width: 100%;
-    padding: 15px;
-    font-size: 16px;
-    font-weight: 700;
-    border: none;
-    border-radius: 10px;
-    background: var(--ink);
-    color: #fff;
-    cursor: pointer;
-    transition: transform .08s, opacity .15s;
-  }
-  .btn:hover { opacity: .92; }
-  .btn:active { transform: scale(.985); }
-  .btn.shu { background: var(--shu); }
-
-  /* ── 채점 스탬프 & 피드백 ─────────── */
-  .judge {
-    display: none;
-    margin-top: 20px;
-    padding: 18px 18px 18px 74px;
-    border-radius: 10px;
-    position: relative;
-    animation: pop .25s ease-out;
-  }
-  .judge.show { display: block; }
-  .judge.correct { background: var(--ok-bg); border: 1.5px dashed var(--shu); }
-  .judge.wrong { background: var(--paper); border: 1.5px dashed var(--grid); }
-  .stamp {
-    position: absolute;
-    left: 16px; top: 50%;
-    translate: 0 -50%;
-    width: 44px; height: 44px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--jp);
-    font-weight: 900;
-    font-size: 30px;
-    color: var(--shu);
-    border: 3px solid var(--shu);
-    border-radius: 50%;
-    rotate: -8deg;
-    background: #fff;
-  }
-  .judge.wrong .stamp { border-style: dashed; }
-  .judge h3 { font-size: 16px; margin-bottom: 4px; }
-  .judge .compare {
-    font-size: 15px;
-    line-height: 1.7;
-    color: var(--ink-soft);
-  }
-  .judge .compare b {
-    font-family: var(--jp);
-    font-size: 18px;
-    color: var(--ink);
-  }
-  .judge .compare .mine {
-    font-family: var(--jp);
-    text-decoration: line-through;
-    text-decoration-color: var(--shu);
-  }
-  @keyframes pop {
-    from { transform: scale(.96); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .judge { animation: none; }
-  }
-
-  /* ── 시작 / 인터미션 / 결과 ────────── */
-  .start-title {
-    font-family: var(--jp);
-    font-weight: 900;
-    font-size: 40px;
-    line-height: 1.3;
-    margin-bottom: 14px;
-  }
-  .start-title .shu-text { color: var(--shu); }
-  .start-desc { font-size: 15px; line-height: 1.8; color: var(--ink-soft); margin-bottom: 26px; }
-
-  .score-line {
-    font-family: var(--jp);
-    font-size: 52px;
-    font-weight: 900;
-    margin: 6px 0 2px;
-  }
-  .score-line small { font-size: 22px; color: var(--ink-soft); font-weight: 700; }
-  .score-sub { color: var(--ink-soft); font-size: 14px; margin-bottom: 22px; }
-
-  .result-group-title {
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    color: var(--ink-soft);
-    margin: 22px 0 10px;
-    padding-bottom: 6px;
-    border-bottom: 1.5px solid var(--line);
-  }
-  .result-item {
+  .menu { display: flex; flex-direction: column; gap: 12px; }
+  a.item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px 4px;
-    border-bottom: 1px dashed var(--paper-deep);
-    font-size: 14.5px;
+    gap: 16px;
+    text-decoration: none;
+    color: inherit;
+    background: #fff;
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    box-shadow: 0 2px 0 var(--line);
+    transition: transform .08s, border-color .15s;
   }
-  .result-item .mark {
+  a.item:hover { border-color: var(--ink); }
+  a.item:active { transform: scale(.99); }
+  a.item.soon { opacity: .55; pointer-events: none; box-shadow: none; }
+
+  .item .kanji {
     flex: none;
+    width: 52px; height: 52px;
+    display: flex; align-items: center; justify-content: center;
     font-family: var(--jp);
     font-weight: 900;
-    font-size: 18px;
+    font-size: 26px;
     color: var(--shu);
-    width: 26px; height: 26px;
-    border: 2px solid var(--shu);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
+    background: var(--paper);
+    border: 1.5px solid var(--grid);
+    border-radius: 10px;
   }
-  .result-item.wrong .mark { border-style: dashed; color: var(--ink-soft); border-color: var(--grid); }
-  .result-item .meaning { flex: 1; color: var(--ink-soft); }
-  .result-item .answers { text-align: right; line-height: 1.5; }
-  .result-item .answers .jp { font-family: var(--jp); font-weight: 700; font-size: 17px; }
-  .result-item.wrong .answers .user-jp {
-    font-family: var(--jp);
-    font-size: 14px;
-    color: var(--shu);
-    text-decoration: line-through;
-    display: block;
-  }
-  .result-item button.replay {
+  .item.soon .kanji { color: var(--ink-soft); }
+  .item .body { flex: 1; min-width: 0; }
+  .item .title { font-size: 17px; font-weight: 700; margin-bottom: 3px; }
+  .item .desc { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+  .item .tag {
     flex: none;
-    border: none; background: none; cursor: pointer;
-    font-size: 16px; padding: 4px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    padding: 4px 9px; border-radius: 999px;
+    border: 1.5px solid var(--grid); color: var(--ink-soft);
   }
+  .item .arrow { flex: none; font-size: 18px; color: var(--ink-soft); }
 
-  .hidden { display: none !important; }
-  .mt { margin-top: 22px; }
+  footer {
+    margin-top: 36px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-align: center;
+    line-height: 1.7;
+  }
+  footer a { color: var(--shu); text-decoration: none; }
 </style>
 </head>
 <body>
 <div class="app">
 
   <header>
-    <h1><span class="kana">かな</span> 받아쓰기</h1>
-    <span class="section-badge" id="sectionBadge">준비</span>
+    <div class="brand"><span class="shu">にほんご</span> 학습</div>
+    <p class="tagline">같이 공부하는 일본어 연습장.<br>아래에서 오늘 할 걸 골라보자.</p>
   </header>
 
-  <div class="progress-grid" id="progressGrid"></div>
+  <p class="list-label">MENU</p>
+  <nav class="menu">
 
-  <!-- 시작 화면 -->
-  <div class="card" id="startScreen">
-    <p class="eyebrow">HIRAGANA 10 + KATAKANA 10</p>
-    <h2 class="start-title">스무 칸을<br><span class="shu-text">○</span>로 채워보자</h2>
-    <p class="start-desc">
-      한국어 단어를 보고 일본어로 받아쓰는 퀴즈다.<br>
-      🔊 <b>듣기</b>로 원어민 발음을 듣고, 막히면 💡 <b>발음 힌트</b>를 열 수 있다.<br>
-      히라가나 10문제 → 가타카나 10문제 순서로 진행되고,<br>
-      다 풀면 오답 비교와 함께 채점 결과가 나온다.
-    </p>
-    <button class="btn shu" id="startBtn">시작하기</button>
-  </div>
+    <a class="item" href="./kana-dictation/">
+      <span class="kanji">か</span>
+      <span class="body">
+        <span class="title">かな 받아쓰기</span>
+        <span class="desc">한국어 단어를 히라가나·가타카나로 받아쓰는 퀴즈</span>
+      </span>
+      <span class="tag">퀴즈</span>
+      <span class="arrow">→</span>
+    </a>
 
-  <!-- 문제 화면 -->
-  <div class="card hidden" id="quizScreen">
-    <p class="eyebrow" id="qNumber">문제 1 / 20</p>
-    <div class="word-kr" id="wordKr">주먹밥</div>
-    <div class="hint-line" id="hintLine"></div>
+    <!-- 앞으로 추가될 항목: 위 블록 복사해서 href/글자/제목만 바꾸면 됨.
+         준비중 항목은 class="item soon" 으로 두면 흐리게 + 클릭 비활성 -->
 
-    <div class="tools">
-      <button class="chip" id="ttsBtn">🔊 듣기</button>
-      <button class="chip" id="hintBtn">💡 발음 힌트</button>
-    </div>
+  </nav>
 
-    <div class="answer-wrap">
-      <input class="answer" id="answerInput" type="text" autocomplete="off"
-             autocapitalize="off" spellcheck="false"
-             placeholder="일본어로 입력 (예: おにぎり)">
-    </div>
-
-    <button class="btn" id="submitBtn">채점하기</button>
-
-    <div class="judge" id="judgeBox">
-      <div class="stamp" id="stampMark">○</div>
-      <h3 id="judgeTitle">정답!</h3>
-      <div class="compare" id="judgeCompare"></div>
-    </div>
-
-    <button class="btn shu mt hidden" id="nextBtn">다음 문제</button>
-  </div>
-
-  <!-- 섹션 전환 화면 -->
-  <div class="card hidden" id="breakScreen">
-    <p class="eyebrow">SECTION 2</p>
-    <h2 class="start-title">히라가나 완료!<br><span class="shu-text">カタカナ</span> 시작</h2>
-    <p class="start-desc" id="breakDesc">이제 가타카나 10문제가 이어진다. 외래어 표기이니 장음(ー)에 특히 주의하자.</p>
-    <button class="btn shu" id="breakBtn">가타카나 시작</button>
-  </div>
-
-  <!-- 결과 화면 -->
-  <div class="card hidden" id="resultScreen">
-    <p class="eyebrow">최종 채점 결과</p>
-    <div class="score-line"><span id="scoreNum">0</span><small> / 20</small></div>
-    <p class="score-sub" id="scoreComment"></p>
-    <div id="resultList"></div>
-    <button class="btn shu mt" id="retryBtn">다시 풀기</button>
-  </div>
+  <footer>
+    <a href="https://github.com/w0nder-official/nihongo" target="_blank" rel="noopener">w0nder-official/nihongo</a>
+  </footer>
 
 </div>
-
-<script>
-(function () {
-  'use strict';
-
-  // ── 데이터 ──────────────────────────────
-  const HIRAGANA = [
-    { kr: '주먹밥',   jp: 'おにぎり',     pron: '오니기리' },
-    { kr: '자동차',   jp: 'くるま',       pron: '구루마' },
-    { kr: '설탕',     jp: 'さとう',       pron: '사토오' },
-    { kr: '민들레',   jp: 'たんぽぽ',     pron: '탄포포' },
-    { kr: '고양이',   jp: 'ねこ',         pron: '네코' },
-    { kr: '양',       jp: 'ひつじ',       pron: '히츠지' },
-    { kr: '안경',     jp: 'めがね',       pron: '메가네' },
-    { kr: '주전자',   jp: 'やかん',       pron: '야칸' },
-    { kr: '냉장고',   jp: 'れいぞうこ',   pron: '레이조오코' },
-    { kr: '악어',     jp: 'わに',         pron: '와니' }
-  ];
-  const KATAKANA = [
-    { kr: '서비스',     jp: 'サービス',       pron: '사아비스' },
-    { kr: '커피',       jp: 'コーヒー',       pron: '코오히이' },
-    { kr: '이어폰',     jp: 'イアポン',       pron: '이아폰' },
-    { kr: '파인애플',   jp: 'パインアップル', pron: '파인압푸루' },
-    { kr: '티켓',       jp: 'チケット',       pron: '치켓토' },
-    { kr: '월드',       jp: 'ワルド',         pron: '와루도' },
-    { kr: '쥬스',       jp: 'ジュース',       pron: '주우스' },
-    { kr: '여권',       jp: 'パスポート',     pron: '파스포오토' },
-    { kr: '선물',       jp: 'プレゼント',     pron: '푸레젠토' },
-    { kr: '위스키',     jp: 'ウイスキー',     pron: '우이스키이' }
-  ];
-
-  const shuffle = (arr) => {
-    const a = arr.slice();
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  };
-
-  // ── 상태 ────────────────────────────────
-  let questions = [];   // 20문제 (히라 10 → 가타 10)
-  let idx = 0;
-  let results = [];     // { q, user, correct }
-  let answered = false;
-
-  // ── 요소 ────────────────────────────────
-  const $ = (id) => document.getElementById(id);
-  const startScreen = $('startScreen'), quizScreen = $('quizScreen'),
-        breakScreen = $('breakScreen'), resultScreen = $('resultScreen');
-  const progressGrid = $('progressGrid'), sectionBadge = $('sectionBadge');
-  const qNumber = $('qNumber'), wordKr = $('wordKr'), hintLine = $('hintLine');
-  const answerInput = $('answerInput'), submitBtn = $('submitBtn'), nextBtn = $('nextBtn');
-  const judgeBox = $('judgeBox'), stampMark = $('stampMark'),
-        judgeTitle = $('judgeTitle'), judgeCompare = $('judgeCompare');
-
-  // ── TTS ─────────────────────────────────
-  let jaVoice = null;
-  function pickVoice() {
-    const voices = speechSynthesis.getVoices();
-    jaVoice = voices.find(v => v.lang === 'ja-JP') ||
-              voices.find(v => v.lang.startsWith('ja')) || null;
-  }
-  if ('speechSynthesis' in window) {
-    pickVoice();
-    speechSynthesis.onvoiceschanged = pickVoice;
-  }
-  function speak(text) {
-    if (!('speechSynthesis' in window)) {
-      alert('이 브라우저는 음성 합성(TTS)을 지원하지 않는다.');
-      return;
-    }
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'ja-JP';
-    if (jaVoice) u.voice = jaVoice;
-    u.rate = 0.85;
-    speechSynthesis.speak(u);
-  }
-
-  // ── 정답 비교 정규화 ─────────────────────
-  function normalize(s) {
-    return (s || '')
-      .normalize('NFKC')                 // 전각/반각 통일
-      .replace(/[\s\u3000]/g, '')        // 공백 제거
-      .replace(/[-‐‑–—－ｰ]/g, 'ー');     // 하이픈류 → 장음부호
-  }
-
-  // ── 진행도 그리드 ────────────────────────
-  function buildGrid() {
-    progressGrid.innerHTML = '';
-    for (let i = 0; i < 20; i++) {
-      const d = document.createElement('div');
-      d.className = 'cell';
-      d.id = 'cell-' + i;
-      progressGrid.appendChild(d);
-    }
-  }
-  function updateGrid() {
-    for (let i = 0; i < 20; i++) {
-      const c = $('cell-' + i);
-      c.classList.toggle('current', i === idx && idx < 20);
-      if (results[i]) {
-        c.textContent = results[i].correct ? '○' : '✕';
-        c.classList.toggle('wrong', !results[i].correct);
-      } else {
-        c.textContent = '';
-      }
-    }
-  }
-
-  // ── 화면 전환 ────────────────────────────
-  function show(screen) {
-    [startScreen, quizScreen, breakScreen, resultScreen].forEach(s =>
-      s.classList.toggle('hidden', s !== screen));
-  }
-
-  function updateBadge() {
-    if (idx < 10) {
-      sectionBadge.textContent = 'ひらがな';
-      sectionBadge.classList.remove('kata');
-    } else {
-      sectionBadge.textContent = 'カタカナ';
-      sectionBadge.classList.add('kata');
-    }
-  }
-
-  // ── 퀴즈 진행 ────────────────────────────
-  function startQuiz() {
-    questions = shuffle(HIRAGANA).concat(shuffle(KATAKANA));
-    idx = 0;
-    results = [];
-    buildGrid();
-    updateGrid();
-    updateBadge();
-    show(quizScreen);
-    renderQuestion();
-  }
-
-  function renderQuestion() {
-    const q = questions[idx];
-    answered = false;
-    qNumber.textContent = `문제 ${idx + 1} / 20 · ${idx < 10 ? '히라가나' : '가타카나'}`;
-    wordKr.textContent = q.kr;
-    hintLine.innerHTML = '';
-    answerInput.value = '';
-    answerInput.disabled = false;
-    submitBtn.classList.remove('hidden');
-    nextBtn.classList.add('hidden');
-    judgeBox.className = 'judge';
-    updateBadge();
-    updateGrid();
-    answerInput.focus();
-  }
-
-  function submitAnswer() {
-    if (answered) return;
-    const q = questions[idx];
-    const user = answerInput.value.trim();
-    if (!user) { answerInput.focus(); return; }
-
-    const correct = normalize(user) === normalize(q.jp);
-    results[idx] = { q, user, correct };
-    answered = true;
-
-    answerInput.disabled = true;
-    submitBtn.classList.add('hidden');
-    nextBtn.classList.remove('hidden');
-    nextBtn.textContent = idx === 19 ? '결과 보기' : (idx === 9 ? '히라가나 끝!' : '다음 문제');
-
-    judgeBox.classList.add('show', correct ? 'correct' : 'wrong');
-    stampMark.textContent = correct ? '○' : '✕';
-    if (correct) {
-      judgeTitle.textContent = '정답!';
-      judgeCompare.innerHTML = `<b>${q.jp}</b> (${q.pron}) — 잘했다!`;
-    } else {
-      judgeTitle.textContent = '아쉽다, 오답';
-      judgeCompare.innerHTML =
-        `내 답: <span class="mine">${escapeHtml(user)}</span><br>` +
-        `정답: <b>${q.jp}</b> (${q.pron})`;
-    }
-    speak(q.jp);   // 채점 후 정답 발음 들려주기
-    updateGrid();
-    nextBtn.focus();
-  }
-
-  function nextQuestion() {
-    if (idx === 9) {          // 히라가나 → 가타카나 전환
-      idx++;
-      show(breakScreen);
-      return;
-    }
-    idx++;
-    if (idx >= 20) { showResult(); return; }
-    show(quizScreen);
-    renderQuestion();
-  }
-
-  // ── 결과 ────────────────────────────────
-  function showResult() {
-    updateGrid();
-    const score = results.filter(r => r.correct).length;
-    $('scoreNum').textContent = score;
-    $('scoreComment').textContent =
-      score === 20 ? '만점! 스무 칸 전부 ○다. 완벽하다.' :
-      score >= 15  ? '훌륭하다. 틀린 단어만 아래에서 복습해보자.' :
-      score >= 10  ? '절반 이상 맞혔다. 오답 단어를 소리 내어 따라 읽어보자.' :
-                     '아직 낯선 글자가 많다. 오답을 듣기 버튼으로 반복해서 들어보자.';
-
-    const list = $('resultList');
-    list.innerHTML = '';
-    const groups = [
-      { title: 'ひらがな — 히라가나', items: results.slice(0, 10) },
-      { title: 'カタカナ — 가타카나', items: results.slice(10, 20) }
-    ];
-    groups.forEach(g => {
-      const h = document.createElement('div');
-      h.className = 'result-group-title';
-      h.textContent = g.title;
-      list.appendChild(h);
-      g.items.forEach(r => {
-        const row = document.createElement('div');
-        row.className = 'result-item' + (r.correct ? '' : ' wrong');
-        row.innerHTML =
-          `<span class="mark">${r.correct ? '○' : '✕'}</span>` +
-          `<span class="meaning">${r.q.kr}</span>` +
-          `<span class="answers">` +
-            (r.correct ? '' : `<span class="user-jp">${escapeHtml(r.user)}</span>`) +
-            `<span class="jp">${r.q.jp}</span> <small>(${r.q.pron})</small>` +
-          `</span>` +
-          `<button class="replay" title="발음 듣기" aria-label="${r.q.jp} 발음 듣기">🔊</button>`;
-        row.querySelector('.replay').addEventListener('click', () => speak(r.q.jp));
-        list.appendChild(row);
-      });
-    });
-
-    sectionBadge.textContent = '채점 완료';
-    sectionBadge.classList.remove('kata');
-    show(resultScreen);
-  }
-
-  function escapeHtml(s) {
-    return s.replace(/[&<>"']/g, c => ({
-      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-    }[c]));
-  }
-
-  // ── 이벤트 ──────────────────────────────
-  $('startBtn').addEventListener('click', startQuiz);
-  $('retryBtn').addEventListener('click', startQuiz);
-  $('breakBtn').addEventListener('click', () => {
-    show(quizScreen);
-    renderQuestion();
-  });
-  $('ttsBtn').addEventListener('click', () => speak(questions[idx].jp));
-  $('hintBtn').addEventListener('click', () => {
-    const q = questions[idx];
-    hintLine.innerHTML = `발음: <span class="pron">${q.pron}</span>`;
-  });
-  submitBtn.addEventListener('click', submitAnswer);
-  nextBtn.addEventListener('click', nextQuestion);
-  answerInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.isComposing) {
-      e.preventDefault();
-      submitAnswer();
-    }
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && answered && !nextBtn.classList.contains('hidden')
-        && document.activeElement !== nextBtn) {
-      nextQuestion();
-    }
-  });
-
-  buildGrid();
-})();
-</script>
 </body>
 </html>
