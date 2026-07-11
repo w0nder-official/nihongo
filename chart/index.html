@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>오십음도 — 히라가나·가타카나 음도표</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F6F4EE;
+    --paper-deep: #EFEBE1;
+    --ink: #2A3550;
+    --ink-soft: #5A6379;
+    --shu: #C24036;
+    --line: #DCD6C8;
+    --grid: #CFC8B6;
+    --radius: 14px;
+    --jp: 'Zen Maru Gothic', sans-serif;
+    --kr: 'IBM Plex Sans KR', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: var(--kr);
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    background-image:
+      linear-gradient(var(--paper-deep) 1px, transparent 1px),
+      linear-gradient(90deg, var(--paper-deep) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  .app { width: 100%; max-width: 620px; padding: 28px 16px 56px; }
+
+  .top { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+  a.back { text-decoration: none; color: var(--ink-soft); font-size: 14px; font-weight: 500; }
+  a.back:hover { color: var(--ink); }
+  h1 { font-family: var(--jp); font-weight: 900; font-size: 24px; }
+  h1 .shu { color: var(--shu); }
+  .tagline { font-size: 13px; color: var(--ink-soft); margin: 4px 0 20px; line-height: 1.6; }
+
+  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .seg { display: inline-flex; border: 1.5px solid var(--line); border-radius: 999px; background: #fff; overflow: hidden; }
+  .seg button {
+    font-family: var(--kr); font-size: 13.5px; font-weight: 600;
+    padding: 8px 16px; border: none; background: transparent; color: var(--ink-soft); cursor: pointer;
+  }
+  .seg button.on { background: var(--ink); color: #fff; }
+  .seg.shu button.on { background: var(--shu); }
+  .chip {
+    font-family: var(--kr); font-size: 13px; font-weight: 500;
+    padding: 8px 14px; border: 1.5px solid var(--line); border-radius: 999px;
+    background: #fff; color: var(--ink); cursor: pointer;
+  }
+  .chip.on { border-color: var(--shu); color: var(--shu); }
+  button:focus-visible { outline: 2px solid var(--shu); outline-offset: 2px; }
+
+  .block-title {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.14em; color: var(--ink-soft);
+    margin: 22px 0 8px; padding-bottom: 6px; border-bottom: 1.5px solid var(--line);
+  }
+  .rows { display: flex; flex-direction: column; gap: 6px; }
+  .row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .kcell {
+    aspect-ratio: 1 / 1.05;
+    background: #fff;
+    border: 1.5px solid var(--grid);
+    border-radius: 10px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: transform .07s, border-color .15s, background .15s;
+    user-select: none;
+  }
+  .kcell:hover { border-color: var(--ink); }
+  .kcell:active { transform: scale(.96); background: var(--paper-deep); }
+  .kcell.empty { background: transparent; border: 1.5px dashed var(--paper-deep); cursor: default; }
+  .kcell.empty:hover { border-color: var(--paper-deep); }
+  .kcell .glyph { font-family: var(--jp); font-weight: 700; font-size: clamp(20px, 6.5vw, 30px); line-height: 1; }
+  .kcell .romaji { font-size: clamp(10px, 2.6vw, 12px); color: var(--ink-soft); margin-top: 5px; letter-spacing: .04em; }
+  .kcell.playing { border-color: var(--shu); background: #FDF3EF; }
+
+  .hint { font-size: 12px; color: var(--ink-soft); margin-top: 18px; line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="top">
+    <a class="back" href="../">← 메뉴</a>
+  </div>
+  <h1><span class="shu">五十音</span> 오십음도</h1>
+  <p class="tagline">칸을 누르면 소리를 들려준다. 위 토글로 히라가나·가타카나를 전환할 수 있다.</p>
+
+  <div class="toolbar">
+    <span class="seg" id="scriptSeg">
+      <button data-script="hira" class="on">ひらがな</button>
+      <button data-script="kata">カタカナ</button>
+    </span>
+    <button class="chip on" id="romajiToggle">로마자 표시</button>
+    <button class="chip on" id="dakutenToggle">탁음·반탁음</button>
+  </div>
+
+  <div id="board"></div>
+
+  <p class="hint">💡 로마자는 헵번식 기준. <b>し</b>=shi, <b>ち</b>=chi, <b>つ</b>=tsu, <b>ふ</b>=fu 처럼 예외 발음에 주의하자.</p>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // [히라가나, 가타카나, 로마자]  — null 은 빈 칸(존재하지 않는 음)
+  const _ = null;
+  const BASE = [
+    [['あ','ア','a'],['い','イ','i'],['う','ウ','u'],['え','エ','e'],['お','オ','o']],
+    [['か','カ','ka'],['き','キ','ki'],['く','ク','ku'],['け','ケ','ke'],['こ','コ','ko']],
+    [['さ','サ','sa'],['し','シ','shi'],['す','ス','su'],['せ','セ','se'],['そ','ソ','so']],
+    [['た','タ','ta'],['ち','チ','chi'],['つ','ツ','tsu'],['て','テ','te'],['と','ト','to']],
+    [['な','ナ','na'],['に','ニ','ni'],['ぬ','ヌ','nu'],['ね','ネ','ne'],['の','ノ','no']],
+    [['は','ハ','ha'],['ひ','ヒ','hi'],['ふ','フ','fu'],['へ','ヘ','he'],['ほ','ホ','ho']],
+    [['ま','マ','ma'],['み','ミ','mi'],['む','ム','mu'],['め','メ','me'],['も','モ','mo']],
+    [['や','ヤ','ya'],_,['ゆ','ユ','yu'],_,['よ','ヨ','yo']],
+    [['ら','ラ','ra'],['り','リ','ri'],['る','ル','ru'],['れ','レ','re'],['ろ','ロ','ro']],
+    [['わ','ワ','wa'],_,_,_,['を','ヲ','wo']],
+    [['ん','ン','n'],_,_,_,_]
+  ];
+  const DAKUTEN = [
+    [['が','ガ','ga'],['ぎ','ギ','gi'],['ぐ','グ','gu'],['げ','ゲ','ge'],['ご','ゴ','go']],
+    [['ざ','ザ','za'],['じ','ジ','ji'],['ず','ズ','zu'],['ぜ','ゼ','ze'],['ぞ','ゾ','zo']],
+    [['だ','ダ','da'],['ぢ','ヂ','ji'],['づ','ヅ','zu'],['で','デ','de'],['ど','ド','do']],
+    [['ば','バ','ba'],['び','ビ','bi'],['ぶ','ブ','bu'],['べ','ベ','be'],['ぼ','ボ','bo']],
+    [['ぱ','パ','pa'],['ぴ','ピ','pi'],['ぷ','プ','pu'],['ぺ','ペ','pe'],['ぽ','ポ','po']]
+  ];
+
+  const $ = (id) => document.getElementById(id);
+  const board = $('board');
+  let script = 'hira';       // 'hira' | 'kata'
+  let showRomaji = true;
+  let showDakuten = true;
+
+  // ── TTS ──
+  let jaVoice = null;
+  function pickVoice() {
+    const vs = speechSynthesis.getVoices();
+    jaVoice = vs.find(v => v.lang === 'ja-JP') || vs.find(v => v.lang.startsWith('ja')) || null;
+  }
+  if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+  function speak(text, cell) {
+    if (!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ja-JP'; if (jaVoice) u.voice = jaVoice; u.rate = 0.8;
+    if (cell) {
+      cell.classList.add('playing');
+      u.onend = u.onerror = () => cell.classList.remove('playing');
+    }
+    speechSynthesis.speak(u);
+  }
+
+  function renderGroup(data, title) {
+    if (title) {
+      const h = document.createElement('div');
+      h.className = 'block-title';
+      h.textContent = title;
+      board.appendChild(h);
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'rows';
+    data.forEach(row => {
+      const r = document.createElement('div');
+      r.className = 'row';
+      row.forEach(item => {
+        const c = document.createElement('div');
+        if (!item) { c.className = 'kcell empty'; r.appendChild(c); return; }
+        const [h, k, rom] = item;
+        const glyph = script === 'hira' ? h : k;
+        c.className = 'kcell';
+        c.innerHTML = `<span class="glyph">${glyph}</span>` +
+                      (showRomaji ? `<span class="romaji">${rom}</span>` : '');
+        c.setAttribute('role', 'button');
+        c.setAttribute('aria-label', `${glyph} ${rom}`);
+        c.addEventListener('click', () => speak(glyph, c));
+        r.appendChild(c);
+      });
+      wrap.appendChild(r);
+    });
+    board.appendChild(wrap);
+  }
+
+  function render() {
+    board.innerHTML = '';
+    renderGroup(BASE, '');
+    if (showDakuten) renderGroup(DAKUTEN, '濁音・半濁音 탁음·반탁음');
+  }
+
+  // ── 이벤트 ──
+  $('scriptSeg').addEventListener('click', (e) => {
+    const btn = e.target.closest('button'); if (!btn) return;
+    script = btn.dataset.script;
+    [...e.currentTarget.children].forEach(b => b.classList.toggle('on', b === btn));
+    render();
+  });
+  $('romajiToggle').addEventListener('click', (e) => {
+    showRomaji = !showRomaji;
+    e.currentTarget.classList.toggle('on', showRomaji);
+    render();
+  });
+  $('dakutenToggle').addEventListener('click', (e) => {
+    showDakuten = !showDakuten;
+    e.currentTarget.classList.toggle('on', showDakuten);
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

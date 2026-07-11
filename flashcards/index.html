@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>かなカード — 히라가나·가타카나 플래시카드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F6F4EE;
+    --paper-deep: #EFEBE1;
+    --ink: #2A3550;
+    --ink-soft: #5A6379;
+    --shu: #C24036;
+    --line: #DCD6C8;
+    --grid: #CFC8B6;
+    --radius: 18px;
+    --jp: 'Zen Maru Gothic', sans-serif;
+    --kr: 'IBM Plex Sans KR', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: var(--kr);
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    background-image:
+      linear-gradient(var(--paper-deep) 1px, transparent 1px),
+      linear-gradient(90deg, var(--paper-deep) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  .app { width: 100%; max-width: 480px; padding: 28px 18px 48px; display: flex; flex-direction: column; }
+
+  .top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  a.back { text-decoration: none; color: var(--ink-soft); font-size: 14px; font-weight: 500; }
+  a.back:hover { color: var(--ink); }
+  h1 { font-family: var(--jp); font-weight: 900; font-size: 22px; }
+  h1 .shu { color: var(--shu); }
+
+  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 6px; }
+  .seg { display: inline-flex; border: 1.5px solid var(--line); border-radius: 999px; background: #fff; overflow: hidden; }
+  .seg button {
+    font-family: var(--kr); font-size: 13px; font-weight: 600;
+    padding: 7px 13px; border: none; background: transparent; color: var(--ink-soft); cursor: pointer;
+  }
+  .seg button.on { background: var(--ink); color: #fff; }
+  .chip {
+    font-family: var(--kr); font-size: 13px; font-weight: 500;
+    padding: 7px 13px; border: 1.5px solid var(--line); border-radius: 999px;
+    background: #fff; color: var(--ink); cursor: pointer;
+  }
+  .chip.on { border-color: var(--shu); color: var(--shu); }
+  button:focus-visible { outline: 2px solid var(--shu); outline-offset: 2px; }
+
+  .counter { font-size: 13px; color: var(--ink-soft); text-align: center; margin: 16px 0 10px; font-weight: 600; letter-spacing: .04em; }
+
+  /* 카드 (3D 플립) */
+  .card-stage { perspective: 1200px; }
+  .card {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1.12;
+    cursor: pointer;
+    transform-style: preserve-3d;
+    transition: transform .45s cubic-bezier(.2,.7,.2,1);
+  }
+  .card.flipped { transform: rotateY(180deg); }
+  .face {
+    position: absolute; inset: 0;
+    backface-visibility: hidden;
+    background: #fff;
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 3px 0 var(--line);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .face .glyph { font-family: var(--jp); font-weight: 900; line-height: 1; }
+  .front .glyph { font-size: clamp(90px, 34vw, 150px); }
+  .front .side-tag {
+    position: absolute; top: 16px; left: 18px;
+    font-size: 12px; font-weight: 700; letter-spacing: .1em; color: var(--ink-soft);
+  }
+  .front .flip-hint { position: absolute; bottom: 16px; font-size: 12px; color: var(--ink-soft); }
+  .back { transform: rotateY(180deg); }
+  .back .romaji { font-family: var(--jp); font-size: clamp(44px, 16vw, 68px); font-weight: 900; color: var(--shu); }
+  .back .other { margin-top: 10px; font-family: var(--jp); font-size: 24px; color: var(--ink-soft); }
+  .back .other b { color: var(--ink); }
+  .back .speak-hint { position: absolute; bottom: 16px; font-size: 12px; color: var(--ink-soft); }
+
+  .controls { display: grid; grid-template-columns: 1fr 1.4fr 1fr; gap: 10px; margin-top: 20px; }
+  .btn {
+    font-family: var(--kr); font-weight: 700; font-size: 15px;
+    padding: 14px; border: 1.5px solid var(--line); border-radius: 12px;
+    background: #fff; color: var(--ink); cursor: pointer;
+    transition: transform .08s, border-color .15s;
+  }
+  .btn:hover { border-color: var(--ink); }
+  .btn:active { transform: scale(.98); }
+  .btn.primary { background: var(--shu); color: #fff; border-color: var(--shu); }
+  .btn:disabled { opacity: .4; cursor: default; }
+
+  .row2 { display: flex; gap: 10px; margin-top: 10px; }
+  .row2 .btn { flex: 1; font-size: 14px; padding: 12px; }
+
+  .hint { font-size: 12px; color: var(--ink-soft); margin-top: 18px; line-height: 1.7; text-align: center; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="top">
+    <a class="back" href="../">← 메뉴</a>
+    <h1><span class="shu">かな</span>カード</h1>
+  </div>
+
+  <div class="toolbar">
+    <span class="seg" id="deckSeg">
+      <button data-deck="hira" class="on">ひらがな</button>
+      <button data-deck="kata">カタカナ</button>
+      <button data-deck="all">전체</button>
+    </span>
+    <button class="chip" id="dakutenToggle">탁음 포함</button>
+    <button class="chip" id="frontToggle">앞면: 로마자</button>
+  </div>
+
+  <p class="counter" id="counter">1 / 46</p>
+
+  <div class="card-stage">
+    <div class="card" id="card">
+      <div class="face front">
+        <span class="side-tag" id="sideTag">かな</span>
+        <span class="glyph" id="frontGlyph">あ</span>
+        <span class="flip-hint">탭하면 뒤집기</span>
+      </div>
+      <div class="face back">
+        <span class="romaji" id="backRomaji">a</span>
+        <span class="other" id="backOther"></span>
+        <span class="speak-hint">🔊 자동 발음</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="btn" id="prevBtn">← 이전</button>
+    <button class="btn primary" id="flipBtn">뒤집기</button>
+    <button class="btn" id="nextBtn">다음 →</button>
+  </div>
+  <div class="row2">
+    <button class="btn" id="shuffleBtn">🔀 섞기</button>
+    <button class="btn" id="speakBtn">🔊 다시 듣기</button>
+  </div>
+
+  <p class="hint">키보드: <b>Space/Enter</b> 뒤집기 · <b>←/→</b> 이동 · <b>S</b> 섞기</p>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+  const _ = null;
+  // [히라가나, 가타카나, 로마자]
+  const BASE = [
+    ['あ','ア','a'],['い','イ','i'],['う','ウ','u'],['え','エ','e'],['お','オ','o'],
+    ['か','カ','ka'],['き','キ','ki'],['く','ク','ku'],['け','ケ','ke'],['こ','コ','ko'],
+    ['さ','サ','sa'],['し','シ','shi'],['す','ス','su'],['せ','セ','se'],['そ','ソ','so'],
+    ['た','タ','ta'],['ち','チ','chi'],['つ','ツ','tsu'],['て','テ','te'],['と','ト','to'],
+    ['な','ナ','na'],['に','ニ','ni'],['ぬ','ヌ','nu'],['ね','ネ','ne'],['の','ノ','no'],
+    ['は','ハ','ha'],['ひ','ヒ','hi'],['ふ','フ','fu'],['へ','ヘ','he'],['ほ','ホ','ho'],
+    ['ま','マ','ma'],['み','ミ','mi'],['む','ム','mu'],['め','メ','me'],['も','モ','mo'],
+    ['や','ヤ','ya'],['ゆ','ユ','yu'],['よ','ヨ','yo'],
+    ['ら','ラ','ra'],['り','リ','ri'],['る','ル','ru'],['れ','レ','re'],['ろ','ロ','ro'],
+    ['わ','ワ','wa'],['を','ヲ','wo'],['ん','ン','n']
+  ];
+  const DAKUTEN = [
+    ['が','ガ','ga'],['ぎ','ギ','gi'],['ぐ','グ','gu'],['げ','ゲ','ge'],['ご','ゴ','go'],
+    ['ざ','ザ','za'],['じ','ジ','ji'],['ず','ズ','zu'],['ぜ','ゼ','ze'],['ぞ','ゾ','zo'],
+    ['だ','ダ','da'],['ぢ','ヂ','ji'],['づ','ヅ','zu'],['で','デ','de'],['ど','ド','do'],
+    ['ば','バ','ba'],['び','ビ','bi'],['ぶ','ブ','bu'],['べ','ベ','be'],['ぼ','ボ','bo'],
+    ['ぱ','パ','pa'],['ぴ','ピ','pi'],['ぷ','プ','pu'],['ぺ','ペ','pe'],['ぽ','ポ','po']
+  ];
+
+  const $ = (id) => document.getElementById(id);
+  const card = $('card');
+
+  let deck = 'hira';        // 'hira' | 'kata' | 'all'
+  let includeDakuten = false;
+  let frontRomaji = false;  // 앞면에 로마자를 보여줄지
+  let cards = [];           // 현재 덱 (순서 반영)
+  let i = 0;
+  let flipped = false;
+
+  // ── TTS ──
+  let jaVoice = null;
+  function pickVoice() {
+    const vs = speechSynthesis.getVoices();
+    jaVoice = vs.find(v => v.lang === 'ja-JP') || vs.find(v => v.lang.startsWith('ja')) || null;
+  }
+  if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+  function speak(text) {
+    if (!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text); u.lang = 'ja-JP';
+    if (jaVoice) u.voice = jaVoice; u.rate = 0.8;
+    speechSynthesis.speak(u);
+  }
+
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let j = a.length - 1; j > 0; j--) {
+      const k = Math.floor(Math.random() * (j + 1));
+      [a[j], a[k]] = [a[k], a[j]];
+    }
+    return a;
+  }
+
+  function buildDeck(keepShuffledOrder) {
+    const src = includeDakuten ? BASE.concat(DAKUTEN) : BASE.slice();
+    cards = keepShuffledOrder ? shuffle(src) : src;
+    i = 0;
+    flipped = false;
+    render();
+  }
+
+  // 현재 카드에서 "앞면 글자"와 "정답 발음용 가나" 결정
+  function currentGlyph(entry) {
+    // entry = [hira, kata, romaji]
+    if (deck === 'kata') return entry[1];
+    return entry[0]; // hira, all(기본 히라 우선)
+  }
+  function currentKana(entry) { return currentGlyph(entry); } // TTS 용
+
+  function render() {
+    const entry = cards[i];
+    const [hira, kata, rom] = entry;
+    const glyph = currentGlyph(entry);
+
+    // 앞면
+    if (frontRomaji) {
+      $('frontGlyph').style.fontFamily = "var(--kr)";
+      $('frontGlyph').textContent = rom;
+      $('sideTag').textContent = 'ローマ字';
+      // 뒷면엔 가나
+      $('backRomaji').textContent = glyph;
+      $('backRomaji').style.fontFamily = "var(--jp)";
+      $('backOther').innerHTML = `<b>${hira}</b> · ${kata}`;
+    } else {
+      $('frontGlyph').style.fontFamily = "var(--jp)";
+      $('frontGlyph').textContent = glyph;
+      $('sideTag').textContent = deck === 'kata' ? 'カタカナ' : (deck === 'all' ? 'かな' : 'ひらがな');
+      $('backRomaji').textContent = rom;
+      $('backRomaji').style.fontFamily = "var(--jp)";
+      $('backOther').innerHTML = `<b>${hira}</b> · ${kata}`;
+    }
+
+    flipped = false;
+    card.classList.remove('flipped');
+    $('counter').textContent = `${i + 1} / ${cards.length}`;
+    $('prevBtn').disabled = i === 0;
+    $('nextBtn').disabled = i === cards.length - 1;
+  }
+
+  function flip() {
+    flipped = !flipped;
+    card.classList.toggle('flipped', flipped);
+    if (flipped) speak(currentKana(cards[i]));  // 뒤집을 때 발음
+  }
+  function next() { if (i < cards.length - 1) { i++; render(); } }
+  function prev() { if (i > 0) { i--; render(); } }
+
+  // ── 이벤트 ──
+  card.addEventListener('click', flip);
+  $('flipBtn').addEventListener('click', flip);
+  $('nextBtn').addEventListener('click', next);
+  $('prevBtn').addEventListener('click', prev);
+  $('shuffleBtn').addEventListener('click', () => buildDeck(true));
+  $('speakBtn').addEventListener('click', () => speak(currentKana(cards[i])));
+
+  $('deckSeg').addEventListener('click', (e) => {
+    const btn = e.target.closest('button'); if (!btn) return;
+    deck = btn.dataset.deck;
+    [...e.currentTarget.children].forEach(b => b.classList.toggle('on', b === btn));
+    buildDeck(false);
+  });
+  $('dakutenToggle').addEventListener('click', (e) => {
+    includeDakuten = !includeDakuten;
+    e.currentTarget.classList.toggle('on', includeDakuten);
+    buildDeck(false);
+  });
+  $('frontToggle').addEventListener('click', (e) => {
+    frontRomaji = !frontRomaji;
+    e.currentTarget.classList.toggle('on', frontRomaji);
+    e.currentTarget.textContent = frontRomaji ? '앞면: 로마자' : '앞면: かな';
+    render();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flip(); }
+    else if (e.key === 'ArrowRight') next();
+    else if (e.key === 'ArrowLeft') prev();
+    else if (e.key === 's' || e.key === 'S') buildDeck(true);
+  });
+
+  buildDeck(false);
+})();
+</script>
+</body>
+</html>
