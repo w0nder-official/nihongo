@@ -45,6 +45,11 @@
     padding: 28px 20px 48px;
   }
 
+  /* ── 상단 back 바 (전 페이지 공통) ── */
+  .top { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+  a.back { text-decoration: none; color: var(--ink-soft); font-size: 14px; font-weight: 500; }
+  a.back:hover { color: var(--ink); }
+
   /* ── 헤더 ───────────────────────── */
   header {
     display: flex;
@@ -316,6 +321,10 @@
 </head>
 <body>
 <div class="app">
+
+  <div class="top">
+    <a class="back" href="../">← 메뉴</a>
+  </div>
 
   <header>
     <h1><span class="kana">かな</span> 받아쓰기</h1>
