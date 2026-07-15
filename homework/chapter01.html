@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日本語テスト — 1과</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+JP:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F3EC;
+  --paper-deep:#EFEAE0;
+  --ink:#24262B;
+  --ink-soft:#6B6E76;
+  --indigo:#31517A;
+  --indigo-deep:#243D5C;
+  --shu:#CE3A2E;
+  --batsu:#3E4757;
+  --line:#D9D2C4;
+  --card:#FFFFFF;
+  --ok-bg:#FBF1EF;
+  --ng-bg:#EEF1F5;
+  --radius:14px;
+  --font-kr:"Noto Sans KR",-apple-system,"Apple SD Gothic Neo",sans-serif;
+  --font-jp:"Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif;
+  --font-jp-serif:"Noto Serif JP","Hiragino Mincho ProN",serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--font-kr);
+  background:var(--paper);
+  background-image:radial-gradient(rgba(49,81,122,.045) 1px, transparent 1px);
+  background-size:22px 22px;
+  color:var(--ink);
+  min-height:100vh;
+  line-height:1.6;
+}
+.jp{font-family:var(--font-jp)}
+.wrap{max-width:680px;margin:0 auto;padding:28px 20px 64px}
+.screen{display:none}
+.screen.active{display:block;animation:fadeUp .35s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+
+/* ---------- 홈 ---------- */
+.home-hero{display:flex;gap:28px;align-items:stretch;padding:34px 0 10px}
+.tategaki{
+  writing-mode:vertical-rl;
+  font-family:var(--font-jp-serif);
+  font-weight:700;font-size:2.35rem;letter-spacing:.28em;
+  color:var(--indigo-deep);
+  border-right:3px solid var(--shu);
+  padding-right:16px;line-height:1.15;user-select:none;
+}
+.hero-copy{align-self:center}
+.hero-copy .eyebrow{
+  font-size:.78rem;letter-spacing:.14em;color:var(--shu);
+  font-weight:700;text-transform:uppercase;margin-bottom:8px;
+}
+.hero-copy h1{font-size:1.5rem;font-weight:700;line-height:1.35;margin-bottom:8px}
+.hero-copy p{color:var(--ink-soft);font-size:.95rem}
+.flow-steps{
+  margin:26px 0 8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
+.flow-step{
+  background:var(--card);border:1.5px solid var(--line);
+  border-radius:12px;padding:12px 18px;
+}
+.flow-step .fs-no{
+  font-size:.72rem;font-weight:700;letter-spacing:.1em;color:var(--shu);
+}
+.flow-step .fs-name{font-weight:700;font-size:1rem}
+.flow-step .fs-desc{font-size:.82rem;color:var(--ink-soft)}
+.flow-arrow{color:var(--indigo);font-weight:700;font-size:1.2rem}
+.start-area{margin-top:30px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.btn{
+  font-family:var(--font-kr);
+  border:none;border-radius:var(--radius);
+  padding:14px 30px;font-size:1.02rem;font-weight:700;
+  cursor:pointer;
+  transition:transform .12s,box-shadow .12s,background .15s;
+}
+.btn-primary{background:var(--shu);color:#fff;box-shadow:0 3px 0 #A32B21}
+.btn-primary:hover{transform:translateY(-1px)}
+.btn-primary:active{transform:translateY(1px);box-shadow:0 1px 0 #A32B21}
+.btn-ghost{background:transparent;color:var(--indigo);border:1.5px solid var(--indigo)}
+.btn-ghost:hover{background:rgba(49,81,122,.07)}
+.pill:focus-visible,.btn:focus-visible,input:focus-visible{
+  outline:3px solid rgba(206,58,46,.45);outline-offset:2px;
+}
+.start-hint{font-size:.85rem;color:var(--ink-soft)}
+
+/* ---------- 퀴즈 ---------- */
+.quiz-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.quiz-meta{font-size:.85rem;color:var(--ink-soft);font-weight:500}
+.quiz-meta b{color:var(--indigo-deep)}
+.stage-chip{
+  display:inline-block;background:var(--indigo);color:#fff;
+  font-size:.75rem;font-weight:700;letter-spacing:.06em;
+  border-radius:6px;padding:2px 10px;margin-right:8px;vertical-align:1px;
+}
+.quit-link{
+  background:none;border:none;font-family:var(--font-kr);
+  font-size:.85rem;color:var(--ink-soft);cursor:pointer;
+  text-decoration:underline;text-underline-offset:3px;
+}
+.quit-link:hover{color:var(--shu)}
+.progress-track{height:6px;background:var(--paper-deep);border-radius:99px;overflow:hidden;margin-bottom:26px}
+.progress-fill{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,var(--indigo),var(--shu));
+  border-radius:99px;transition:width .3s ease;
+}
+.q-card{
+  position:relative;
+  background:var(--card);
+  border:1.5px solid var(--line);
+  border-radius:var(--radius);
+  padding:34px 28px 30px;
+  box-shadow:0 2px 10px rgba(36,38,43,.05);
+}
+.q-tag{
+  display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.1em;
+  color:var(--indigo);border:1px solid var(--indigo);
+  border-radius:6px;padding:2px 9px;margin-bottom:16px;
+}
+.q-direction{font-size:.88rem;color:var(--ink-soft);margin-bottom:10px}
+.q-prompt{font-size:1.85rem;font-weight:700;line-height:1.5;margin-bottom:6px;word-break:keep-all}
+.q-prompt.jp{font-family:var(--font-jp)}
+.q-prompt.grammar{font-size:1.3rem;font-weight:500}
+.q-prompt .blank{
+  display:inline-block;min-width:3.2em;
+  border-bottom:2.5px solid var(--shu);
+  text-align:center;color:var(--shu);
+}
+.q-sub{font-size:.92rem;color:var(--ink-soft);margin-bottom:4px}
+.answer-row{display:flex;gap:10px;margin-top:22px}
+.answer-input{
+  flex:1;font-family:var(--font-jp);font-size:1.15rem;
+  padding:13px 16px;border:1.5px solid var(--line);
+  border-radius:10px;background:var(--paper);color:var(--ink);
+  transition:border-color .15s,background .15s;
+}
+.answer-input::placeholder{color:#B4AFA3;font-size:1rem}
+.answer-input:focus{border-color:var(--indigo);background:#fff}
+.answer-input:disabled{opacity:.6}
+.submit-btn{white-space:nowrap}
+
+.judge-layer{position:absolute;top:14px;right:16px;width:88px;height:88px;pointer-events:none}
+.judge-layer svg{width:100%;height:100%}
+.judge-layer .stroke{fill:none;stroke-linecap:round;stroke-dasharray:300;stroke-dashoffset:300}
+.judge-layer.show-maru .stroke{stroke:var(--shu);stroke-width:9;animation:draw .45s ease-out forwards}
+.judge-layer.show-batsu .stroke{stroke:var(--batsu);stroke-width:9;animation:draw .35s ease-out forwards}
+.judge-layer.show-batsu .stroke.s2{animation-delay:.18s}
+@keyframes draw{to{stroke-dashoffset:0}}
+
+.feedback{margin-top:20px;border-radius:10px;padding:16px 18px;display:none;animation:fadeUp .25s ease both}
+.feedback.on{display:block}
+.feedback.ok{background:var(--ok-bg);border:1.5px solid rgba(206,58,46,.35)}
+.feedback.ng{background:var(--ng-bg);border:1.5px solid rgba(62,71,87,.3)}
+.feedback .fb-title{font-weight:700;font-size:1rem;margin-bottom:4px}
+.feedback.ok .fb-title{color:var(--shu)}
+.feedback.ng .fb-title{color:var(--batsu)}
+.feedback .fb-answer{font-size:1.05rem}
+.feedback .fb-answer .jp{font-weight:700}
+.feedback .fb-note{font-size:.85rem;color:var(--ink-soft);margin-top:6px}
+.next-row{margin-top:18px;display:none}
+.next-row.on{display:flex;justify-content:flex-end}
+
+/* ---------- 결과 (중간/최종 공용) ---------- */
+.result-head{text-align:center;padding:30px 0 8px}
+.result-kicker{
+  font-size:.82rem;font-weight:700;letter-spacing:.14em;
+  color:var(--indigo);margin-bottom:14px;
+}
+.result-stamp{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:132px;height:132px;border-radius:50%;
+  border:4px solid var(--shu);color:var(--shu);
+  font-family:var(--font-jp-serif);
+  font-size:1.6rem;font-weight:700;letter-spacing:.05em;
+  transform:rotate(-8deg);margin-bottom:18px;
+  background:rgba(206,58,46,.04);
+}
+.result-score{font-size:2.1rem;font-weight:700}
+.result-score small{font-size:1.1rem;color:var(--ink-soft);font-weight:500}
+.result-sub{color:var(--ink-soft);margin-top:4px;font-size:.95rem}
+.score-split{
+  display:flex;justify-content:center;gap:14px;margin-top:20px;flex-wrap:wrap;
+}
+.score-box{
+  background:var(--card);border:1.5px solid var(--line);border-radius:12px;
+  padding:12px 22px;text-align:center;min-width:120px;
+}
+.score-box .sb-label{font-size:.78rem;font-weight:700;color:var(--ink-soft);letter-spacing:.08em}
+.score-box .sb-val{font-size:1.35rem;font-weight:700;color:var(--indigo-deep)}
+.wrong-section{margin-top:34px}
+.wrong-title{font-size:1rem;font-weight:700;margin:22px 0 12px;display:flex;align-items:center;gap:8px}
+.wrong-title::before{content:"";width:14px;height:3px;background:var(--shu);border-radius:2px}
+.wrong-item{background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:10px}
+.wrong-item .w-q{font-weight:700;font-size:1.05rem;margin-bottom:8px}
+.wrong-item .w-row{font-size:.92rem;display:flex;gap:8px;margin-top:3px;flex-wrap:wrap}
+.wrong-item .w-label{
+  flex-shrink:0;font-size:.75rem;font-weight:700;letter-spacing:.06em;
+  padding:2px 8px;border-radius:6px;align-self:center;
+}
+.w-label.mine{background:var(--ng-bg);color:var(--batsu)}
+.w-label.ans{background:var(--ok-bg);color:var(--shu)}
+.wrong-item .w-val{align-self:center}
+.wrong-item .w-val.jp{font-family:var(--font-jp)}
+.perfect-note{text-align:center;color:var(--ink-soft);margin-top:26px;font-size:.95rem}
+.result-actions{margin-top:34px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+@media (max-width:520px){
+  .home-hero{gap:20px;padding-top:22px}
+  .tategaki{font-size:1.8rem}
+  .q-prompt{font-size:1.5rem}
+  .q-prompt.grammar{font-size:1.12rem}
+  .answer-row{flex-direction:column}
+  .judge-layer{width:66px;height:66px;top:10px;right:12px}
+  .flow-arrow{display:none}
+  .flow-steps{flex-direction:column;align-items:stretch}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===== 홈 ===== -->
+  <section id="screen-home" class="screen active">
+    <div class="home-hero">
+      <div class="tategaki jp" aria-hidden="true">第一課<br>テスト</div>
+      <div class="hero-copy">
+        <div class="eyebrow">STUDY QUIZ · 第1課 · LESSON 1</div>
+        <h1>1과 시험</h1>
+        <p>단어 시험이 끝나면 이어서 문법 시험이 시작됩니다.<br>답을 입력하고 Enter를 누르면 바로 채점돼요.</p>
+      </div>
+    </div>
+
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="fs-no">STEP 1</div>
+        <div class="fs-name">단어 시험 · <span id="home-vocab-count"></span>문제</div>
+        <div class="fs-desc">전 단어 랜덤 출제 · 한↔일 방향도 랜덤</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="fs-no">STEP 2</div>
+        <div class="fs-name">문장 만들기 · <span id="home-grammar-count"></span>문제</div>
+        <div class="fs-desc">문법 항목별 1문제 · 작문/빈칸/해석</div>
+      </div>
+    </div>
+
+    <div class="start-area">
+      <button class="btn btn-primary" id="btn-start">시험 시작</button>
+      <span class="start-hint">성씨 단어(鈴木·佐藤 등)는 출제되지 않아요</span>
+    </div>
+  </section>
+
+  <!-- ===== 퀴즈 ===== -->
+  <section id="screen-quiz" class="screen">
+    <div class="quiz-top">
+      <div class="quiz-meta">
+        <span class="stage-chip" id="stage-chip">단어</span>
+        <b id="q-current">1</b> / <span id="q-total">0</span> · 맞은 개수 <b id="q-score">0</b>
+      </div>
+      <button class="quit-link" id="btn-quit">그만두기</button>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+
+    <div class="q-card">
+      <div class="judge-layer" id="judge" aria-hidden="true">
+        <svg viewBox="0 0 100 100">
+          <circle class="stroke s1 maru-only" cx="50" cy="50" r="36"/>
+          <line class="stroke s1 batsu-only" x1="22" y1="22" x2="78" y2="78"/>
+          <line class="stroke s2 batsu-only" x1="78" y1="22" x2="22" y2="78"/>
+        </svg>
+      </div>
+      <span class="q-tag" id="q-tag">단어</span>
+      <div class="q-direction" id="q-direction"></div>
+      <div class="q-prompt" id="q-prompt"></div>
+      <div class="q-sub" id="q-sub"></div>
+      <div class="answer-row">
+        <input type="text" class="answer-input" id="answer-input"
+               autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
+               placeholder="답을 입력하세요" aria-label="답 입력">
+        <button class="btn btn-primary submit-btn" id="btn-submit">확인</button>
+      </div>
+      <div class="feedback" id="feedback" role="status">
+        <div class="fb-title" id="fb-title"></div>
+        <div class="fb-answer" id="fb-answer"></div>
+        <div class="fb-note" id="fb-note"></div>
+      </div>
+      <div class="next-row" id="next-row">
+        <button class="btn btn-ghost" id="btn-next">다음 문제 →&nbsp; <small>(Enter)</small></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 중간 결과 (단어 시험) ===== -->
+  <section id="screen-mid" class="screen">
+    <div class="result-head">
+      <div class="result-kicker">STEP 1 완료 · 단어 시험 결과</div>
+      <div class="result-stamp jp" id="mid-stamp">合格</div>
+      <div class="result-score"><span id="mid-correct">0</span><small> / <span id="mid-total">0</span> 문제 정답</small></div>
+      <div class="result-sub" id="mid-sub"></div>
+    </div>
+
+    <div class="wrong-section" id="mid-wrong-section">
+      <div class="wrong-title">틀린 단어 다시 보기</div>
+      <div id="mid-wrong-list"></div>
+    </div>
+    <div class="perfect-note" id="mid-perfect" style="display:none">단어 전부 정답! 대단해요 🎉</div>
+
+    <div class="result-actions">
+      <button class="btn btn-primary" id="btn-to-grammar">문법 시험 시작 →&nbsp; <small>(Enter)</small></button>
+    </div>
+  </section>
+
+  <!-- ===== 최종 결과 ===== -->
+  <section id="screen-result" class="screen">
+    <div class="result-head">
+      <div class="result-kicker" id="final-kicker">시험 종료 · 최종 결과</div>
+      <div class="result-stamp jp" id="result-stamp">合格</div>
+      <div class="result-score"><span id="r-correct">0</span><small> / <span id="r-total">0</span> 문제 정답</small></div>
+      <div class="result-sub" id="r-sub"></div>
+      <div class="score-split" id="score-split">
+        <div class="score-box">
+          <div class="sb-label">단어</div>
+          <div class="sb-val" id="sb-vocab">0/0</div>
+        </div>
+        <div class="score-box">
+          <div class="sb-label">문법</div>
+          <div class="sb-val" id="sb-grammar">0/0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrong-section" id="wrong-section">
+      <div id="wrong-blocks"></div>
+    </div>
+    <div class="perfect-note" id="perfect-note" style="display:none">
+      전부 정답! 다음 과로 넘어가도 되겠어요 🎉
+    </div>
+
+    <div class="result-actions">
+      <button class="btn btn-primary" id="btn-retry-wrong">틀린 것만 다시 풀기</button>
+      <button class="btn btn-ghost" id="btn-restart">처음부터 다시 풀기</button>
+    </div>
+  </section>
+
+</div>
+<script>
+const LESSON = 1;
+const VOCAB = [{"kana":"〜さん","kr":"~씨","krAlt":["씨"],"jpAlt":["さん"],"display":"〜さん"},{"kana":"こんにちは","kr":"안녕하세요","krAlt":["안녕하세요."],"jpAlt":[],"display":"こんにちは"},{"kana":"〜の","kr":"~의","krAlt":["의"],"jpAlt":["の"],"display":"〜の"},{"kana":"おしごと","kr":"직업","krAlt":[],"jpAlt":["お仕事"],"display":"お仕事（おしごと）"},{"kana":"〜は","kr":"~은/는","krAlt":["은/는","은","는","~은","~는","은는"],"jpAlt":["は"],"display":"〜は"},{"kana":"なんですか","kr":"무엇입니까?","krAlt":["무엇입니까","뭐입니까"],"jpAlt":["何ですか"],"display":"何ですか（なんですか）"},{"kana":"かいしゃいん","kr":"회사원","krAlt":[],"jpAlt":["会社員"],"display":"会社員（かいしゃいん）"},{"kana":"〜も","kr":"~도","krAlt":["도"],"jpAlt":["も"],"display":"〜も"},{"kana":"だいがくせい","kr":"대학생","krAlt":[],"jpAlt":["大学生"],"display":"大学生（だいがくせい）"},{"kana":"せんせい","kr":"선생님","krAlt":["선생"],"jpAlt":["先生"],"display":"先生（せんせい）"},{"kana":"にほんじん","kr":"일본인","krAlt":["일본사람"],"jpAlt":["日本人"],"display":"日本人（にほんじん）"},{"kana":"かんこくじん","kr":"한국인","krAlt":["한국사람"],"jpAlt":["韓国人"],"display":"韓国人（かんこくじん）"},{"kana":"ぎんこういん","kr":"은행원","krAlt":[],"jpAlt":["銀行員"],"display":"銀行員（ぎんこういん）"},{"kana":"がくせい","kr":"학생","krAlt":[],"jpAlt":["学生"],"display":"学生（がくせい）"},{"kana":"ちゅうごくじん","kr":"중국인","krAlt":["중국사람"],"jpAlt":["中国人"],"display":"中国人（ちゅうごくじん）"},{"kana":"かしゅ","kr":"가수","krAlt":[],"jpAlt":["歌手"],"display":"歌手（かしゅ）"},{"kana":"こうこうせい","kr":"고등학생","krAlt":["고교생"],"jpAlt":["高校生"],"display":"高校生（こうこうせい）"},{"kana":"いしゃ","kr":"의사","krAlt":[],"jpAlt":["医者"],"display":"医者（いしゃ）"},{"kana":"フランスじん","kr":"프랑스인","krAlt":["프랑스사람"],"jpAlt":["フランス人"],"display":"フランス人（フランスじん）"},{"kana":"ドイツじん","kr":"독일인","krAlt":["독일사람"],"jpAlt":["ドイツ人"],"display":"ドイツ人（ドイツじん）"},{"kana":"かんごし","kr":"간호사","krAlt":[],"jpAlt":["看護師"],"display":"看護師（かんごし）"},{"kana":"こうむいん","kr":"공무원","krAlt":[],"jpAlt":["公務員"],"display":"公務員（こうむいん）"},{"kana":"きょうじゅ","kr":"교수","krAlt":["교수님"],"jpAlt":["教授"],"display":"教授（きょうじゅ）"},{"kana":"しゅふ","kr":"주부","krAlt":[],"jpAlt":["主婦"],"display":"主婦（しゅふ）"},{"kana":"デザイナー","kr":"디자이너","krAlt":[],"jpAlt":[],"display":"デザイナー"},{"kana":"エンジニア","kr":"엔지니어","krAlt":[],"jpAlt":[],"display":"エンジニア"},{"kana":"フリーター","kr":"프리터","krAlt":["아르바이트생","프리터(아르바이트생)"],"jpAlt":[],"display":"フリーター"},{"kana":"タイじん","kr":"태국인","krAlt":["태국사람","타이인"],"jpAlt":["タイ人"],"display":"タイ人（タイじん）"},{"kana":"イギリスじん","kr":"영국인","krAlt":["영국사람"],"jpAlt":["イギリス人"],"display":"イギリス人（イギリスじん）"},{"kana":"ロシアじん","kr":"러시아인","krAlt":["러시아사람"],"jpAlt":["ロシア人"],"display":"ロシア人（ロシアじん）"},{"kana":"アメリカじん","kr":"아메리카인","krAlt":["미국인","미국사람"],"jpAlt":["アメリカ人"],"display":"アメリカ人（アメリカじん）"}];
+const GRAMMAR = [{"no":"문법 2","type":"compose","direction":"다음 문장을 일본어로 써 보세요.","prompt":"다나카 씨는 회사원입니다.","segments":[["田中","たなか"],["さんは"],["会社員","かいしゃいん"],["です"]],"answerDisplay":"田中さんは会社員です。","note":"〜は〜です : ~은/는 ~입니다"},{"no":"문법 3","type":"blank","direction":"빈칸에 들어갈 말을 입력하세요.","promptJp":"鈴木さんは大学生［　　　］。","sub":"뜻: 스즈키 씨는 대학생입니까?","segments":[["ですか"]],"answerDisplay":"ですか","note":"〜ですか : ~입니까? (문장 끝에 か를 붙이면 의문문)"},{"no":"문법 4","type":"translate","direction":"다음 문장을 한국어로 해석해 보세요.","promptJp":"はい、私は医者です。","segments":[["네","예"],[",",""],["저는","나는","전","저"],["의사입니다","의사예요","의사에요"]],"answerDisplay":"네, 저는 의사입니다.","note":"はい、〜です : 네, ~입니다"},{"no":"문법 5","type":"compose","direction":"다음 문장을 일본어로 써 보세요.","prompt":"아니요, 저는 학생이 아닙니다.","segments":[["いいえ"],[",",""],["私","わたし"],["は"],["学生","がくせい"],["じゃありません","ではありません"]],"answerDisplay":"いいえ、私は学生じゃありません。／ ではありません。","note":"〜じゃありません = 〜ではありません : ~이/가 아닙니다 (둘 다 정답)"},{"no":"문법 6","type":"blank","direction":"빈칸에 들어갈 조사를 입력하세요.","promptJp":"山田さんは銀行員です。中村さん［　　］銀行員です。","sub":"뜻: 야마다 씨는 은행원입니다. 나카무라 씨도 은행원입니다.","segments":[["も"]],"answerDisplay":"も","note":"〜も : ~도"}];
+</script>
+<script>
+/* ================= 유틸 ================= */
+function normalize(s){
+  return (s||"")
+    .toLowerCase()
+    .replace(/[\s\u3000]/g,"")
+    .replace(/[。、，,.．・?？!！~〜「」『』()（）\[\]［］'"’”]/g,"")
+    .trim();
+}
+function expandSegments(segments){
+  let acc = [""];
+  for(const seg of segments){
+    const next = [];
+    for(const a of acc) for(const opt of seg) next.push(a + opt);
+    acc = next;
+  }
+  return acc.map(normalize);
+}
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+const $ = id => document.getElementById(id);
+
+/* ================= 문제 생성 ================= */
+function buildVocabQuestions(){
+  return shuffle(VOCAB).map(w=>{
+    const dir = Math.random() < 0.5 ? "kr2jp" : "jp2kr";
+    if(dir==="kr2jp"){
+      return {
+        kind:"vocab",
+        direction:"다음 단어를 히라가나/가타카나로 써 보세요.",
+        prompt:w.kr, promptIsJp:false,
+        accepted:[normalize(w.kana), ...w.jpAlt.map(normalize)],
+        answerDisplay:w.display, note:null
+      };
+    }
+    return {
+      kind:"vocab",
+      direction:"다음 단어의 뜻을 한국어로 써 보세요.",
+      prompt:w.kana, promptIsJp:true,
+      accepted:[normalize(w.kr), ...w.krAlt.map(normalize)],
+      answerDisplay:w.kr,
+      note:"표기: " + w.display
+    };
+  });
+}
+function buildGrammarQuestions(){
+  return GRAMMAR.map(g=>({
+    kind:"grammar", tag:g.no,
+    direction:g.direction,
+    prompt:g.prompt || g.promptJp,
+    promptIsJp:!!g.promptJp,
+    sub:g.sub || null,
+    accepted:expandSegments(g.segments),
+    answerDisplay:g.answerDisplay,
+    note:g.note
+  }));
+}
+
+/* ================= 상태 ================= */
+/* stage: "vocab" → (mid) → "grammar" → (final) / "review" */
+let state = null;
+
+function newSession(){
+  state = {
+    stage:"vocab",
+    questions:buildVocabQuestions(),
+    idx:0, correct:0, wrong:[],
+    vocabResult:null, grammarResult:null
+  };
+  showScreen("quiz");
+  renderQuestion();
+}
+function showScreen(name){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  $("screen-"+name).classList.add("active");
+}
+const STAGE_LABEL = {vocab:"STEP 1 · 단어", grammar:"STEP 2 · 문법", review:"오답 복습"};
+
+/* ================= 렌더 ================= */
+function renderQuestion(){
+  const q = state.questions[state.idx];
+  $("stage-chip").textContent = STAGE_LABEL[state.stage];
+  $("q-current").textContent = state.idx+1;
+  $("q-total").textContent = state.questions.length;
+  $("q-score").textContent = state.correct;
+  $("progress-fill").style.width = (state.idx/state.questions.length*100)+"%";
+
+  $("q-tag").textContent = q.kind==="vocab" ? "단어" : q.tag;
+  $("q-direction").textContent = q.direction;
+
+  const promptEl = $("q-prompt");
+  promptEl.textContent = "";
+  promptEl.className = "q-prompt" + (q.promptIsJp?" jp":"") + (q.kind==="grammar"?" grammar":"");
+  if(q.kind==="grammar" && q.promptIsJp){
+    const parts = q.prompt.split(/(［[　\s]*］)/);
+    parts.forEach(p=>{
+      if(/^［[　\s]*］$/.test(p)){
+        const b = document.createElement("span");
+        b.className="blank"; b.textContent="？";
+        promptEl.appendChild(b);
+      }else{
+        promptEl.appendChild(document.createTextNode(p));
+      }
+    });
+  }else{
+    promptEl.textContent = q.prompt;
+  }
+  $("q-sub").textContent = q.sub || "";
+
+  const input = $("answer-input");
+  input.value = "";
+  input.disabled = false;
+  input.placeholder = (q.kind==="vocab" && q.promptIsJp) ? "한국어로 입력" :
+                      (q.kind==="grammar" && !q.prompt.match(/[가-힣]/) && q.promptIsJp && q.direction.includes("해석")) ? "한국어로 해석 입력" :
+                      q.direction.includes("해석") ? "한국어로 해석 입력" : "일본어로 입력";
+  $("btn-submit").disabled = false;
+  $("feedback").className = "feedback";
+  $("next-row").className = "next-row";
+  $("judge").className = "judge-layer";
+  syncJudgeSvg(null);
+  state.phase = "question";
+  input.focus();
+}
+function syncJudgeSvg(kind){
+  document.querySelectorAll("#judge .maru-only").forEach(el=>{
+    el.style.display = (kind==="maru") ? "" : "none";
+  });
+  document.querySelectorAll("#judge .batsu-only").forEach(el=>{
+    el.style.display = (kind==="batsu") ? "" : "none";
+  });
+}
+
+function submitAnswer(){
+  if(state.phase!=="question") return;
+  const q = state.questions[state.idx];
+  const raw = $("answer-input").value;
+  if(!normalize(raw)) { $("answer-input").focus(); return; }
+
+  const ok = q.accepted.includes(normalize(raw));
+  state.phase = "feedback";
+  $("answer-input").disabled = true;
+  $("btn-submit").disabled = true;
+
+  syncJudgeSvg(ok ? "maru" : "batsu");
+  $("judge").className = "judge-layer " + (ok?"show-maru":"show-batsu");
+
+  const fb = $("feedback");
+  fb.className = "feedback on " + (ok?"ok":"ng");
+  $("fb-title").textContent = ok ? "정답! ○" : "아쉬워요 ✗";
+  $("fb-answer").innerHTML = "";
+  const label = document.createElement("span");
+  label.textContent = "정답: ";
+  const ans = document.createElement("span");
+  ans.className = "jp";
+  ans.textContent = q.answerDisplay;
+  $("fb-answer").append(label, ans);
+  $("fb-note").textContent = q.note || "";
+
+  if(ok){
+    state.correct++;
+    $("q-score").textContent = state.correct;
+  }else{
+    state.wrong.push({
+      prompt:q.prompt, promptIsJp:q.promptIsJp,
+      mine:raw.trim(), answerDisplay:q.answerDisplay,
+      tag:q.kind==="vocab" ? "단어" : q.tag,
+      kind:q.kind,
+      original:q
+    });
+  }
+  $("next-row").className = "next-row on";
+  const last = state.idx === state.questions.length-1;
+  $("btn-next").innerHTML = last
+    ? (state.stage==="vocab" ? "단어 시험 결과 보기 →&nbsp; <small>(Enter)</small>" : "결과 보기 →&nbsp; <small>(Enter)</small>")
+    : "다음 문제 →&nbsp; <small>(Enter)</small>";
+  $("btn-next").focus();
+}
+
+function nextQuestion(){
+  if(state.phase!=="feedback") return;
+  if(state.idx === state.questions.length-1){
+    finishStage();
+    return;
+  }
+  state.idx++;
+  renderQuestion();
+}
+
+/* ================= 스테이지 전환 ================= */
+function stampFor(rate){
+  if(rate === 1) return "満点";
+  if(rate >= 0.8) return "合格";
+  if(rate >= 0.5) return "頑張れ";
+  return "復習";
+}
+function finishStage(){
+  $("progress-fill").style.width = "100%";
+  const result = {correct:state.correct, total:state.questions.length, wrong:state.wrong.slice()};
+  if(state.stage === "vocab"){
+    state.vocabResult = result;
+    renderMidResult();
+  }else if(state.stage === "grammar"){
+    state.grammarResult = result;
+    renderFinalResult(false);
+  }else{ // review
+    state.reviewResult = result;
+    renderFinalResult(true);
+  }
+}
+
+function fillWrongList(containerId, wrongs){
+  const list = $(containerId);
+  list.innerHTML = "";
+  wrongs.forEach(w=>{
+    const item = document.createElement("div");
+    item.className = "wrong-item";
+
+    const qEl = document.createElement("div");
+    qEl.className = "w-q" + (w.promptIsJp?" jp":"");
+    qEl.textContent = w.prompt;
+    const tagEl = document.createElement("span");
+    tagEl.style.cssText = "font-size:.72rem;font-weight:500;color:var(--ink-soft);margin-left:8px";
+    tagEl.textContent = w.tag;
+    qEl.appendChild(tagEl);
+
+    const mineRow = document.createElement("div");
+    mineRow.className = "w-row";
+    mineRow.innerHTML = '<span class="w-label mine">내 답</span>';
+    const mineVal = document.createElement("span");
+    mineVal.className = "w-val jp";
+    mineVal.textContent = w.mine || "(무응답)";
+    mineRow.appendChild(mineVal);
+
+    const ansRow = document.createElement("div");
+    ansRow.className = "w-row";
+    ansRow.innerHTML = '<span class="w-label ans">정답</span>';
+    const ansVal = document.createElement("span");
+    ansVal.className = "w-val jp";
+    ansVal.textContent = w.answerDisplay;
+    ansRow.appendChild(ansVal);
+
+    item.append(qEl, mineRow, ansRow);
+    list.appendChild(item);
+  });
+}
+
+function renderMidResult(){
+  const r = state.vocabResult;
+  const rate = r.correct / r.total;
+  $("mid-stamp").textContent = stampFor(rate);
+  $("mid-correct").textContent = r.correct;
+  $("mid-total").textContent = r.total;
+  $("mid-sub").textContent = `정답률 ${Math.round(rate*100)}% · 이어서 문법 시험이 시작돼요`;
+  if(r.wrong.length === 0){
+    $("mid-wrong-section").style.display = "none";
+    $("mid-perfect").style.display = "block";
+  }else{
+    $("mid-wrong-section").style.display = "";
+    $("mid-perfect").style.display = "none";
+    fillWrongList("mid-wrong-list", r.wrong);
+  }
+  showScreen("mid");
+  $("btn-to-grammar").focus();
+}
+
+function startGrammar(){
+  state.stage = "grammar";
+  state.questions = buildGrammarQuestions();
+  state.idx = 0; state.correct = 0; state.wrong = [];
+  showScreen("quiz");
+  renderQuestion();
+}
+
+function renderFinalResult(isReview){
+  let correct, total, wrongs;
+  if(isReview){
+    correct = state.reviewResult.correct;
+    total = state.reviewResult.total;
+    wrongs = state.reviewResult.wrong;
+    $("final-kicker").textContent = "오답 복습 결과";
+    $("score-split").style.display = "none";
+    $("r-sub").textContent = `복습 정답률 ${Math.round(correct/total*100)}%`;
+  }else{
+    const v = state.vocabResult, g = state.grammarResult;
+    correct = v.correct + g.correct;
+    total = v.total + g.total;
+    wrongs = v.wrong.concat(g.wrong);
+    $("final-kicker").textContent = "시험 종료 · 최종 결과";
+    $("score-split").style.display = "";
+    $("sb-vocab").textContent = `${v.correct}/${v.total}`;
+    $("sb-grammar").textContent = `${g.correct}/${g.total}`;
+    $("r-sub").textContent = `종합 정답률 ${Math.round(correct/total*100)}%`;
+  }
+  state.finalWrongs = wrongs;
+
+  $("result-stamp").textContent = stampFor(correct/total);
+  $("r-correct").textContent = correct;
+  $("r-total").textContent = total;
+
+  const blocks = $("wrong-blocks");
+  blocks.innerHTML = "";
+  if(wrongs.length === 0){
+    $("wrong-section").style.display = "none";
+    $("perfect-note").style.display = "block";
+    $("btn-retry-wrong").style.display = "none";
+  }else{
+    $("wrong-section").style.display = "";
+    $("perfect-note").style.display = "none";
+    $("btn-retry-wrong").style.display = "";
+    const vocabWrongs = wrongs.filter(w=>w.kind==="vocab");
+    const grammarWrongs = wrongs.filter(w=>w.kind==="grammar");
+    if(vocabWrongs.length){
+      const t = document.createElement("div");
+      t.className = "wrong-title";
+      t.textContent = `틀린 단어 (${vocabWrongs.length})`;
+      const holder = document.createElement("div");
+      holder.id = "wb-vocab";
+      blocks.append(t, holder);
+      fillWrongList("wb-vocab", vocabWrongs);
+    }
+    if(grammarWrongs.length){
+      const t = document.createElement("div");
+      t.className = "wrong-title";
+      t.textContent = `틀린 문법 문제 (${grammarWrongs.length})`;
+      const holder = document.createElement("div");
+      holder.id = "wb-grammar";
+      blocks.append(t, holder);
+      fillWrongList("wb-grammar", grammarWrongs);
+    }
+  }
+  showScreen("result");
+}
+
+/* ================= 이벤트 ================= */
+$("home-vocab-count").textContent = VOCAB.length;
+$("home-grammar-count").textContent = GRAMMAR.length;
+
+$("btn-start").addEventListener("click", newSession);
+$("btn-submit").addEventListener("click", submitAnswer);
+$("btn-next").addEventListener("click", nextQuestion);
+$("btn-to-grammar").addEventListener("click", startGrammar);
+$("btn-quit").addEventListener("click", ()=>{
+  if(confirm("시험을 그만두고 처음으로 돌아갈까요? (지금까지 결과는 사라져요)")){
+    showScreen("home");
+  }
+});
+$("btn-restart").addEventListener("click", newSession);
+$("btn-retry-wrong").addEventListener("click", ()=>{
+  state.stage = "review";
+  state.questions = shuffle(state.finalWrongs.map(w=>w.original));
+  state.idx = 0; state.correct = 0; state.wrong = [];
+  showScreen("quiz");
+  renderQuestion();
+});
+
+/* IME 조합 중 Enter 무시 */
+$("answer-input").addEventListener("keydown", e=>{
+  if(e.key !== "Enter") return;
+  if(e.isComposing || e.keyCode === 229) return;
+  e.preventDefault();
+  e.stopPropagation(); // 같은 Enter가 document 리스너로 전달돼 바로 다음 문제로 넘어가는 것 방지
+  if(state && state.phase==="question") submitAnswer();
+});
+document.addEventListener("keydown", e=>{
+  if(e.key !== "Enter") return;
+  if(e.isComposing || e.keyCode === 229) return;
+  if(e.target === $("answer-input")) return; // 이중 안전장치
+  if(state && state.phase==="feedback" && $("screen-quiz").classList.contains("active")){
+    e.preventDefault();
+    nextQuestion();
+  }
+  else if($("screen-mid").classList.contains("active")){
+    e.preventDefault();
+    startGrammar();
+  }
+});
+</script>
+</body>
+</html>
