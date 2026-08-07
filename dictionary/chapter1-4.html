@@ -148,7 +148,7 @@
       }
       .card {
         position: relative;
-        height: 280px;
+        height: 310px;
         cursor: pointer;
         transform-style: preserve-3d;
         transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
@@ -214,11 +214,17 @@
         line-height: 1.4;
         letter-spacing: -0.3px;
       }
+      .word-kanji {
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--ink-soft);
+        margin-top: 8px;
+      }
       .back {
         transform: rotateY(180deg);
       }
       .back-line {
-        margin: 6px 0;
+        margin: 9px 0;
       }
       .back-line .lbl {
         font-size: 11px;
@@ -229,12 +235,12 @@
         margin-bottom: 2px;
       }
       .back-line .val {
-        font-size: 22px;
+        font-size: 28px;
         font-weight: 700;
         color: var(--ink);
       }
       .back-line .val.kanji {
-        font-size: 18px;
+        font-size: 24px;
         font-weight: 600;
         color: var(--ink-soft);
       }
@@ -760,6 +766,13 @@
         flipped: false,
       };
 
+      function isKatakana(str) {
+        return /[\u30A0-\u30FF]/.test(str);
+      }
+      function kanaLabel(str) {
+        return isKatakana(str) ? "가타카나" : "히라가나";
+      }
+
       function shuffle(arr) {
         const a = arr.slice();
         for (let i = a.length - 1; i > 0; i--) {
@@ -841,14 +854,18 @@
         const pct = ((state.index + 1) / state.deck.length) * 100;
 
         const frontIsKr = state.dir === "kr-jp";
+        const kanjiLine =
+          w.kanji && w.kanji !== "-"
+            ? `<div class="word-kanji">${w.kanji}</div>`
+            : "";
         const frontContent = frontIsKr
           ? `<span class="tag">챕터 ${w.ch} · 한글</span><div class="word-main">${w.kr}</div><span class="hint">눌러서 뒤집기</span>`
-          : `<span class="tag">챕터 ${w.ch} · 일본어</span><div class="word-main">${w.hira}</div><span class="hint">눌러서 뒤집기</span>`;
+          : `<span class="tag">챕터 ${w.ch} · 일본어</span><div class="word-main">${w.hira}</div>${kanjiLine}<span class="hint">눌러서 뒤집기</span>`;
 
         const backContent = frontIsKr
           ? `<span class="tag">챕터 ${w.ch} · 일본어</span>
        <div class="back-line"><span class="lbl">발음</span><span class="val">${w.pron}</span></div>
-       <div class="back-line"><span class="lbl">히라가나</span><span class="val">${w.hira}</span></div>
+       <div class="back-line"><span class="lbl">${kanaLabel(w.hira)}</span><span class="val">${w.hira}</span></div>
        <div class="back-line"><span class="lbl">한자</span><span class="val kanji">${w.kanji}</span></div>`
           : `<span class="tag">챕터 ${w.ch} · 한글</span>
        <div class="back-line"><span class="lbl">뜻</span><span class="val">${w.kr}</span></div>
