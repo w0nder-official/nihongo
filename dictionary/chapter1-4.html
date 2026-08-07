@@ -1,0 +1,902 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>단어장</title>
+    <style>
+      :root {
+        --paper: #faf3e7;
+        --paper-line: #e4d9c4;
+        --ink: #1f3a5f;
+        --ink-soft: #4c6079;
+        --hanko: #b23a2e;
+        --hanko-soft: #d9877d;
+        --gold: #b8922e;
+        --card: #fffdf8;
+        --shadow: rgba(31, 58, 95, 0.14);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+          "Malgun Gothic", sans-serif;
+        color: var(--ink);
+        display: flex;
+        justify-content: center;
+        padding: 40px 16px 64px;
+      }
+      .app {
+        width: 100%;
+        max-width: 460px;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 22px;
+      }
+      .header .eyebrow {
+        font-size: 12px;
+        letter-spacing: 2px;
+        color: var(--gold);
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      .header h1 {
+        font-size: 26px;
+        font-weight: 800;
+        margin: 0;
+        letter-spacing: 0.5px;
+      }
+
+      /* setup panel */
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--paper-line);
+        border-radius: 14px;
+        padding: 18px 18px 16px;
+        margin-bottom: 20px;
+      }
+      .panel-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+      .panel-row:last-child {
+        margin-bottom: 0;
+      }
+      .panel-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--ink-soft);
+        white-space: nowrap;
+        margin-right: 12px;
+      }
+      .chapter-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: flex-end;
+      }
+      .chip {
+        border: 1px solid var(--paper-line);
+        background: transparent;
+        color: var(--ink-soft);
+        font-size: 13px;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 100px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .chip.active {
+        background: var(--ink);
+        border-color: var(--ink);
+        color: #fff;
+      }
+      .toggle-group {
+        display: flex;
+        border: 1px solid var(--paper-line);
+        border-radius: 100px;
+        overflow: hidden;
+      }
+      .toggle-btn {
+        border: none;
+        background: transparent;
+        padding: 6px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ink-soft);
+        cursor: pointer;
+      }
+      .toggle-btn.active {
+        background: var(--hanko);
+        color: #fff;
+      }
+
+      /* progress */
+      .progress-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 13px;
+        color: var(--ink-soft);
+        font-weight: 600;
+      }
+      .progress-track {
+        height: 3px;
+        background: var(--paper-line);
+        border-radius: 2px;
+        margin-bottom: 20px;
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        background: var(--hanko);
+        transition: width 0.2s ease;
+      }
+
+      /* flashcard with genkouyoushi grid signature */
+      .stage {
+        perspective: 1400px;
+        margin-bottom: 20px;
+      }
+      .card {
+        position: relative;
+        height: 280px;
+        cursor: pointer;
+        transform-style: preserve-3d;
+        transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
+      }
+      .card.flipped {
+        transform: rotateY(180deg);
+      }
+      .face {
+        position: absolute;
+        inset: 0;
+        backface-visibility: hidden;
+        border-radius: 16px;
+        border: 1px solid var(--paper-line);
+        background:
+          linear-gradient(var(--paper-line) 1px, transparent 1px),
+          linear-gradient(90deg, var(--paper-line) 1px, transparent 1px),
+          var(--card);
+        background-size:
+          28px 28px,
+          28px 28px,
+          100% 100%;
+        background-position: -1px -1px;
+        box-shadow: 0 10px 28px var(--shadow);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        text-align: center;
+      }
+      .face::before {
+        content: "";
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--hanko);
+        opacity: 0.08;
+      }
+      .face .tag {
+        position: absolute;
+        top: 16px;
+        left: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--gold);
+        letter-spacing: 1px;
+      }
+      .face .hint {
+        position: absolute;
+        bottom: 16px;
+        font-size: 11px;
+        color: var(--ink-soft);
+        opacity: 0.6;
+        letter-spacing: 0.5px;
+      }
+      .word-main {
+        font-size: 36px;
+        font-weight: 800;
+        color: var(--ink);
+        line-height: 1.4;
+        letter-spacing: -0.3px;
+      }
+      .back {
+        transform: rotateY(180deg);
+      }
+      .back-line {
+        margin: 6px 0;
+      }
+      .back-line .lbl {
+        font-size: 11px;
+        color: var(--gold);
+        font-weight: 700;
+        letter-spacing: 1px;
+        display: block;
+        margin-bottom: 2px;
+      }
+      .back-line .val {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--ink);
+      }
+      .back-line .val.kanji {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--ink-soft);
+      }
+
+      /* controls */
+      .controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        margin-bottom: 14px;
+      }
+      .nav-btn {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        border: 1px solid var(--paper-line);
+        background: var(--card);
+        color: var(--ink);
+        font-size: 18px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s ease;
+      }
+      .nav-btn:hover {
+        border-color: var(--ink);
+      }
+      .nav-btn:active {
+        transform: scale(0.94);
+      }
+      .flip-btn {
+        flex: 1;
+        max-width: 200px;
+        height: 46px;
+        border-radius: 100px;
+        border: none;
+        background: var(--ink);
+        color: #fff;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .flip-btn:active {
+        transform: scale(0.97);
+      }
+
+      .footer-actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }
+      .text-btn {
+        border: none;
+        background: transparent;
+        color: var(--ink-soft);
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 6px 10px;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+
+      .empty {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--ink-soft);
+        font-size: 14px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .card {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <div class="header">
+        <div class="eyebrow">日本語 単語帳</div>
+        <h1>단어장</h1>
+      </div>
+
+      <div class="panel">
+        <div class="panel-row">
+          <span class="panel-label">챕터</span>
+          <div class="chapter-grid" id="chapterGrid"></div>
+        </div>
+        <div class="panel-row">
+          <span class="panel-label">순서</span>
+          <div class="toggle-group">
+            <button class="toggle-btn" data-mode="sequential">순서대로</button>
+            <button class="toggle-btn" data-mode="random">랜덤</button>
+          </div>
+        </div>
+        <div class="panel-row">
+          <span class="panel-label">방향</span>
+          <div class="toggle-group">
+            <button class="toggle-btn" data-dir="kr-jp">한글 → 일본어</button>
+            <button class="toggle-btn" data-dir="jp-kr">일본어 → 한글</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="deckArea"></div>
+    </div>
+
+    <script>
+      const VOCAB = [
+        { ch: 1, kr: "~씨", pron: "상", hira: "～さん", kanji: "-" },
+        {
+          ch: 1,
+          kr: "안녕하세요",
+          pron: "곤니치와",
+          hira: "こんにちは",
+          kanji: "-",
+        },
+        { ch: 1, kr: "~의", pron: "노", hira: "の", kanji: "-" },
+        {
+          ch: 1,
+          kr: "직업",
+          pron: "쇼쿠교",
+          hira: "しょくぎょう",
+          kanji: "職業",
+        },
+        { ch: 1, kr: "~은/는", pron: "와", hira: "は", kanji: "-" },
+        {
+          ch: 1,
+          kr: "무엇입니까?",
+          pron: "난데스카",
+          hira: "なんですか",
+          kanji: "-",
+        },
+        {
+          ch: 1,
+          kr: "회사원",
+          pron: "카이샤인",
+          hira: "かいしゃいん",
+          kanji: "会社員",
+        },
+        { ch: 1, kr: "~도", pron: "모", hira: "も", kanji: "-" },
+        {
+          ch: 1,
+          kr: "대학생",
+          pron: "다이가쿠세이",
+          hira: "だいがくせい",
+          kanji: "大学生",
+        },
+        {
+          ch: 1,
+          kr: "선생님",
+          pron: "센세이",
+          hira: "せんせい",
+          kanji: "先生",
+        },
+        {
+          ch: 1,
+          kr: "일본인",
+          pron: "니혼진",
+          hira: "にほんじん",
+          kanji: "日本人",
+        },
+        {
+          ch: 1,
+          kr: "한국인",
+          pron: "칸코쿠진",
+          hira: "かんこくじん",
+          kanji: "韓国人",
+        },
+        {
+          ch: 1,
+          kr: "은행원",
+          pron: "긴코인",
+          hira: "ぎんこういん",
+          kanji: "銀行員",
+        },
+        {
+          ch: 1,
+          kr: "학생",
+          pron: "가쿠세이",
+          hira: "がくせい",
+          kanji: "学生",
+        },
+        {
+          ch: 1,
+          kr: "중국인",
+          pron: "츄고쿠진",
+          hira: "ちゅうごくじん",
+          kanji: "中国人",
+        },
+        { ch: 1, kr: "가수", pron: "카슈", hira: "かしゅ", kanji: "歌手" },
+        { ch: 1, kr: "당신/너", pron: "아나타", hira: "あなた", kanji: "-" },
+        {
+          ch: 1,
+          kr: "고등학생",
+          pron: "코코세이",
+          hira: "こうこうせい",
+          kanji: "高校生",
+        },
+        { ch: 1, kr: "의사", pron: "이샤", hira: "いしゃ", kanji: "医者" },
+        {
+          ch: 1,
+          kr: "프랑스인",
+          pron: "후란스진",
+          hira: "フランスじん",
+          kanji: "フランス人",
+        },
+        {
+          ch: 1,
+          kr: "독일인",
+          pron: "도이츠진",
+          hira: "ドイツじん",
+          kanji: "ドイツ人",
+        },
+        {
+          ch: 1,
+          kr: "간호사",
+          pron: "칸고시",
+          hira: "かんごし",
+          kanji: "看護師",
+        },
+        {
+          ch: 1,
+          kr: "공무원",
+          pron: "코무인",
+          hira: "こうむいん",
+          kanji: "公務員",
+        },
+        { ch: 1, kr: "주부", pron: "슈후", hira: "しゅふ", kanji: "主婦" },
+        {
+          ch: 1,
+          kr: "디자이너",
+          pron: "데자이나",
+          hira: "デザイナー",
+          kanji: "-",
+        },
+        {
+          ch: 1,
+          kr: "엔지니어",
+          pron: "엔지니아",
+          hira: "エンジニア",
+          kanji: "-",
+        },
+        {
+          ch: 1,
+          kr: "아르바이트(직업)",
+          pron: "아루바이토",
+          hira: "アルバイト",
+          kanji: "-",
+        },
+        {
+          ch: 1,
+          kr: "태국인",
+          pron: "타이진",
+          hira: "タイじん",
+          kanji: "タイ人",
+        },
+        {
+          ch: 1,
+          kr: "미국인",
+          pron: "아메리카진",
+          hira: "アメリカじん",
+          kanji: "アメリカ人",
+        },
+        {
+          ch: 1,
+          kr: "러시아인",
+          pron: "로시아진",
+          hira: "ロシアじん",
+          kanji: "ロシア人",
+        },
+        {
+          ch: 1,
+          kr: "영국인",
+          pron: "이기리스진",
+          hira: "イギリスじん",
+          kanji: "イギリス人",
+        },
+
+        { ch: 2, kr: "일본", pron: "니혼", hira: "にほん", kanji: "日本" },
+        { ch: 2, kr: "저(나)", pron: "와타시", hira: "わたし", kanji: "私" },
+        { ch: 2, kr: "신문", pron: "신분", hira: "しんぶん", kanji: "新聞" },
+        { ch: 2, kr: "연필", pron: "엔피츠", hira: "えんぴつ", kanji: "鉛筆" },
+        { ch: 2, kr: "시계", pron: "토케이", hira: "とけい", kanji: "時計" },
+        { ch: 2, kr: "우산", pron: "카사", hira: "かさ", kanji: "傘" },
+        { ch: 2, kr: "의자", pron: "이스", hira: "いす", kanji: "椅子" },
+        { ch: 2, kr: "지갑", pron: "사이후", hira: "さいふ", kanji: "財布" },
+        { ch: 2, kr: "전화", pron: "덴와", hira: "でんわ", kanji: "電話" },
+        { ch: 2, kr: "영어", pron: "에이고", hira: "えいご", kanji: "英語" },
+        { ch: 2, kr: "책", pron: "혼", hira: "ほん", kanji: "本" },
+        { ch: 2, kr: "책상", pron: "츠쿠에", hira: "つくえ", kanji: "机" },
+        {
+          ch: 2,
+          kr: "선생님",
+          pron: "센세이",
+          hira: "せんせい",
+          kanji: "先生",
+        },
+        { ch: 2, kr: "서울", pron: "소우루", hira: "ソウル", kanji: "-" },
+        {
+          ch: 2,
+          kr: "대학",
+          pron: "다이가쿠",
+          hira: "だいがく",
+          kanji: "大学",
+        },
+        { ch: 2, kr: "가방", pron: "카반", hira: "かばん", kanji: "鞄" },
+        { ch: 2, kr: "사전", pron: "지쇼", hira: "じしょ", kanji: "辞書" },
+        { ch: 2, kr: "카메라", pron: "카메라", hira: "カメラ", kanji: "-" },
+        { ch: 2, kr: "잡지", pron: "잣시", hira: "ざっし", kanji: "雑誌" },
+        { ch: 2, kr: "구두", pron: "쿠츠", hira: "くつ", kanji: "靴" },
+        {
+          ch: 2,
+          kr: "무엇입니까?",
+          pron: "난데스카",
+          hira: "なんですか",
+          kanji: "-",
+        },
+        { ch: 2, kr: "모자", pron: "보우시", hira: "ぼうし", kanji: "帽子" },
+        { ch: 2, kr: "안경", pron: "메가네", hira: "めがね", kanji: "眼鏡" },
+        { ch: 2, kr: "노트", pron: "노오토", hira: "ノート", kanji: "-" },
+        { ch: 2, kr: "이것", pron: "코레", hira: "これ", kanji: "-" },
+        { ch: 2, kr: "저것", pron: "아레", hira: "あれ", kanji: "-" },
+        { ch: 2, kr: "그것", pron: "소레", hira: "それ", kanji: "-" },
+        { ch: 2, kr: "어느 것", pron: "도레", hira: "どれ", kanji: "-" },
+
+        { ch: 3, kr: "지금", pron: "이마", hira: "いま", kanji: "今" },
+        { ch: 3, kr: "몇 시", pron: "난지", hira: "なんじ", kanji: "何時" },
+        { ch: 3, kr: "반", pron: "한", hira: "はん", kanji: "半" },
+        {
+          ch: 3,
+          kr: "도서관",
+          pron: "토쇼칸",
+          hira: "としょかん",
+          kanji: "図書館",
+        },
+        { ch: 3, kr: "~부터", pron: "카라", hira: "から", kanji: "-" },
+        { ch: 3, kr: "~까지", pron: "마데", hira: "まで", kanji: "-" },
+        { ch: 3, kr: "오전", pron: "고젠", hira: "ごぜん", kanji: "午前" },
+        { ch: 3, kr: "오후", pron: "고고", hira: "ごご", kanji: "午後" },
+        { ch: 3, kr: "여기", pron: "코코", hira: "ここ", kanji: "-" },
+        { ch: 3, kr: "몇 분", pron: "난푼", hira: "なんぷん", kanji: "何分" },
+        {
+          ch: 3,
+          kr: "몇 시입니까?",
+          pron: "난지데스카",
+          hira: "なんじですか",
+          kanji: "-",
+        },
+        {
+          ch: 3,
+          kr: "몇 분입니까?",
+          pron: "난푼데스카",
+          hira: "なんぷんですか",
+          kanji: "-",
+        },
+        {
+          ch: 3,
+          kr: "아르바이트",
+          pron: "아루바이토",
+          hira: "アルバイト",
+          kanji: "-",
+        },
+        { ch: 3, kr: "회사", pron: "카이샤", hira: "かいしゃ", kanji: "会社" },
+        {
+          ch: 3,
+          kr: "점심시간",
+          pron: "히루야스미",
+          hira: "ひるやすみ",
+          kanji: "昼休み",
+        },
+        { ch: 3, kr: "시험", pron: "시켄", hira: "しけん", kanji: "試験" },
+        {
+          ch: 3,
+          kr: "백화점",
+          pron: "햣카텐",
+          hira: "ひゃっかてん",
+          kanji: "百貨店",
+        },
+        { ch: 3, kr: "수업", pron: "주교", hira: "じゅぎょう", kanji: "授業" },
+        { ch: 3, kr: "역", pron: "에키", hira: "えき", kanji: "駅" },
+        { ch: 3, kr: "일", pron: "시고토", hira: "しごと", kanji: "仕事" },
+        { ch: 3, kr: "시간", pron: "지칸", hira: "じかん", kanji: "時間" },
+
+        { ch: 4, kr: "학교", pron: "각코", hira: "がっこう", kanji: "学校" },
+        { ch: 4, kr: "집", pron: "우치", hira: "うち", kanji: "家" },
+        { ch: 4, kr: "~부터", pron: "카라", hira: "から", kanji: "-" },
+        { ch: 4, kr: "멀다", pron: "토오이", hira: "とおい", kanji: "遠い" },
+        { ch: 4, kr: "가깝다", pron: "치카이", hira: "ちかい", kanji: "近い" },
+        {
+          ch: 4,
+          kr: "한국인",
+          pron: "칸코쿠진",
+          hira: "かんこくじん",
+          kanji: "韓国人",
+        },
+        {
+          ch: 4,
+          kr: "친구",
+          pron: "토모다치",
+          hira: "ともだち",
+          kanji: "友達",
+        },
+        { ch: 4, kr: "많다", pron: "오오이", hira: "おおい", kanji: "多い" },
+        {
+          ch: 4,
+          kr: "한국어",
+          pron: "칸코쿠고",
+          hira: "かんこくご",
+          kanji: "韓国語",
+        },
+        { ch: 4, kr: "공부", pron: "벤쿄", hira: "べんきょう", kanji: "勉強" },
+        {
+          ch: 4,
+          kr: "어렵다",
+          pron: "무즈카시이",
+          hira: "むずかしい",
+          kanji: "難しい",
+        },
+        {
+          ch: 4,
+          kr: "그렇네요",
+          pron: "소오 데스네",
+          hira: "そうですね",
+          kanji: "-",
+        },
+        { ch: 4, kr: "조금", pron: "스코시", hira: "すこし", kanji: "少し" },
+        {
+          ch: 4,
+          kr: "재미있다",
+          pron: "오모시로이",
+          hira: "おもしろい",
+          kanji: "面白い",
+        },
+        { ch: 4, kr: "스시", pron: "스시", hira: "すし", kanji: "寿司" },
+        {
+          ch: 4,
+          kr: "맛있다",
+          pron: "오이시이",
+          hira: "おいしい",
+          kanji: "美味しい",
+        },
+        { ch: 4, kr: "컴퓨터", pron: "파소콘", hira: "パソコン", kanji: "-" },
+        { ch: 4, kr: "비싸다", pron: "타카이", hira: "たかい", kanji: "高い" },
+        {
+          ch: 4,
+          kr: "바쁘다",
+          pron: "이소가시이",
+          hira: "いそがしい",
+          kanji: "忙しい",
+        },
+        { ch: 4, kr: "오늘", pron: "쿄오", hira: "きょう", kanji: "今日" },
+        { ch: 4, kr: "덥다", pron: "아츠이", hira: "あつい", kanji: "暑い" },
+        { ch: 4, kr: "한자", pron: "칸지", hira: "かんじ", kanji: "漢字" },
+        { ch: 4, kr: "일", pron: "시고토", hira: "しごと", kanji: "仕事" },
+        { ch: 4, kr: "날씨", pron: "텐키", hira: "てんき", kanji: "天気" },
+        {
+          ch: 4,
+          kr: "휴대폰",
+          pron: "케이타이",
+          hira: "けいたい",
+          kanji: "携帯",
+        },
+        { ch: 4, kr: "낡다", pron: "후루이", hira: "ふるい", kanji: "古い" },
+        { ch: 4, kr: "좋다", pron: "이이", hira: "いい", kanji: "良い" },
+        {
+          ch: 4,
+          kr: "귀엽다",
+          pron: "카와이이",
+          hira: "かわいい",
+          kanji: "可愛い",
+        },
+        {
+          ch: 4,
+          kr: "쉽다",
+          pron: "야사시이",
+          hira: "やさしい",
+          kanji: "易しい",
+        },
+        { ch: 4, kr: "춥다", pron: "사무이", hira: "さむい", kanji: "寒い" },
+        { ch: 4, kr: "텔레비전", pron: "테레비", hira: "テレビ", kanji: "-" },
+        {
+          ch: 4,
+          kr: "크다",
+          pron: "오오키이",
+          hira: "おおきい",
+          kanji: "大きい",
+        },
+        {
+          ch: 4,
+          kr: "작다",
+          pron: "치이사이",
+          hira: "ちいさい",
+          kanji: "小さい",
+        },
+        {
+          ch: 4,
+          kr: "새롭다",
+          pron: "아타라시이",
+          hira: "あたらしい",
+          kanji: "新しい",
+        },
+        {
+          ch: 4,
+          kr: "적다",
+          pron: "스쿠나이",
+          hira: "すくない",
+          kanji: "少ない",
+        },
+      ];
+
+      const state = {
+        chapters: new Set([1, 2, 3, 4]),
+        mode: "sequential",
+        dir: "kr-jp",
+        deck: [],
+        index: 0,
+        flipped: false,
+      };
+
+      function shuffle(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      function buildDeck() {
+        let filtered = VOCAB.filter((w) => state.chapters.has(w.ch));
+        state.deck = state.mode === "random" ? shuffle(filtered) : filtered;
+        state.index = 0;
+        state.flipped = false;
+        render();
+      }
+
+      function renderChapterChips() {
+        const grid = document.getElementById("chapterGrid");
+        grid.innerHTML = "";
+        [1, 2, 3, 4].forEach((ch) => {
+          const btn = document.createElement("button");
+          btn.className = "chip" + (state.chapters.has(ch) ? " active" : "");
+          btn.textContent = "챕터 " + ch;
+          btn.onclick = () => {
+            if (state.chapters.has(ch)) {
+              if (state.chapters.size > 1) state.chapters.delete(ch);
+            } else {
+              state.chapters.add(ch);
+            }
+            renderChapterChips();
+            buildDeck();
+          };
+          grid.appendChild(btn);
+        });
+      }
+
+      document.querySelectorAll("[data-mode]").forEach((btn) => {
+        btn.onclick = () => {
+          state.mode = btn.dataset.mode;
+          document
+            .querySelectorAll("[data-mode]")
+            .forEach((b) => b.classList.toggle("active", b === btn));
+          buildDeck();
+        };
+      });
+      document.querySelectorAll("[data-dir]").forEach((btn) => {
+        btn.onclick = () => {
+          state.dir = btn.dataset.dir;
+          document
+            .querySelectorAll("[data-dir]")
+            .forEach((b) => b.classList.toggle("active", b === btn));
+          state.flipped = false;
+          render();
+        };
+      });
+
+      function go(delta) {
+        if (state.deck.length === 0) return;
+        state.index =
+          (state.index + delta + state.deck.length) % state.deck.length;
+        state.flipped = false;
+        render();
+      }
+
+      function flip() {
+        state.flipped = !state.flipped;
+        render();
+      }
+
+      function render() {
+        const area = document.getElementById("deckArea");
+        if (state.deck.length === 0) {
+          area.innerHTML =
+            '<div class="empty">챕터를 하나 이상 선택하세요.</div>';
+          return;
+        }
+        const w = state.deck[state.index];
+        const pct = ((state.index + 1) / state.deck.length) * 100;
+
+        const frontIsKr = state.dir === "kr-jp";
+        const frontContent = frontIsKr
+          ? `<span class="tag">챕터 ${w.ch} · 한글</span><div class="word-main">${w.kr}</div><span class="hint">눌러서 뒤집기</span>`
+          : `<span class="tag">챕터 ${w.ch} · 일본어</span><div class="word-main">${w.hira}</div><span class="hint">눌러서 뒤집기</span>`;
+
+        const backContent = frontIsKr
+          ? `<span class="tag">챕터 ${w.ch} · 일본어</span>
+       <div class="back-line"><span class="lbl">발음</span><span class="val">${w.pron}</span></div>
+       <div class="back-line"><span class="lbl">히라가나</span><span class="val">${w.hira}</span></div>
+       <div class="back-line"><span class="lbl">한자</span><span class="val kanji">${w.kanji}</span></div>`
+          : `<span class="tag">챕터 ${w.ch} · 한글</span>
+       <div class="back-line"><span class="lbl">뜻</span><span class="val">${w.kr}</span></div>
+       <div class="back-line"><span class="lbl">발음</span><span class="val">${w.pron}</span></div>
+       <div class="back-line"><span class="lbl">한자</span><span class="val kanji">${w.kanji}</span></div>`;
+
+        area.innerHTML = `
+    <div class="progress-row">
+      <span>${state.index + 1} / ${state.deck.length}</span>
+      <span>${state.mode === "random" ? "랜덤" : "순서대로"}</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+
+    <div class="stage">
+      <div class="card ${state.flipped ? "flipped" : ""}" id="cardEl">
+        <div class="face front">${frontContent}</div>
+        <div class="face back">${backContent}</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="nav-btn" id="prevBtn" aria-label="이전 단어">←</button>
+      <button class="flip-btn" id="flipBtn">카드 뒤집기</button>
+      <button class="nav-btn" id="nextBtn" aria-label="다음 단어">→</button>
+    </div>
+    <div class="footer-actions">
+      <button class="text-btn" id="shuffleBtn">다시 섞기</button>
+    </div>
+  `;
+
+        document.getElementById("cardEl").onclick = flip;
+        document.getElementById("flipBtn").onclick = flip;
+        document.getElementById("prevBtn").onclick = () => go(-1);
+        document.getElementById("nextBtn").onclick = () => go(1);
+        document.getElementById("shuffleBtn").onclick = () => {
+          state.deck = shuffle(state.deck);
+          state.index = 0;
+          state.flipped = false;
+          render();
+        };
+      }
+
+      document
+        .querySelector('[data-mode="sequential"]')
+        .classList.add("active");
+      document.querySelector('[data-dir="kr-jp"]').classList.add("active");
+      renderChapterChips();
+      buildDeck();
+    </script>
+  </body>
+</html>
