@@ -158,13 +158,46 @@
       .saved-item .main { font-size: 16px; font-weight: 600; color: var(--text-main); }
       .tap-hint { font-size: 12px; color: var(--text-soft); }
       .back-info { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; padding-top: 8px; border-top: 1px solid var(--border-light); }
-      .sub-line { font-size: 14px; color: var(--text-main); display: flex; flex-direction: column; }
-      .lbl-mini { font-size: 11px; font-weight: 500; color: var(--text-soft); margin-bottom: 2px; }
+      .sub-line { font-size: 16px; color: var(--text-main); display: flex; flex-direction: column; }
+      .sub-line .sub-val { font-size: 28px; font-weight: 500; color: var(--text-main); padding-top: 4px; }
+      .lbl-mini { font-size: 12px; font-weight: 500; color: var(--text-soft); margin-bottom: 2px; }
       .saved-item.flipped { background: var(--bg-sub); }
       .saved-item .dir-badge { font-size: 11px; font-weight: 500; color: var(--text-soft); margin-bottom: 4px; display: inline-block; background: var(--bg-main); border: 1px solid var(--border-light); padding: 2px 6px; border-radius: 4px; align-self: flex-start; }
-      .del-btn { border: none; background: transparent; color: var(--text-soft); font-size: 18px; cursor: pointer; padding: 4px; border-radius: 4px; line-height: 1; }
-      .del-btn:hover { background: var(--bg-hover); color: var(--text-main); }
+      .del-btn { border: 1px solid var(--border-light); background: var(--bg-main); color: var(--text-soft); font-size: 12px; font-weight: 500; cursor: pointer; padding: 6px 10px; border-radius: 6px; line-height: 1; margin-left: 8px; transition: 0.1s; }
+      .del-btn:hover { background: var(--bg-hover); color: var(--text-main); border-color: var(--border-light); }
       .saved-empty { text-align: center; padding: 60px 20px; color: var(--text-soft); font-size: 14px; }
+      
+      .saved-controls { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+      .saved-controls-row { display: flex; gap: 8px; align-items: center; overflow-x: auto; padding-bottom: 4px; }
+      .saved-select { padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border-light); background: var(--bg-main); color: var(--text-main); font-size: 13px; outline: none; cursor: pointer; }
+      .saved-chapter-header { font-size: 13px; font-weight: 600; color: var(--text-soft); margin-top: 16px; margin-bottom: 4px; padding-left: 4px; border-bottom: 1px solid var(--border-light); padding-bottom: 4px; }
+
+      /* Search view */
+      .search-container { margin-bottom: 24px; }
+      .search-input { width: 100%; padding: 14px 16px; font-size: 16px; border: 1px solid var(--border-light); border-radius: 8px; outline: none; background: var(--bg-main); color: var(--text-main); transition: border-color 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+      .search-input:focus { border-color: var(--text-soft); }
+      .search-input::placeholder { color: var(--text-soft); opacity: 0.7; }
+      .search-results { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+      .search-level-badge { font-size: 11px; font-weight: 600; color: #fff; background: var(--text-soft); padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 4px; align-self: flex-start; }
+      .search-empty { text-align: center; padding: 60px 20px; color: var(--text-soft); font-size: 14px; }
+
+      /* Appendix Table */
+      .appendix-container { display: flex; flex-direction: column; gap: 12px; padding-bottom: 40px; }
+      .collapse-item { background: var(--bg-main); border-radius: 8px; box-shadow: 0 0 0 1px var(--border-light); overflow: hidden; }
+      .collapse-header { padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; font-weight: 600; font-size: 16px; transition: background 0.1s ease; color: var(--text-main); }
+      .collapse-header:hover { background: var(--bg-hover); }
+      .collapse-icon { font-size: 12px; transition: transform 0.2s ease; color: var(--text-soft); }
+      .collapse-item.open .collapse-icon { transform: rotate(180deg); }
+      .collapse-content { display: none; padding: 0 16px 16px; border-top: 1px solid var(--border-light); background: var(--bg-main); }
+      .collapse-item.open .collapse-content { display: block; }
+      
+      .appendix-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 16px; }
+      .appendix-table th, .appendix-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border-light); }
+      .appendix-table th { background: var(--bg-sub); color: var(--text-soft); font-weight: 600; font-size: 13px; }
+      .appendix-table tr:last-child td { border-bottom: none; }
+      .appendix-table .highlight { font-weight: 600; color: var(--hanko); }
+      .appendix-desc { font-size: 13px; color: var(--text-soft); margin-top: 16px; line-height: 1.5; }
+
 
       @media (prefers-reduced-motion: reduce) { .card { transition: none; } }
     </style>
@@ -195,6 +228,8 @@
       <div class="view-tabs">
         <button class="view-tab active" id="tabStudy">학습</button>
         <button class="view-tab" id="tabSaved">저장한 단어 <span id="savedCount">(0)</span></button>
+        <button class="view-tab" id="tabSearch">검색</button>
+        <button class="view-tab" id="tabAppendix">테마별 단어</button>
       </div>
 
       <div class="panel" id="panel"></div>
@@ -211,6 +246,7 @@
       let VOCAB = [];
       let FURIGANA = {};
       let RADICALS = {};
+      let APPENDIX_DATA = null;
 
       const state = {
         level: "N5",
@@ -225,30 +261,52 @@
         view: "study",
         storageReady: false,
         chaptersExpanded: false,
+        searchQuery: "",
+        savedFilterLevel: "All",
+        savedFilterChapter: "All",
+        savedSortBy: "newest",
       };
       
       const cachedVocab = {};
 
       function wordKey(w) { return w.ch + "_" + w.kr; }
-      function isSaved(w, direction) { return state.saved.some(s => s.ch === w.ch && s.kr === w.kr && s.direction === direction); }
+      function isSaved(w, direction) { return state.saved.some(s => s.ch === w.ch && s.kr === w.kr && s.direction === direction && s.level === state.level); }
       
       async function loadSaved() {
         try {
-          const raw = localStorage.getItem("vocab-saved-words-" + state.level.toLowerCase());
-          state.saved = raw ? JSON.parse(raw) : [];
+          const allSavedStr = localStorage.getItem("vocab-saved-words-all");
+          if (allSavedStr) {
+            state.saved = JSON.parse(allSavedStr);
+          } else {
+            let migrated = [];
+            const levels = ["n5", "n4", "n3", "n2", "n1"];
+            levels.forEach(l => {
+              const raw = localStorage.getItem("vocab-saved-words-" + l);
+              if (raw) {
+                const arr = JSON.parse(raw);
+                arr.forEach(item => {
+                  item.level = l.toUpperCase();
+                  item.timestamp = Date.now() - Math.floor(Math.random() * 10000);
+                  migrated.push(item);
+                });
+              }
+            });
+            state.saved = migrated;
+            if (migrated.length > 0) persistSaved();
+          }
         } catch (e) { state.saved = []; }
         state.storageReady = true;
       }
       
       async function persistSaved() {
         try {
-          localStorage.setItem("vocab-saved-words-" + state.level.toLowerCase(), JSON.stringify(state.saved));
+          localStorage.setItem("vocab-saved-words-all", JSON.stringify(state.saved));
         } catch (e) { console.error("저장 실패", e); }
       }
       
       function toggleSave(w, direction) {
-        const idx = state.saved.findIndex(s => s.ch === w.ch && s.kr === w.kr && s.direction === direction);
-        if (idx >= 0) { state.saved.splice(idx, 1); } else { state.saved.push({ ch: w.ch, kr: w.kr, direction }); }
+        const idx = state.saved.findIndex(s => s.ch === w.ch && s.kr === w.kr && s.direction === direction && s.level === state.level);
+        if (idx >= 0) { state.saved.splice(idx, 1); } else { state.saved.push({ ch: w.ch, kr: w.kr, direction, level: state.level, timestamp: Date.now() }); }
         persistSaved();
         render();
       }
@@ -380,6 +438,8 @@
         state.view = "study";
         document.getElementById("tabStudy").classList.add("active");
         document.getElementById("tabSaved").classList.remove("active");
+        document.getElementById("tabSearch").classList.remove("active");
+        document.getElementById("tabAppendix").classList.remove("active");
         document.getElementById("panel").style.display = "";
         render();
       };
@@ -387,6 +447,28 @@
         state.view = "saved";
         document.getElementById("tabSaved").classList.add("active");
         document.getElementById("tabStudy").classList.remove("active");
+        document.getElementById("tabSearch").classList.remove("active");
+        document.getElementById("tabAppendix").classList.remove("active");
+        document.getElementById("panel").style.display = "none";
+        render();
+      };
+      document.getElementById("tabSearch").onclick = async () => {
+        state.view = "search";
+        document.getElementById("tabSearch").classList.add("active");
+        document.getElementById("tabStudy").classList.remove("active");
+        document.getElementById("tabSaved").classList.remove("active");
+        document.getElementById("tabAppendix").classList.remove("active");
+        document.getElementById("panel").style.display = "none";
+        render();
+        await loadAllLevelsData();
+        if (state.view === "search") renderSearchViewResults();
+      };
+      document.getElementById("tabAppendix").onclick = () => {
+        state.view = "appendix";
+        document.getElementById("tabAppendix").classList.add("active");
+        document.getElementById("tabStudy").classList.remove("active");
+        document.getElementById("tabSaved").classList.remove("active");
+        document.getElementById("tabSearch").classList.remove("active");
         document.getElementById("panel").style.display = "none";
         render();
       };
@@ -406,51 +488,178 @@
           area.innerHTML = '<div class="saved-empty">아직 저장한 단어가 없어요.<br>학습 화면에서 카드 아래 저장 버튼을 눌러보세요.</div>';
           return;
         }
-        const items = state.saved.map((s, i) => {
-          const w = VOCAB.find((v) => v.ch === s.ch && v.kr === s.kr);
+
+        // Apply filters
+        let filtered = state.saved.filter(s => {
+          if (state.savedFilterLevel !== "All" && s.level !== state.savedFilterLevel) return false;
+          if (state.savedFilterChapter !== "All" && s.ch.toString() !== state.savedFilterChapter) return false;
+          return true;
+        });
+
+        // Apply sort
+        filtered.sort((a, b) => {
+          if (state.savedSortBy === "newest") return b.timestamp - a.timestamp;
+          if (state.savedSortBy === "oldest") return a.timestamp - b.timestamp;
+          if (state.savedSortBy === "kr") return a.kr.localeCompare(b.kr);
+          if (state.savedSortBy === "jp") {
+            const getJp = (w) => {
+              const vocab = cachedVocab[w.level] ? cachedVocab[w.level].find(v => v.ch === w.ch && v.kr === w.kr) : null;
+              return vocab ? vocab.hira : "";
+            };
+            return getJp(a).localeCompare(getJp(b));
+          }
+          if (state.savedSortBy === "chapter") {
+            if (a.level !== b.level) {
+              const levels = ["N1", "N2", "N3", "N4", "N5"];
+              return levels.indexOf(a.level) - levels.indexOf(b.level);
+            }
+            return a.ch - b.ch;
+          }
+          return 0;
+        });
+
+        // Extract available chapters for the selected level
+        const availableChapters = new Set();
+        state.saved.forEach(s => {
+          if (state.savedFilterLevel === "All" || s.level === state.savedFilterLevel) {
+            availableChapters.add(s.ch);
+          }
+        });
+        const chapterOptions = Array.from(availableChapters).sort((a,b)=>a-b).map(ch => 
+          `<option value="${ch}" ${state.savedFilterChapter === ch.toString() ? "selected" : ""}>챕터 ${ch}</option>`
+        ).join("");
+
+        const controlsHtml = `
+          <div class="saved-controls">
+            <div class="saved-controls-row">
+              <select class="saved-select" id="savedFilterLevel">
+                <option value="All" ${state.savedFilterLevel === "All" ? "selected" : ""}>전체 급수</option>
+                <option value="N5" ${state.savedFilterLevel === "N5" ? "selected" : ""}>N5</option>
+                <option value="N4" ${state.savedFilterLevel === "N4" ? "selected" : ""}>N4</option>
+                <option value="N3" ${state.savedFilterLevel === "N3" ? "selected" : ""}>N3</option>
+                <option value="N2" ${state.savedFilterLevel === "N2" ? "selected" : ""}>N2</option>
+                <option value="N1" ${state.savedFilterLevel === "N1" ? "selected" : ""}>N1</option>
+              </select>
+              <select class="saved-select" id="savedFilterChapter">
+                <option value="All" ${state.savedFilterChapter === "All" ? "selected" : ""}>전체 챕터</option>
+                ${chapterOptions}
+              </select>
+              <select class="saved-select" id="savedSortBy">
+                <option value="newest" ${state.savedSortBy === "newest" ? "selected" : ""}>최신순</option>
+                <option value="oldest" ${state.savedSortBy === "oldest" ? "selected" : ""}>오래된순</option>
+                <option value="chapter" ${state.savedSortBy === "chapter" ? "selected" : ""}>챕터순</option>
+                <option value="kr" ${state.savedSortBy === "kr" ? "selected" : ""}>가나다순</option>
+                <option value="jp" ${state.savedSortBy === "jp" ? "selected" : ""}>50음도순</option>
+              </select>
+            </div>
+          </div>
+        `;
+
+        if (filtered.length === 0) {
+          area.innerHTML = controlsHtml + '<div class="saved-empty">조건에 맞는 단어가 없습니다.</div>';
+          setupSavedControls();
+          return;
+        }
+
+        let lastChapterKey = null;
+        const items = filtered.map((s) => {
+          const w = cachedVocab[s.level] ? cachedVocab[s.level].find((v) => v.ch === s.ch && v.kr === s.kr) : null;
           if (!w) return "";
+          
+          let headerHtml = "";
+          if (state.savedSortBy === "chapter") {
+            const currentChapterKey = s.level + "-" + s.ch;
+            if (currentChapterKey !== lastChapterKey) {
+              headerHtml = `<div class="saved-chapter-header">${s.level} · 챕터 ${s.ch}</div>`;
+              lastChapterKey = currentChapterKey;
+            }
+          }
+
           const isKrJp = s.direction === "kr-jp";
-          const isFlipped = state.savedFlipped.has(i);
+          // Use a unique ID for flipped state instead of array index
+          const uniqueId = s.level + "_" + s.ch + "_" + s.kr + "_" + s.direction;
+          const isFlipped = state.savedFlipped.has(uniqueId);
+          
           const radicalsHtml = buildRadicals(w.kanji);
           const jpDisplay = (w.kanji && w.kanji !== "-") ? buildInvertedRuby(w.kanji, w.hira) : w.hira;
           const frontMain = isKrJp ? w.kr : jpDisplay;
           const backHtml = isKrJp
-            ? `<span class="sub-line"><span class="lbl-mini">${kanaLabel(w.hira)}/한자</span><span style="line-height: 1.6;">${jpDisplay}</span></span>
+            ? `<span class="sub-line"><span class="lbl-mini">${kanaLabel(w.hira)}/한자</span><span class="sub-val" style="line-height: 1.6;">${jpDisplay}</span></span>
                ${radicalsHtml}`
-            : `<span class="sub-line"><span class="lbl-mini">뜻</span>${w.kr}</span>
-               <span class="sub-line"><span class="lbl-mini">${kanaLabel(w.hira)}/한자</span><span style="line-height: 1.6;">${jpDisplay}</span></span>
+            : `<span class="sub-line"><span class="lbl-mini">뜻</span><span class="sub-val">${w.kr}</span></span>
+               <span class="sub-line"><span class="lbl-mini">${kanaLabel(w.hira)}/한자</span><span class="sub-val" style="line-height: 1.6;">${jpDisplay}</span></span>
                ${radicalsHtml}`;
 
-          return `
-            <div class="saved-item ${isFlipped ? "flipped" : ""}" data-idx="${i}">
-              <div class="info" data-flip="${i}">
-                <span class="dir-badge">챕터 ${w.ch} · ${isKrJp ? "한글 → 일본어" : "일본어 → 한글"}</span>
+          return headerHtml + `
+            <div class="saved-item ${isFlipped ? "flipped" : ""}">
+              <div class="info" data-flip="${uniqueId}">
+                <span class="dir-badge">${s.level} · 챕터 ${w.ch} · ${isKrJp ? "한글 → 일본어" : "일본어 → 한글"}</span>
                 ${ !isFlipped
                     ? `<span class="main">${frontMain}</span><span class="tap-hint">눌러서 뒤집기</span>`
                     : `<div class="back-info">${backHtml}</div>` }
               </div>
-              <button class="del-btn" data-del="${i}" aria-label="삭제">×</button>
+              <button class="del-btn" data-del="${uniqueId}">해제</button>
             </div>`;
         }).join("");
-        area.innerHTML = `<div class="saved-list">${items}</div>`;
+        
+        area.innerHTML = controlsHtml + `<div class="saved-list">${items}</div>`;
+        
+        setupSavedControls();
+
         area.querySelectorAll("[data-flip]").forEach((el) => {
           el.onclick = () => {
-            const idx = parseInt(el.dataset.flip, 10);
-            if (state.savedFlipped.has(idx)) state.savedFlipped.delete(idx);
-            else state.savedFlipped.add(idx);
+            const uid = el.dataset.flip;
+            if (state.savedFlipped.has(uid)) state.savedFlipped.delete(uid);
+            else state.savedFlipped.add(uid);
             render();
           };
         });
         area.querySelectorAll("[data-del]").forEach((btn) => {
           btn.onclick = (e) => {
             e.stopPropagation();
-            const idx = parseInt(btn.dataset.del, 10);
-            state.saved.splice(idx, 1);
-            state.savedFlipped.delete(idx);
-            persistSaved();
-            render();
+            const uid = btn.dataset.del;
+            // Parse uniqueId back to object
+            const parts = uid.split("_");
+            const lvl = parts[0];
+            const ch = parseInt(parts[1], 10);
+            const kr = parts[2];
+            const dir = parts[3];
+            
+            const idx = state.saved.findIndex(s => s.level === lvl && s.ch === ch && s.kr === kr && s.direction === dir);
+            if (idx >= 0) {
+              state.saved.splice(idx, 1);
+              state.savedFlipped.delete(uid);
+              persistSaved();
+              render();
+            }
           };
         });
+      }
+
+      function setupSavedControls() {
+        const selLevel = document.getElementById("savedFilterLevel");
+        const selChapter = document.getElementById("savedFilterChapter");
+        const selSort = document.getElementById("savedSortBy");
+
+        if (selLevel) {
+          selLevel.onchange = (e) => {
+            state.savedFilterLevel = e.target.value;
+            state.savedFilterChapter = "All"; // Reset chapter filter
+            render();
+          };
+        }
+        if (selChapter) {
+          selChapter.onchange = (e) => {
+            state.savedFilterChapter = e.target.value;
+            render();
+          };
+        }
+        if (selSort) {
+          selSort.onchange = (e) => {
+            state.savedSortBy = e.target.value;
+            render();
+          };
+        }
       }
 
       function go(delta) {
@@ -476,7 +685,7 @@
         const kanjiBase = kanji.substring(start, endK + 1);
         const suffix = hira.substring(endH + 1);
 
-        if (FURIGANA[kanjiBase]) {
+        if (FURIGANA[kanjiBase] && kanjiBase.length > 1) {
            let html = prefix;
            const splits = FURIGANA[kanjiBase];
            for (let i = 0; i < kanjiBase.length; i++) {
@@ -513,6 +722,8 @@
       function render() {
         updateSavedCount();
         if (state.view === "saved") { renderSavedView(); return; }
+        if (state.view === "search") { renderSearchView(); return; }
+        if (state.view === "appendix") { renderAppendixView(); return; }
         const area = document.getElementById("deckArea");
         if (state.deck.length === 0) { area.innerHTML = '<div class="empty">챕터를 하나 이상 선택하세요.</div>'; return; }
         const w = state.deck[state.index];
@@ -597,12 +808,176 @@
         buildDeck();
       }
 
+      function renderSearchView() {
+        const area = document.getElementById("deckArea");
+        
+        if (!document.getElementById("searchInput")) {
+          area.innerHTML = `
+            <div class="search-container">
+              <input type="text" id="searchInput" class="search-input" placeholder="한국어 뜻, 한자, 히라가나 검색..." autocomplete="off" />
+            </div>
+            <div id="searchResults" class="search-results"></div>
+          `;
+          
+          const input = document.getElementById("searchInput");
+          input.value = state.searchQuery;
+          input.focus();
+          const val = input.value;
+          input.value = '';
+          input.value = val;
+          
+          input.addEventListener("input", (e) => {
+            state.searchQuery = e.target.value.trim();
+            renderSearchViewResults();
+          });
+        }
+        
+        renderSearchViewResults();
+      }
+
+      function renderSearchViewResults() {
+        const resultsEl = document.getElementById("searchResults");
+        if (!resultsEl || state.view !== "search") return;
+
+        const q = state.searchQuery.toLowerCase();
+        if (!q) {
+          resultsEl.innerHTML = '<div class="search-empty">검색어를 입력하세요.</div>';
+          return;
+        }
+
+        let allMatches = [];
+        const levels = ["N5", "N4", "N3", "N2", "N1"];
+        for (let l of levels) {
+          if (cachedVocab[l]) {
+             for (let w of cachedVocab[l]) {
+               if ((w.kr && w.kr.toLowerCase().includes(q)) ||
+                   (w.hira && w.hira.includes(q)) ||
+                   (w.kanji && w.kanji !== "-" && w.kanji.includes(q))) {
+                 allMatches.push({ w, level: l });
+                 if (allMatches.length >= 100) break;
+               }
+             }
+          }
+          if (allMatches.length >= 100) break;
+        }
+
+        if (allMatches.length === 0) {
+          resultsEl.innerHTML = '<div class="search-empty">결과가 없습니다.</div>';
+          return;
+        }
+
+        const items = allMatches.map((m) => {
+          const { w, level } = m;
+          const jpDisplay = (w.kanji && w.kanji !== "-") ? buildInvertedRuby(w.kanji, w.hira) : w.hira;
+          const radicalsHtml = buildRadicals(w.kanji);
+          
+          return `
+            <div class="saved-item">
+              <div class="info" style="cursor: default;">
+                <span class="search-level-badge">${level} · 챕터 ${w.ch}</span>
+                <span class="main">${w.kr}</span>
+                <div class="back-info" style="margin-top: 8px;">
+                  <span class="sub-line"><span class="lbl-mini">${kanaLabel(w.hira)}/한자</span><span class="sub-val" style="line-height: 1.6;">${jpDisplay}</span></span>
+                  ${radicalsHtml}
+                </div>
+              </div>
+            </div>`;
+        }).join("");
+        
+        resultsEl.innerHTML = `<div class="saved-list">${items}</div>`;
+      }
+
+      function renderAppendixView() {
+        const area = document.getElementById("deckArea");
+        
+        if (!APPENDIX_DATA) {
+          area.innerHTML = '<div class="empty">데이터를 불러오는 중입니다...</div>';
+          return;
+        }
+
+        const renderRow = (item) => {
+          const jpClass = item.exception ? "highlight" : "";
+          const hira = item.hira || "-";
+          const kanji = (item.kanji && item.kanji !== "-") ? item.kanji : "-";
+          return `<tr>
+            <td style="font-weight: 500; width: 30%;">${item.kr}</td>
+            <td class="${jpClass}" style="width: 40%;">${hira}</td>
+            <td style="width: 30%;">${kanji}</td>
+          </tr>`;
+        };
+
+        const { 
+          numbers = [], nativeCounters = [], counters = [], periods = [], 
+          daysOfWeek = [], months = [], days = [], seasons = [], 
+          relativeDays = [], relativeWeeks = [], relativeMonths = [], 
+          relativeYears = [], directions = [] 
+        } = APPENDIX_DATA;
+
+        const buildSection = (title, desc, data) => {
+          if (!data || data.length === 0) return '';
+          return `
+            <div class="collapse-item">
+              <div class="collapse-header" onclick="this.parentElement.classList.toggle('open')">
+                <span>${title}</span>
+                <span class="collapse-icon">▼</span>
+              </div>
+              <div class="collapse-content">
+                ${desc ? `<div class="appendix-desc">${desc}</div>` : ''}
+                <table class="appendix-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 30%;">뜻</th>
+                      <th style="width: 40%;">히라가나/가타카나</th>
+                      <th style="width: 30%;">한자</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${data.map(renderRow).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+        };
+
+        area.innerHTML = `
+          <div class="appendix-container">
+            ${buildSection('기본 숫자', '4, 7, 9는 읽는 법이 여러 개입니다.', numbers)}
+            ${buildSection('고유 숫자 (개수 세기)', '1~10개 사물을 셀 때 쓰이는 고유어입니다.', nativeCounters)}
+            ${buildSection('조수사 (단위)', '사물이나 사람을 세는 단위입니다.', counters)}
+            ${buildSection('시간 및 기간', '시간, 기간 등을 나타내는 표현입니다.', periods)}
+            ${buildSection('시점 (일/주)', '', [...relativeDays, ...relativeWeeks])}
+            ${buildSection('시점 (월/년)', '', [...relativeMonths, ...relativeYears])}
+            ${buildSection('요일 및 계절', '', [...seasons, ...daysOfWeek])}
+            ${buildSection('방향 및 위치', '', directions)}
+            ${buildSection('월 (月)', '4, 7, 9월의 발음에 주의하세요.', months)}
+            ${buildSection('일 (日)', '1~10일, 14, 20, 24일은 불규칙하게 읽습니다.', days)}
+          </div>
+        `;
+      }
+
+      async function loadAllLevelsData() {
+        const levels = ["N5", "N4", "N3", "N2", "N1"];
+        const promises = levels.map(async (l) => {
+          if (!cachedVocab[l]) {
+            try {
+              const res = await fetch(`data/JLPT-${l}/vocabulary.json`);
+              if (res.ok) cachedVocab[l] = await res.json();
+              else cachedVocab[l] = [];
+            } catch(e) { cachedVocab[l] = []; }
+          }
+        });
+        await Promise.all(promises);
+      }
+
       async function init() {
         try {
           const radRes = await fetch('data/radicals.json');
           if (radRes.ok) RADICALS = await radRes.json();
           const furRes = await fetch('data/furigana.json');
           if (furRes.ok) FURIGANA = await furRes.json();
+          const appRes = await fetch('data/appendix.json');
+          if (appRes.ok) APPENDIX_DATA = await appRes.json();
         } catch (e) { console.error("Global data loading failed", e); }
         await loadLevelData();
       }
