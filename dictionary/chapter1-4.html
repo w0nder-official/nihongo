@@ -1,147 +1,189 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ja">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>단어장</title>
+    <title>JLPT 단어장</title>
     <style>
       :root {
-        --paper: #faf3e7;
-        --paper-line: #e4d9c4;
-        --ink: #1f3a5f;
-        --ink-soft: #4c6079;
-        --hanko: #b23a2e;
-        --hanko-soft: #d9877d;
-        --gold: #b8922e;
-        --card: #fffdf8;
-        --shadow: rgba(31, 58, 95, 0.14);
+        --bg-main: #ffffff;
+        --bg-sub: #f7f7f5;
+        --bg-hover: rgba(55, 53, 47, 0.08);
+        --bg-active: rgba(55, 53, 47, 0.16);
+        --text-main: #37352f;
+        --text-soft: rgba(55, 53, 47, 0.65);
+        --border-color: rgba(55, 53, 47, 0.16);
+        --border-light: rgba(55, 53, 47, 0.09);
+        --hanko: #eb5757;
+
+        /* Compatibility with JS inline styles */
+        --ink-soft: var(--text-soft);
+        --paper-line: var(--border-light);
       }
       * {
         box-sizing: border-box;
       }
       body {
         margin: 0;
-        background: var(--paper);
+        background: var(--bg-main);
         font-family:
-          -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
-          "Malgun Gothic", sans-serif;
-        color: var(--ink);
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Apple Color Emoji",
+          Arial,
+          sans-serif,
+          "Segoe UI Emoji",
+          "Segoe UI Symbol";
+        color: var(--text-main);
         display: flex;
         justify-content: center;
         padding: 40px 16px 64px;
+        line-height: 1.5;
       }
       .app {
         width: 100%;
-        max-width: 460px;
+        max-width: 540px;
       }
       .header {
-        text-align: center;
-        margin-bottom: 22px;
+        margin-bottom: 32px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
       }
-      .header .eyebrow {
-        font-size: 12px;
-        letter-spacing: 2px;
-        color: var(--gold);
-        font-weight: 700;
-        margin-bottom: 6px;
+      .header-icon {
+        font-size: 32px;
       }
       .header h1 {
-        font-size: 26px;
-        font-weight: 800;
+        font-size: 32px;
+        font-weight: 700;
         margin: 0;
-        letter-spacing: 0.5px;
+        letter-spacing: -0.03em;
+      }
+
+      .level-tabs,
+      .view-tabs {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 24px;
+        overflow-x: auto;
+        border-bottom: 1px solid var(--border-light);
+        padding-bottom: 8px;
+      }
+      .level-tab,
+      .view-tab {
+        border: none;
+        background: transparent;
+        color: var(--text-soft);
+        font-size: 14px;
+        font-weight: 500;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.1s ease;
+      }
+      .level-tab:hover,
+      .view-tab:hover {
+        background: var(--bg-hover);
+        color: var(--text-main);
+      }
+      .level-tab.active,
+      .view-tab.active {
+        background: var(--bg-active);
+        color: var(--text-main);
+        font-weight: 600;
+      }
+      .level-tab.disabled {
+        opacity: 0.5;
+        pointer-events: none;
       }
 
       .view-tabs {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 16px;
-      }
-      .view-tab {
-        flex: 1;
-        border: 1px solid var(--paper-line);
-        background: var(--card);
-        color: var(--ink-soft);
-        font-size: 13px;
-        font-weight: 700;
-        padding: 10px 12px;
-        border-radius: 10px;
-        cursor: pointer;
-      }
-      .view-tab.active {
-        background: var(--ink);
-        border-color: var(--ink);
-        color: #fff;
-      }
-      .view-tab span {
-        opacity: 0.8;
-        font-weight: 600;
+        border-bottom: none;
       }
 
       /* setup panel */
       .panel {
-        background: var(--card);
-        border: 1px solid var(--paper-line);
-        border-radius: 14px;
-        padding: 18px 18px 16px;
-        margin-bottom: 20px;
+        margin-bottom: 32px;
       }
       .panel-row {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 14px;
-      }
-      .panel-row:last-child {
-        margin-bottom: 0;
+        align-items: flex-start;
+        margin-bottom: 16px;
       }
       .panel-label {
-        font-size: 13px;
-        font-weight: 700;
-        color: var(--ink-soft);
-        white-space: nowrap;
-        margin-right: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-main);
+        min-width: 60px;
+        margin-top: 4px;
       }
       .chapter-grid {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
-        justify-content: flex-end;
+        gap: 6px;
+        flex: 1;
+        overflow: hidden;
+      }
+      .chapter-grid.collapsed {
+        max-height: 96px;
+      }
+      .chapter-grid.expanded {
+        max-height: none;
       }
       .chip {
-        border: 1px solid var(--paper-line);
+        border: 1px solid var(--border-light);
         background: transparent;
-        color: var(--ink-soft);
+        color: var(--text-soft);
         font-size: 13px;
-        font-weight: 600;
-        padding: 6px 12px;
-        border-radius: 100px;
+        font-weight: 500;
+        padding: 4px 10px;
+        border-radius: 6px;
         cursor: pointer;
-        transition: all 0.15s ease;
+        transition: all 0.1s ease;
+      }
+      .chip:hover {
+        background: var(--bg-hover);
+        border-color: rgba(55, 53, 47, 0.2);
+        color: var(--text-main);
       }
       .chip.active {
-        background: var(--ink);
-        border-color: var(--ink);
+        background: var(--text-main);
+        border-color: var(--text-main);
         color: #fff;
       }
       .toggle-group {
         display: flex;
-        border: 1px solid var(--paper-line);
-        border-radius: 100px;
+        border: 1px solid var(--border-light);
+        border-radius: 6px;
         overflow: hidden;
+        background: var(--bg-main);
       }
       .toggle-btn {
         border: none;
         background: transparent;
-        padding: 6px 14px;
+        padding: 6px 12px;
         font-size: 13px;
-        font-weight: 600;
-        color: var(--ink-soft);
+        font-weight: 500;
+        color: var(--text-soft);
         cursor: pointer;
+        border-right: 1px solid var(--border-light);
+        transition: all 0.1s ease;
+      }
+      .toggle-btn:last-child {
+        border-right: none;
+      }
+      .toggle-btn:hover {
+        background: var(--bg-hover);
+        color: var(--text-main);
       }
       .toggle-btn.active {
-        background: var(--hanko);
-        color: #fff;
+        background: var(--bg-active);
+        color: var(--text-main);
+        font-weight: 600;
       }
 
       /* progress */
@@ -149,35 +191,76 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         font-size: 13px;
-        color: var(--ink-soft);
-        font-weight: 600;
+        color: var(--text-soft);
+        font-weight: 500;
       }
       .progress-track {
-        height: 3px;
-        background: var(--paper-line);
+        height: 4px;
+        background: var(--bg-sub);
         border-radius: 2px;
-        margin-bottom: 20px;
+        margin-bottom: 24px;
         overflow: hidden;
       }
       .progress-fill {
         height: 100%;
-        background: var(--hanko);
+        background: var(--text-main);
         transition: width 0.2s ease;
+        border-radius: 2px;
       }
 
-      /* flashcard with genkouyoushi grid signature */
+      .radicals {
+        margin-top: 16px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: center;
+        width: 100%;
+      }
+      .radical-chip {
+        display: flex;
+        align-items: center;
+        background: var(--bg-main);
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 18px;
+        border: 1px solid var(--border-light);
+      }
+      .radical-target {
+        font-weight: 600;
+        color: var(--text-main);
+        margin-right: 8px;
+        padding-right: 8px;
+        border-right: 1px solid var(--border-light);
+      }
+      .radical-kanji {
+        font-weight: 600;
+        color: var(--text-soft);
+        margin-right: 6px;
+      }
+      .radical-meaning {
+        color: var(--text-soft);
+        font-size: 15px;
+      }
+
+      /* flashcard */
+      .deck-layout {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+      }
       .stage {
         perspective: 1400px;
-        margin-bottom: 20px;
+        flex: 1;
       }
       .card {
         position: relative;
-        height: 310px;
+        height: 420px;
         cursor: pointer;
         transform-style: preserve-3d;
-        transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
+        transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
       }
       .card.flipped {
         transform: rotateY(180deg);
@@ -186,270 +269,456 @@
         position: absolute;
         inset: 0;
         backface-visibility: hidden;
-        border-radius: 16px;
-        border: 1px solid var(--paper-line);
-        background:
-          linear-gradient(var(--paper-line) 1px, transparent 1px),
-          linear-gradient(90deg, var(--paper-line) 1px, transparent 1px),
-          var(--card);
-        background-size:
-          28px 28px,
-          28px 28px,
-          100% 100%;
-        background-position: -1px -1px;
-        box-shadow: 0 10px 28px var(--shadow);
+        border-radius: 8px;
+        background: var(--bg-main);
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 24px;
+        padding: 32px;
         text-align: center;
+        border: 1px solid var(--border-light);
+        transition: border-color 0.2s ease;
       }
-      .face::before {
-        content: "";
-        position: absolute;
-        top: 14px;
-        left: 14px;
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
-        background: var(--hanko);
-        opacity: 0.08;
+      .card:hover .face {
+        border-color: rgba(55, 53, 47, 0.2);
       }
       .face .tag {
         position: absolute;
         top: 16px;
-        left: 20px;
-        font-size: 11px;
-        font-weight: 700;
-        color: var(--gold);
-        letter-spacing: 1px;
+        left: 16px;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--text-soft);
+        background: var(--bg-sub);
+        padding: 4px 8px;
+        border-radius: 4px;
       }
       .face .hint {
         position: absolute;
         bottom: 16px;
-        font-size: 11px;
-        color: var(--ink-soft);
-        opacity: 0.6;
-        letter-spacing: 0.5px;
+        font-size: 12px;
+        color: var(--text-soft);
+        opacity: 0.8;
       }
       .word-main {
-        font-size: 36px;
-        font-weight: 800;
-        color: var(--ink);
-        line-height: 1.4;
-        letter-spacing: -0.3px;
+        font-size: 60px;
+        font-weight: 700;
+        color: var(--text-main);
+        line-height: 1.3;
+        letter-spacing: -0.02em;
       }
       .word-kanji {
-        font-size: 26px;
-        font-weight: 700;
-        color: var(--ink-soft);
+        font-size: 36px;
+        font-weight: 600;
+        color: var(--text-soft);
         margin-top: 8px;
       }
       .back {
         transform: rotateY(180deg);
       }
       .back-line {
-        margin: 9px 0;
+        margin: 12px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
       .back-line .lbl {
-        font-size: 11px;
-        color: var(--gold);
-        font-weight: 700;
-        letter-spacing: 1px;
-        display: block;
-        margin-bottom: 2px;
+        font-size: 16px;
+        color: var(--text-soft);
+        font-weight: 500;
+        margin-bottom: 6px;
       }
       .back-line .val {
-        font-size: 28px;
-        font-weight: 700;
-        color: var(--ink);
+        font-size: 36px;
+        font-weight: 600;
+        color: var(--text-main);
       }
       .back-line .val.kanji {
-        font-size: 24px;
-        font-weight: 600;
-        color: var(--ink-soft);
+        font-size: 30px;
+        font-weight: 500;
+        color: var(--text-soft);
       }
 
-      /* controls */
-      .controls {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 14px;
-        margin-bottom: 14px;
-      }
+      /* controls & save panel */
       .nav-btn {
-        width: 46px;
-        height: 46px;
-        border-radius: 50%;
-        border: 1px solid var(--paper-line);
-        background: var(--card);
-        color: var(--ink);
+        width: 44px;
+        height: 44px;
+        border-radius: 6px;
+        border: 1px solid var(--border-light);
+        background: var(--bg-main);
+        color: var(--text-main);
         font-size: 18px;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.15s ease;
+        transition: all 0.1s ease;
+        flex-shrink: 0;
       }
       .nav-btn:hover {
-        border-color: var(--ink);
+        background: var(--bg-hover);
+        border-color: rgba(55, 53, 47, 0.2);
       }
       .nav-btn:active {
-        transform: scale(0.94);
+        background: var(--bg-active);
       }
-      .flip-btn {
+      .save-row-panel {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
         flex: 1;
-        max-width: 200px;
-        height: 46px;
-        border-radius: 100px;
-        border: none;
-        background: var(--ink);
-        color: #fff;
-        font-size: 14px;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-        cursor: pointer;
-        transition: all 0.15s ease;
       }
-      .flip-btn:active {
-        transform: scale(0.97);
+      .save-row-panel .chip {
+        border-radius: 100px;
+        padding: 4px 12px;
       }
 
       .footer-actions {
         display: flex;
         justify-content: center;
         gap: 10px;
+        margin-top: 16px;
       }
       .text-btn {
         border: none;
         background: transparent;
-        color: var(--ink-soft);
-        font-size: 12px;
-        font-weight: 600;
+        color: var(--text-soft);
+        font-size: 13px;
+        font-weight: 500;
         cursor: pointer;
-        padding: 6px 10px;
-        text-decoration: underline;
-        text-underline-offset: 3px;
+        padding: 6px 12px;
+        border-radius: 4px;
       }
-
+      .text-btn:hover {
+        background: var(--bg-hover);
+        color: var(--text-main);
+      }
       .empty {
         text-align: center;
         padding: 60px 20px;
-        color: var(--ink-soft);
+        color: var(--text-soft);
         font-size: 14px;
       }
 
-      /* save buttons */
-      .save-row {
-        display: flex;
-        gap: 8px;
-        justify-content: center;
-        margin-bottom: 16px;
+      /* help button */
+      .help-btn-wrapper {
+        position: relative;
+        margin-left: 8px;
+        display: inline-flex;
+        align-items: center;
       }
-      .save-btn {
-        border: 1px solid var(--paper-line);
-        background: var(--card);
-        color: var(--ink-soft);
-        font-size: 12px;
-        font-weight: 700;
-        padding: 8px 12px;
-        border-radius: 100px;
+      .help-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 1px solid var(--border-light);
+        background: var(--bg-main);
+        color: var(--text-soft);
+        font-size: 13px;
+        font-weight: 600;
         cursor: pointer;
-        transition: all 0.15s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.1s ease;
       }
-      .save-btn.on {
-        background: var(--gold);
-        border-color: var(--gold);
+      .help-btn:hover {
+        background: var(--bg-hover);
+        border-color: rgba(55, 53, 47, 0.2);
+        color: var(--text-main);
+      }
+      .help-tooltip {
+        position: absolute;
+        top: 36px;
+        left: 0;
+        background: var(--text-main);
         color: #fff;
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-4px);
+        transition: all 0.2s ease;
+        box-shadow: rgba(15, 15, 15, 0.2) 0px 4px 12px;
+        line-height: 1.6;
+        z-index: 100;
+      }
+      .help-tooltip.show {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+      }
+      .help-tooltip code {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 2px 4px;
+        border-radius: 4px;
+        font-family: ui-monospace, monospace;
+        font-size: 11px;
+        margin: 0 2px;
       }
 
       /* saved list view */
       .saved-list {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
       }
       .saved-item {
-        background: var(--card);
-        border: 1px solid var(--paper-line);
-        border-radius: 12px;
-        padding: 14px 16px;
+        background: var(--bg-main);
+        border: 1px solid var(--border-light);
+        border-radius: 6px;
+        padding: 12px 16px;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: space-between;
-        gap: 10px;
+        gap: 12px;
+        transition: border-color 0.1s ease;
+      }
+      .saved-item:hover {
+        border-color: rgba(55, 53, 47, 0.2);
       }
       .saved-item .info {
         display: flex;
         flex-direction: column;
-        gap: 2px;
+        gap: 4px;
         cursor: pointer;
         flex: 1;
       }
       .saved-item .main {
-        font-size: 18px;
-        font-weight: 800;
-        color: var(--ink);
-      }
-      .saved-kanji-mini {
-        font-size: 13px;
+        font-size: 16px;
         font-weight: 600;
-        color: var(--ink-soft);
+        color: var(--text-main);
       }
       .tap-hint {
-        font-size: 11px;
-        color: var(--ink-soft);
-        opacity: 0.55;
-        margin-top: 2px;
+        font-size: 12px;
+        color: var(--text-soft);
       }
       .back-info {
         display: flex;
         flex-direction: column;
-        gap: 4px;
-        margin-top: 2px;
+        gap: 6px;
+        margin-top: 4px;
+        padding-top: 8px;
+        border-top: 1px solid var(--border-light);
       }
       .sub-line {
-        font-size: 15px;
-        font-weight: 700;
-        color: var(--ink);
+        font-size: 16px;
+        color: var(--text-main);
+        display: flex;
+        flex-direction: column;
+      }
+      .sub-line .sub-val {
+        font-size: 28px;
+        font-weight: 500;
+        color: var(--text-main);
+        padding-top: 4px;
       }
       .lbl-mini {
-        font-size: 10px;
-        font-weight: 700;
-        color: var(--gold);
-        letter-spacing: 0.5px;
-        margin-right: 6px;
-      }
-      .saved-item.flipped {
-        background: #fff9ee;
-        border-color: var(--gold);
-      }
-      .saved-item .dir-badge {
-        font-size: 10px;
-        font-weight: 700;
-        color: var(--hanko);
-        letter-spacing: 0.5px;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--text-soft);
         margin-bottom: 2px;
       }
+      .saved-item.flipped {
+        background: var(--bg-sub);
+      }
+      .saved-item .dir-badge {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--text-soft);
+        margin-bottom: 4px;
+        display: inline-block;
+        background: var(--bg-main);
+        border: 1px solid var(--border-light);
+        padding: 2px 6px;
+        border-radius: 4px;
+        align-self: flex-start;
+      }
       .del-btn {
-        border: none;
-        background: transparent;
-        color: var(--ink-soft);
-        font-size: 18px;
+        border: 1px solid var(--border-light);
+        background: var(--bg-main);
+        color: var(--text-soft);
+        font-size: 12px;
+        font-weight: 500;
         cursor: pointer;
-        padding: 4px 8px;
+        padding: 6px 10px;
+        border-radius: 6px;
         line-height: 1;
+        margin-left: 8px;
+        transition: 0.1s;
       }
       .del-btn:hover {
-        color: var(--hanko);
+        background: var(--bg-hover);
+        color: var(--text-main);
+        border-color: var(--border-light);
       }
       .saved-empty {
         text-align: center;
-        padding: 50px 20px;
-        color: var(--ink-soft);
+        padding: 60px 20px;
+        color: var(--text-soft);
         font-size: 14px;
+      }
+
+      .saved-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+      .saved-controls-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+      .saved-select {
+        padding: 6px 8px;
+        border-radius: 6px;
+        border: 1px solid var(--border-light);
+        background: var(--bg-main);
+        color: var(--text-main);
+        font-size: 13px;
+        outline: none;
+        cursor: pointer;
+      }
+      .saved-chapter-header {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-soft);
+        margin-top: 16px;
+        margin-bottom: 4px;
+        padding-left: 4px;
+        border-bottom: 1px solid var(--border-light);
+        padding-bottom: 4px;
+      }
+
+      /* Search view */
+      .search-container {
+        margin-bottom: 24px;
+      }
+      .search-input {
+        width: 100%;
+        padding: 14px 16px;
+        font-size: 16px;
+        border: 1px solid var(--border-light);
+        border-radius: 8px;
+        outline: none;
+        background: var(--bg-main);
+        color: var(--text-main);
+        transition: border-color 0.2s;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      }
+      .search-input:focus {
+        border-color: var(--text-soft);
+      }
+      .search-input::placeholder {
+        color: var(--text-soft);
+        opacity: 0.7;
+      }
+      .search-results {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 16px;
+      }
+      .search-level-badge {
+        font-size: 11px;
+        font-weight: 600;
+        color: #fff;
+        background: var(--text-soft);
+        padding: 2px 6px;
+        border-radius: 4px;
+        display: inline-block;
+        margin-bottom: 4px;
+        align-self: flex-start;
+      }
+      .search-empty {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-soft);
+        font-size: 14px;
+      }
+
+      /* Appendix Table */
+      .appendix-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding-bottom: 40px;
+      }
+      .collapse-item {
+        background: var(--bg-main);
+        border-radius: 8px;
+        box-shadow: 0 0 0 1px var(--border-light);
+        overflow: hidden;
+      }
+      .collapse-header {
+        padding: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        user-select: none;
+        font-weight: 600;
+        font-size: 16px;
+        transition: background 0.1s ease;
+        color: var(--text-main);
+      }
+      .collapse-header:hover {
+        background: var(--bg-hover);
+      }
+      .collapse-icon {
+        font-size: 12px;
+        transition: transform 0.2s ease;
+        color: var(--text-soft);
+      }
+      .collapse-item.open .collapse-icon {
+        transform: rotate(180deg);
+      }
+      .collapse-content {
+        display: none;
+        padding: 0 16px 16px;
+        border-top: 1px solid var(--border-light);
+        background: var(--bg-main);
+      }
+      .collapse-item.open .collapse-content {
+        display: block;
+      }
+
+      .appendix-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+        margin-top: 16px;
+      }
+      .appendix-table th,
+      .appendix-table td {
+        padding: 10px 12px;
+        text-align: left;
+        border-bottom: 1px solid var(--border-light);
+      }
+      .appendix-table th {
+        background: var(--bg-sub);
+        color: var(--text-soft);
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .appendix-table tr:last-child td {
+        border-bottom: none;
+      }
+      .appendix-table .highlight {
+        font-weight: 600;
+        color: var(--hanko);
+      }
+      .appendix-desc {
+        font-size: 13px;
+        color: var(--text-soft);
+        margin-top: 16px;
+        line-height: 1.5;
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -462,8 +731,16 @@
   <body>
     <div class="app">
       <div class="header">
-        <div class="eyebrow">日本語 単語帳</div>
+        <span class="header-icon">📓</span>
         <h1>단어장</h1>
+        <div class="help-btn-wrapper">
+          <button class="help-btn" id="helpBtn" aria-label="도움말">?</button>
+          <div class="help-tooltip" id="helpTooltip">
+            <div style="font-weight: 600; margin-bottom: 6px">단축키 안내</div>
+            <div><code>Enter</code> <code>Space</code> : 카드 뒤집기</div>
+            <div><code>←</code> <code>→</code> : 이전/다음 단어</div>
+          </div>
+        </div>
       </div>
 
       <div class="view-tabs">
@@ -471,10 +748,10 @@
         <button class="view-tab" id="tabSaved">
           저장한 단어 <span id="savedCount">(0)</span>
         </button>
+        <button class="view-tab" id="tabSearch">검색</button>
       </div>
 
       <div class="panel" id="panel"></div>
-
       <div id="deckArea"></div>
     </div>
 
@@ -876,17 +1153,24 @@
         },
       ];
 
+      let FURIGANA = {};
+      let RADICALS = {};
+
       const state = {
-        chapters: new Set([1, 2, 3, 4]),
+        chapters: new Set([1]),
         mode: "sequential",
         dir: "kr-jp",
         deck: [],
         index: 0,
         flipped: false,
-        saved: [], // {ch, kr, direction}
-        savedFlipped: new Set(), // indices currently showing back
-        view: "study", // "study" | "saved"
+        saved: [],
+        savedFlipped: new Set(),
+        view: "study",
         storageReady: false,
+        chaptersExpanded: false,
+        searchQuery: "",
+        savedFilterChapter: "All",
+        savedSortBy: "newest",
       };
 
       function wordKey(w) {
@@ -897,15 +1181,26 @@
           (s) => s.ch === w.ch && s.kr === w.kr && s.direction === direction,
         );
       }
+
       async function loadSaved() {
         try {
           const raw = localStorage.getItem("vocab-saved-words");
-          state.saved = raw ? JSON.parse(raw) : [];
+          if (raw) {
+            let arr = JSON.parse(raw);
+            arr.forEach((item) => {
+              if (!item.timestamp)
+                item.timestamp = Date.now() - Math.floor(Math.random() * 10000);
+            });
+            state.saved = arr;
+          } else {
+            state.saved = [];
+          }
         } catch (e) {
           state.saved = [];
         }
         state.storageReady = true;
       }
+
       async function persistSaved() {
         try {
           localStorage.setItem(
@@ -916,6 +1211,7 @@
           console.error("저장 실패", e);
         }
       }
+
       function toggleSave(w, direction) {
         const idx = state.saved.findIndex(
           (s) => s.ch === w.ch && s.kr === w.kr && s.direction === direction,
@@ -923,19 +1219,23 @@
         if (idx >= 0) {
           state.saved.splice(idx, 1);
         } else {
-          state.saved.push({ ch: w.ch, kr: w.kr, direction });
+          state.saved.push({
+            ch: w.ch,
+            kr: w.kr,
+            direction,
+            timestamp: Date.now(),
+          });
         }
         persistSaved();
         render();
       }
 
       function isKatakana(str) {
-        return /[\u30A0-\u30FF]/.test(str);
+        return /[゠-ヿ]/.test(str);
       }
       function kanaLabel(str) {
         return isKatakana(str) ? "가타카나" : "히라가나";
       }
-
       function shuffle(arr) {
         const a = arr.slice();
         for (let i = a.length - 1; i > 0; i--) {
@@ -956,7 +1256,10 @@
       function renderChapterChips() {
         const grid = document.getElementById("chapterGrid");
         grid.innerHTML = "";
-        [1, 2, 3, 4].forEach((ch) => {
+        const maxCh =
+          VOCAB.length > 0 ? Math.max(...VOCAB.map((v) => v.ch)) : 1;
+        const chArray = Array.from({ length: maxCh }, (_, i) => i + 1);
+        chArray.forEach((ch) => {
           const btn = document.createElement("button");
           btn.className = "chip" + (state.chapters.has(ch) ? " active" : "");
           btn.textContent = "챕터 " + ch;
@@ -971,31 +1274,72 @@
           };
           grid.appendChild(btn);
         });
+        const selectAllBtn = document.getElementById("selectAllChapters");
+        if (selectAllBtn) {
+          selectAllBtn.textContent =
+            state.chapters.size === maxCh ? "전체 해제" : "전체 선택";
+        }
       }
 
       function renderPanel() {
         const panel = document.getElementById("panel");
         panel.innerHTML = `
-    <div class="panel-row">
-      <span class="panel-label">챕터</span>
-      <div class="chapter-grid" id="chapterGrid"></div>
-    </div>
-    <div class="panel-row">
-      <span class="panel-label">순서</span>
-      <div class="toggle-group">
-        <button class="toggle-btn" data-mode="sequential">순서대로</button>
-        <button class="toggle-btn" data-mode="random">랜덤</button>
-      </div>
-    </div>
-    <div class="panel-row">
-      <span class="panel-label">방향</span>
-      <div class="toggle-group">
-        <button class="toggle-btn" data-dir="kr-jp">한글 → 일본어</button>
-        <button class="toggle-btn" data-dir="jp-kr">일본어 → 한글</button>
-      </div>
-    </div>
-  `;
+          <div class="panel-row">
+            <span class="panel-label">챕터</span>
+            <div style="flex: 1; display: flex; flex-direction: column;">
+              <div class="chapter-grid ${state.chaptersExpanded ? "expanded" : "collapsed"}" id="chapterGrid"></div>
+              <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+                <button class="text-btn" style="padding: 4px 8px; font-size: 12px; background: var(--bg-sub);" id="selectAllChapters">전체 선택</button>
+                <button class="text-btn" style="padding: 4px 8px; font-size: 12px; background: var(--bg-sub);" id="toggleChapterHeight">${state.chaptersExpanded ? "접기 ▲" : "더보기 ▼"}</button>
+              </div>
+            </div>
+          </div>
+          <div class="panel-row">
+            <span class="panel-label">순서</span>
+            <div class="toggle-group">
+              <button class="toggle-btn" data-mode="sequential">순서대로</button>
+              <button class="toggle-btn" data-mode="random">랜덤</button>
+            </div>
+          </div>
+          <div class="panel-row">
+            <span class="panel-label">방향</span>
+            <div class="toggle-group">
+              <button class="toggle-btn" data-dir="kr-jp">한글 → 일본어</button>
+              <button class="toggle-btn" data-dir="jp-kr">일본어 → 한글</button>
+            </div>
+          </div>
+          <div class="panel-row">
+            <span class="panel-label">단어 저장</span>
+            <div class="save-row-panel" id="panelSaveRow"></div>
+          </div>
+        `;
         renderChapterChips();
+
+        document.getElementById("selectAllChapters").onclick = () => {
+          const maxCh =
+            VOCAB.length > 0 ? Math.max(...VOCAB.map((v) => v.ch)) : 1;
+          if (state.chapters.size === maxCh) {
+            state.chapters.clear();
+            state.chapters.add(1);
+          } else {
+            for (let i = 1; i <= maxCh; i++) state.chapters.add(i);
+          }
+          renderChapterChips();
+          buildDeck();
+        };
+
+        document.getElementById("toggleChapterHeight").onclick = () => {
+          state.chaptersExpanded = !state.chaptersExpanded;
+          const grid = document.getElementById("chapterGrid");
+          const btn = document.getElementById("toggleChapterHeight");
+          if (state.chaptersExpanded) {
+            grid.classList.replace("collapsed", "expanded");
+            btn.textContent = "접기 ▲";
+          } else {
+            grid.classList.replace("expanded", "collapsed");
+            btn.textContent = "더보기 ▼";
+          }
+        };
         document
           .querySelector(`[data-mode="${state.mode}"]`)
           .classList.add("active");
@@ -1032,6 +1376,7 @@
         state.view = "study";
         document.getElementById("tabStudy").classList.add("active");
         document.getElementById("tabSaved").classList.remove("active");
+        document.getElementById("tabSearch").classList.remove("active");
         document.getElementById("panel").style.display = "";
         render();
       };
@@ -1039,6 +1384,15 @@
         state.view = "saved";
         document.getElementById("tabSaved").classList.add("active");
         document.getElementById("tabStudy").classList.remove("active");
+        document.getElementById("tabSearch").classList.remove("active");
+        document.getElementById("panel").style.display = "none";
+        render();
+      };
+      document.getElementById("tabSearch").onclick = () => {
+        state.view = "search";
+        document.getElementById("tabSearch").classList.add("active");
+        document.getElementById("tabStudy").classList.remove("active");
+        document.getElementById("tabSaved").classList.remove("active");
         document.getElementById("panel").style.display = "none";
         render();
       };
@@ -1050,61 +1404,253 @@
             '<div class="saved-empty">아직 저장한 단어가 없어요.<br>학습 화면에서 카드 아래 저장 버튼을 눌러보세요.</div>';
           return;
         }
-        const items = state.saved
-          .map((s, i) => {
+
+        // Apply filters
+        let filtered = state.saved.filter((s) => {
+          if (
+            state.savedFilterChapter !== "All" &&
+            s.ch.toString() !== state.savedFilterChapter
+          )
+            return false;
+          return true;
+        });
+
+        // Apply sort
+        filtered.sort((a, b) => {
+          if (state.savedSortBy === "newest") return b.timestamp - a.timestamp;
+          if (state.savedSortBy === "oldest") return a.timestamp - b.timestamp;
+          if (state.savedSortBy === "kr") return a.kr.localeCompare(b.kr);
+          if (state.savedSortBy === "jp") {
+            const getJp = (w) => {
+              const vocab = VOCAB.find((v) => v.ch === w.ch && v.kr === w.kr);
+              return vocab ? vocab.hira : "";
+            };
+            return getJp(a).localeCompare(getJp(b));
+          }
+          if (state.savedSortBy === "chapter") {
+            return a.ch - b.ch;
+          }
+          return 0;
+        });
+
+        const availableChapters = new Set();
+        state.saved.forEach((s) => availableChapters.add(s.ch));
+
+        const chapterOptions = Array.from(availableChapters)
+          .sort((a, b) => a - b)
+          .map(
+            (ch) =>
+              `<option value="${ch}" ${state.savedFilterChapter === ch.toString() ? "selected" : ""}>챕터 ${ch}</option>`,
+          )
+          .join("");
+
+        const controlsHtml = `
+          <div class="saved-controls">
+            <div class="saved-controls-row">
+              <select class="saved-select" id="savedFilterChapter">
+                <option value="All" ${state.savedFilterChapter === "All" ? "selected" : ""}>전체 챕터</option>
+                ${chapterOptions}
+              </select>
+              <select class="saved-select" id="savedSortBy">
+                <option value="newest" ${state.savedSortBy === "newest" ? "selected" : ""}>최신순</option>
+                <option value="oldest" ${state.savedSortBy === "oldest" ? "selected" : ""}>오래된순</option>
+                <option value="chapter" ${state.savedSortBy === "chapter" ? "selected" : ""}>챕터순</option>
+                <option value="kr" ${state.savedSortBy === "kr" ? "selected" : ""}>가나다순</option>
+                <option value="jp" ${state.savedSortBy === "jp" ? "selected" : ""}>50음도순</option>
+              </select>
+            </div>
+          </div>
+        `;
+
+        if (filtered.length === 0) {
+          area.innerHTML =
+            controlsHtml +
+            '<div class="saved-empty">조건에 맞는 단어가 없습니다.</div>';
+          setupSavedControls();
+          return;
+        }
+
+        let lastChapterKey = null;
+        const items = filtered
+          .map((s) => {
             const w = VOCAB.find((v) => v.ch === s.ch && v.kr === s.kr);
             if (!w) return "";
+
+            let headerHtml = "";
+            if (state.savedSortBy === "chapter") {
+              const currentChapterKey = s.ch;
+              if (currentChapterKey !== lastChapterKey) {
+                headerHtml = `<div class="saved-chapter-header">챕터 ${s.ch}</div>`;
+                lastChapterKey = currentChapterKey;
+              }
+            }
+
             const isKrJp = s.direction === "kr-jp";
-            const isFlipped = state.savedFlipped.has(i);
+            const uniqueId = s.ch + "_" + s.kr + "_" + s.direction;
+            const isFlipped = state.savedFlipped.has(uniqueId);
 
-            const frontMain = isKrJp ? w.kr : w.hira;
-            const frontKanji =
-              !isKrJp && w.kanji !== "-"
-                ? `<span class="saved-kanji-mini">${w.kanji}</span>`
-                : "";
-
+            const radicalsHtml = buildRadicals(w.kanji);
+            const jpDisplay =
+              w.kanji && w.kanji !== "-"
+                ? buildInvertedRuby(w.kanji, w.hira)
+                : w.hira;
+            const frontMain = isKrJp ? w.kr : jpDisplay;
             const backHtml = isKrJp
-              ? `<span class="sub-line"><span class="lbl-mini">발음</span>${w.pron}</span>
-         <span class="sub-line"><span class="lbl-mini">${kanaLabel(w.hira)}</span>${w.hira}</span>
-         ${w.kanji !== "-" ? `<span class="sub-line"><span class="lbl-mini">한자</span>${w.kanji}</span>` : ""}`
-              : `<span class="sub-line"><span class="lbl-mini">뜻</span>${w.kr}</span>
-         <span class="sub-line"><span class="lbl-mini">발음</span>${w.pron}</span>`;
+              ? `<span class="sub-line"><span class="lbl-mini">발음</span><span class="sub-val" style="font-size: 20px;">${w.pron}</span></span>
+               <span class="sub-line"><span class="lbl-mini">${kanaLabel(w.hira)}/한자</span><span class="sub-val" style="line-height: 1.6;">${jpDisplay}</span></span>
+               ${radicalsHtml}`
+              : `<span class="sub-line"><span class="lbl-mini">뜻</span><span class="sub-val">${w.kr}</span></span>
+               <span class="sub-line"><span class="lbl-mini">발음</span><span class="sub-val" style="font-size: 20px;">${w.pron}</span></span>
+               <span class="sub-line"><span class="lbl-mini">${kanaLabel(w.hira)}/한자</span><span class="sub-val" style="line-height: 1.6;">${jpDisplay}</span></span>
+               ${radicalsHtml}`;
 
-            return `
-      <div class="saved-item ${isFlipped ? "flipped" : ""}" data-idx="${i}">
-        <div class="info" data-flip="${i}">
-          <span class="dir-badge">챕터 ${w.ch} · ${isKrJp ? "한글 → 일본어" : "일본어 → 한글"}</span>
-          ${
-            !isFlipped
-              ? `<span class="main">${frontMain}</span>${frontKanji}<span class="tap-hint">눌러서 뒤집기</span>`
-              : `<div class="back-info">${backHtml}</div>`
-          }
-        </div>
-        <button class="del-btn" data-del="${i}" aria-label="삭제">×</button>
-      </div>`;
+            return (
+              headerHtml +
+              `
+            <div class="saved-item ${isFlipped ? "flipped" : ""}">
+              <div class="info" data-flip="${uniqueId}">
+                <span class="dir-badge">챕터 ${w.ch} · ${isKrJp ? "한글 → 일본어" : "일본어 → 한글"}</span>
+                ${
+                  !isFlipped
+                    ? `<span class="main">${frontMain}</span><span class="tap-hint">눌러서 뒤집기</span>`
+                    : `<div class="back-info">${backHtml}</div>`
+                }
+              </div>
+              <button class="del-btn" data-del="${uniqueId}">해제</button>
+            </div>`
+            );
           })
           .join("");
 
-        area.innerHTML = `<div class="saved-list">${items}</div>`;
+        area.innerHTML =
+          controlsHtml + `<div class="saved-list">${items}</div>`;
+
+        setupSavedControls();
 
         area.querySelectorAll("[data-flip]").forEach((el) => {
           el.onclick = () => {
-            const idx = parseInt(el.dataset.flip, 10);
-            if (state.savedFlipped.has(idx)) state.savedFlipped.delete(idx);
-            else state.savedFlipped.add(idx);
+            const uid = el.dataset.flip;
+            if (state.savedFlipped.has(uid)) state.savedFlipped.delete(uid);
+            else state.savedFlipped.add(uid);
             render();
           };
         });
         area.querySelectorAll("[data-del]").forEach((btn) => {
           btn.onclick = (e) => {
             e.stopPropagation();
-            const idx = parseInt(btn.dataset.del, 10);
-            state.saved.splice(idx, 1);
-            state.savedFlipped.delete(idx);
-            persistSaved();
-            render();
+            const uid = btn.dataset.del;
+            const parts = uid.split("_");
+            const ch = parseInt(parts[0], 10);
+            const kr = parts[1];
+            const dir = parts[2];
+
+            const idx = state.saved.findIndex(
+              (s) => s.ch === ch && s.kr === kr && s.direction === dir,
+            );
+            if (idx >= 0) {
+              state.saved.splice(idx, 1);
+              state.savedFlipped.delete(uid);
+              persistSaved();
+              render();
+            }
           };
         });
+      }
+
+      function setupSavedControls() {
+        const selChapter = document.getElementById("savedFilterChapter");
+        const selSort = document.getElementById("savedSortBy");
+
+        if (selChapter) {
+          selChapter.onchange = (e) => {
+            state.savedFilterChapter = e.target.value;
+            render();
+          };
+        }
+        if (selSort) {
+          selSort.onchange = (e) => {
+            state.savedSortBy = e.target.value;
+            render();
+          };
+        }
+      }
+
+      function renderSearchView() {
+        const area = document.getElementById("deckArea");
+
+        if (!document.getElementById("searchInput")) {
+          area.innerHTML = `
+            <div class="search-container">
+              <input type="text" id="searchInput" class="search-input" placeholder="한국어 뜻, 한자, 히라가나 검색..." autocomplete="off" />
+            </div>
+            <div id="searchResults" class="search-results"></div>
+          `;
+
+          const input = document.getElementById("searchInput");
+          input.value = state.searchQuery;
+          input.focus();
+          const val = input.value;
+          input.value = "";
+          input.value = val;
+
+          input.addEventListener("input", (e) => {
+            state.searchQuery = e.target.value.trim();
+            renderSearchViewResults();
+          });
+        }
+
+        renderSearchViewResults();
+      }
+
+      function renderSearchViewResults() {
+        const resultsEl = document.getElementById("searchResults");
+        if (!resultsEl || state.view !== "search") return;
+
+        const q = state.searchQuery.toLowerCase();
+        if (!q) {
+          resultsEl.innerHTML =
+            '<div class="search-empty">검색어를 입력하세요.</div>';
+          return;
+        }
+
+        let allMatches = VOCAB.filter(
+          (w) =>
+            (w.kr && w.kr.toLowerCase().includes(q)) ||
+            (w.hira && w.hira.includes(q)) ||
+            (w.pron && w.pron.includes(q)) ||
+            (w.kanji && w.kanji !== "-" && w.kanji.includes(q)),
+        ).slice(0, 100);
+
+        if (allMatches.length === 0) {
+          resultsEl.innerHTML =
+            '<div class="search-empty">결과가 없습니다.</div>';
+          return;
+        }
+
+        const items = allMatches
+          .map((w) => {
+            const jpDisplay =
+              w.kanji && w.kanji !== "-"
+                ? buildInvertedRuby(w.kanji, w.hira)
+                : w.hira;
+            const radicalsHtml = buildRadicals(w.kanji);
+
+            return `
+            <div class="saved-item">
+              <div class="info" style="cursor: default;">
+                <span class="search-level-badge">챕터 ${w.ch}</span>
+                <span class="main">${w.kr}</span>
+                <div class="back-info" style="margin-top: 8px;">
+                  <span class="sub-line"><span class="lbl-mini">발음</span><span class="sub-val" style="font-size: 20px;">${w.pron}</span></span>
+                  <span class="sub-line"><span class="lbl-mini">${kanaLabel(w.hira)}/한자</span><span class="sub-val" style="line-height: 1.6;">${jpDisplay}</span></span>
+                  ${radicalsHtml}
+                </div>
+              </div>
+            </div>`;
+          })
+          .join("");
+
+        resultsEl.innerHTML = `<div class="saved-list">${items}</div>`;
       }
 
       function go(delta) {
@@ -1120,10 +1666,73 @@
         render();
       }
 
+      function buildInvertedRuby(kanji, hira) {
+        if (!kanji || kanji === "-" || kanji === hira) return hira || kanji;
+        let start = 0;
+        while (
+          start < kanji.length &&
+          start < hira.length &&
+          kanji[start] === hira[start]
+        )
+          start++;
+        let endK = kanji.length - 1;
+        let endH = hira.length - 1;
+        while (endK >= start && endH >= start && kanji[endK] === hira[endH]) {
+          endK--;
+          endH--;
+        }
+        if (start > endK) return hira;
+
+        const prefix = hira.substring(0, start);
+        const reading = hira.substring(start, endH + 1);
+        const kanjiBase = kanji.substring(start, endK + 1);
+        const suffix = hira.substring(endH + 1);
+
+        if (FURIGANA[kanjiBase] && kanjiBase.length > 1) {
+          let html = prefix;
+          const splits = FURIGANA[kanjiBase];
+          for (let i = 0; i < kanjiBase.length; i++) {
+            const r = splits[i] !== undefined ? splits[i] : kanjiBase[i];
+            if (r !== "") {
+              html += `<ruby style="ruby-position: under;"><span style="border-bottom: 2px solid var(--hanko); padding-bottom: 2px; margin-right: 2px;">${r}</span><rt style="font-size: 0.75em; font-weight: 700; color: var(--text-main); padding-top: 2px;">${kanjiBase[i]}</rt></ruby>`;
+            } else {
+              html += `<ruby style="ruby-position: under;"><span style="border-bottom: 2px solid var(--hanko); padding-bottom: 2px; margin-right: 2px; padding-left: 0.5em;">&nbsp;</span><rt style="font-size: 0.75em; font-weight: 700; color: var(--text-main); padding-top: 2px;">${kanjiBase[i]}</rt></ruby>`;
+            }
+          }
+          html += suffix;
+          return html;
+        }
+
+        return `${prefix}<ruby style="ruby-position: under;"><span style="border-bottom: 2px solid var(--hanko); padding-bottom: 2px;">${reading}</span><rt style="font-size: 0.75em; font-weight: 700; color: var(--text-main); padding-top: 2px;">${kanjiBase}</rt></ruby>${suffix}`;
+      }
+
+      function buildRadicals(kanjiStr) {
+        if (!kanjiStr || kanjiStr === "-" || Object.keys(RADICALS).length === 0)
+          return "";
+        const chars = kanjiStr.match(/[一-龯]/g);
+        if (!chars) return "";
+        let found = [];
+        let seen = new Set();
+        for (let char of chars) {
+          if (RADICALS[char] && !seen.has(char)) {
+            seen.add(char);
+            found.push(
+              `<div class="radical-chip"><span class="radical-target">${char}</span><span class="radical-kanji">${RADICALS[char].radical}</span><span class="radical-meaning">${RADICALS[char].meaning}</span></div>`,
+            );
+          }
+        }
+        if (found.length === 0) return "";
+        return `<div class="radicals">${found.join("")}</div>`;
+      }
+
       function render() {
         updateSavedCount();
         if (state.view === "saved") {
           renderSavedView();
+          return;
+        }
+        if (state.view === "search") {
+          renderSearchView();
           return;
         }
         const area = document.getElementById("deckArea");
@@ -1134,67 +1743,70 @@
         }
         const w = state.deck[state.index];
         const pct = ((state.index + 1) / state.deck.length) * 100;
-
         const frontIsKr = state.dir === "kr-jp";
-        const kanjiLine =
+        const jpMain =
           w.kanji && w.kanji !== "-"
-            ? `<div class="word-kanji">${w.kanji}</div>`
-            : "";
+            ? buildInvertedRuby(w.kanji, w.hira)
+            : w.hira;
+
         const frontContent = frontIsKr
           ? `<span class="tag">챕터 ${w.ch} · 한글</span><div class="word-main">${w.kr}</div><span class="hint">눌러서 뒤집기</span>`
-          : `<span class="tag">챕터 ${w.ch} · 일본어</span><div class="word-main">${w.hira}</div>${kanjiLine}<span class="hint">눌러서 뒤집기</span>`;
+          : `<span class="tag">챕터 ${w.ch} · 일본어</span><div class="word-main" style="line-height: 1.6;">${jpMain}</div><span class="hint">눌러서 뒤집기</span>`;
+
+        const radicalsHtml = buildRadicals(w.kanji);
+        const radicalsBackLine = radicalsHtml
+          ? `<div class="back-line" style="margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--paper-line); width: 100%;"><span class="lbl">부수</span>${radicalsHtml}</div>`
+          : "";
 
         const backContent = frontIsKr
           ? `<span class="tag">챕터 ${w.ch} · 일본어</span>
-       <div class="back-line"><span class="lbl">발음</span><span class="val">${w.pron}</span></div>
-       <div class="back-line"><span class="lbl">${kanaLabel(w.hira)}</span><span class="val">${w.hira}</span></div>
-       <div class="back-line"><span class="lbl">한자</span><span class="val kanji">${w.kanji}</span></div>`
+             <div class="back-line"><span class="lbl">발음</span><span class="val" style="font-size: 24px;">${w.pron}</span></div>
+             <div class="back-line"><span class="lbl">${kanaLabel(w.hira)}/한자</span><span class="val" style="line-height: 1.6;">${jpMain}</span></div>
+             ${radicalsBackLine}`
           : `<span class="tag">챕터 ${w.ch} · 한글</span>
-       <div class="back-line"><span class="lbl">뜻</span><span class="val">${w.kr}</span></div>
-       <div class="back-line"><span class="lbl">발음</span><span class="val">${w.pron}</span></div>
-       <div class="back-line"><span class="lbl">한자</span><span class="val kanji">${w.kanji}</span></div>`;
+             <div class="back-line"><span class="lbl">뜻</span><span class="val">${w.kr}</span></div>
+             <div class="back-line"><span class="lbl">발음</span><span class="val" style="font-size: 24px;">${w.pron}</span></div>
+             <div class="back-line"><span class="lbl">${kanaLabel(w.hira)}/한자</span><span class="val" style="line-height: 1.6;">${jpMain}</span></div>
+             ${radicalsBackLine}`;
 
         const krJpOn = isSaved(w, "kr-jp");
         const jpKrOn = isSaved(w, "jp-kr");
 
         area.innerHTML = `
-    <div class="progress-row">
-      <span>${state.index + 1} / ${state.deck.length}</span>
-      <span>${state.mode === "random" ? "랜덤" : "순서대로"}</span>
-    </div>
-    <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+          <div class="progress-row"><span>${state.index + 1} / ${state.deck.length}</span><span>${state.mode === "random" ? "랜덤" : "순서대로"}</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+          
+          <div class="deck-layout">
+            <button class="nav-btn" id="prevBtn" aria-label="이전 단어">←</button>
+            <div class="stage">
+              <div class="card ${state.flipped ? "flipped" : ""}" id="cardEl">
+                <div class="face front">${frontContent}</div>
+                <div class="face back">${backContent}</div>
+              </div>
+            </div>
+            <button class="nav-btn" id="nextBtn" aria-label="다음 단어">→</button>
+          </div>
+          
+          <div class="footer-actions">
+            <button class="text-btn" id="shuffleBtn">다시 섞기</button>
+          </div>
+        `;
 
-    <div class="stage">
-      <div class="card ${state.flipped ? "flipped" : ""}" id="cardEl">
-        <div class="face front">${frontContent}</div>
-        <div class="face back">${backContent}</div>
-      </div>
-    </div>
-
-    <div class="controls">
-      <button class="nav-btn" id="prevBtn" aria-label="이전 단어">←</button>
-      <button class="flip-btn" id="flipBtn">카드 뒤집기</button>
-      <button class="nav-btn" id="nextBtn" aria-label="다음 단어">→</button>
-    </div>
-
-    <div class="save-row">
-      <button class="save-btn ${krJpOn ? "on" : ""}" id="saveKrJp">${krJpOn ? "★" : "☆"} 한글 → 일본어로 저장</button>
-      <button class="save-btn ${jpKrOn ? "on" : ""}" id="saveJpKr">${jpKrOn ? "★" : "☆"} 일본어 → 한글로 저장</button>
-    </div>
-
-    <div class="footer-actions">
-      <button class="text-btn" id="shuffleBtn">다시 섞기</button>
-    </div>
-  `;
+        const panelSaveRow = document.getElementById("panelSaveRow");
+        if (panelSaveRow) {
+          panelSaveRow.innerHTML = `
+            <button class="chip ${krJpOn ? "active" : ""}" id="saveKrJp">${krJpOn ? "✓ 한글 → 일어" : "+ 한글 → 일어"}</button>
+            <button class="chip ${jpKrOn ? "active" : ""}" id="saveJpKr">${jpKrOn ? "✓ 일어 → 한글" : "+ 일어 → 한글"}</button>
+          `;
+          document.getElementById("saveKrJp").onclick = () =>
+            toggleSave(w, "kr-jp");
+          document.getElementById("saveJpKr").onclick = () =>
+            toggleSave(w, "jp-kr");
+        }
 
         document.getElementById("cardEl").onclick = flip;
-        document.getElementById("flipBtn").onclick = flip;
         document.getElementById("prevBtn").onclick = () => go(-1);
         document.getElementById("nextBtn").onclick = () => go(1);
-        document.getElementById("saveKrJp").onclick = () =>
-          toggleSave(w, "kr-jp");
-        document.getElementById("saveJpKr").onclick = () =>
-          toggleSave(w, "jp-kr");
         document.getElementById("shuffleBtn").onclick = () => {
           state.deck = shuffle(state.deck);
           state.index = 0;
@@ -1204,10 +1816,46 @@
       }
 
       async function init() {
+        try {
+          const radRes = await fetch("data/radicals.json");
+          if (radRes.ok) RADICALS = await radRes.json();
+          const furRes = await fetch("data/furigana.json");
+          if (furRes.ok) FURIGANA = await furRes.json();
+        } catch (e) {
+          console.error("Global data loading failed", e);
+        }
+
         await loadSaved();
         renderPanel();
         buildDeck();
       }
+
+      document.getElementById("helpBtn").addEventListener("click", (e) => {
+        e.stopPropagation();
+        document.getElementById("helpTooltip").classList.toggle("show");
+      });
+      document.addEventListener("click", () => {
+        const tooltip = document.getElementById("helpTooltip");
+        if (tooltip && tooltip.classList.contains("show"))
+          tooltip.classList.remove("show");
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")
+          return;
+        if (state.view !== "study" || state.deck.length === 0) return;
+
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          flip();
+        } else if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          go(-1);
+        } else if (e.key === "ArrowRight") {
+          e.preventDefault();
+          go(1);
+        }
+      });
+
       init();
     </script>
   </body>
