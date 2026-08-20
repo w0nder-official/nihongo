@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日本語 学習 — 5과</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+JP:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{
+  --paper:#F6F3EC; --paper-deep:#EFEAE0;
+  --ink:#24262B; --ink-soft:#6B6E76;
+  --indigo:#31517A; --indigo-deep:#243D5C;
+  --shu:#CE3A2E; --batsu:#3E4757;
+  --line:#D9D2C4; --card:#FFFFFF;
+  --ok-bg:#FBF1EF; --ng-bg:#EEF1F5;
+  --radius:16px;
+  --font-kr:"Noto Sans KR",-apple-system,"Apple SD Gothic Neo",sans-serif;
+  --font-jp:"Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif;
+  --font-jp-serif:"Noto Serif JP","Hiragino Mincho ProN",serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--font-kr);
+  font-size:18px; /* 초보용 큰 폰트 기준 */
+  background:var(--paper);
+  background-image:radial-gradient(rgba(49,81,122,.045) 1px, transparent 1px);
+  background-size:22px 22px;
+  color:var(--ink); min-height:100vh; line-height:1.65;
+}
+.jp{font-family:var(--font-jp)}
+.wrap{max-width:720px;margin:0 auto;padding:26px 18px 70px}
+.screen{display:none}
+.screen.active{display:block;animation:fadeUp .3s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+.btn{
+  font-family:var(--font-kr);border:none;border-radius:var(--radius);
+  padding:15px 30px;font-size:1.08rem;font-weight:700;cursor:pointer;
+  transition:transform .12s,box-shadow .12s,background .15s;
+}
+.btn-primary{background:var(--shu);color:#fff;box-shadow:0 3px 0 #A32B21}
+.btn-primary:hover{transform:translateY(-1px)}
+.btn-primary:active{transform:translateY(1px);box-shadow:0 1px 0 #A32B21}
+.btn-primary:disabled{opacity:.5;cursor:default;transform:none}
+.btn-ghost{background:transparent;color:var(--indigo);border:1.5px solid var(--indigo)}
+.btn-ghost:hover{background:rgba(49,81,122,.07)}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible,.opt-btn:focus-visible{
+  outline:3px solid rgba(206,58,46,.45);outline-offset:2px;
+}
+.tts-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--indigo);color:#fff;border:none;border-radius:999px;
+  padding:9px 20px;font-size:1rem;font-weight:700;font-family:var(--font-kr);
+  cursor:pointer;transition:background .15s,transform .12s;
+}
+.tts-btn:hover{background:var(--indigo-deep)}
+.tts-btn:active{transform:scale(.97)}
+.tts-btn:disabled{opacity:.45;cursor:default}
+.tts-btn.small{padding:6px 14px;font-size:.9rem}
+
+/* ---------- 메인 ---------- */
+.home-hero{display:flex;gap:26px;align-items:stretch;padding:30px 0 14px}
+.tategaki{
+  writing-mode:vertical-rl;font-family:var(--font-jp-serif);
+  font-weight:700;font-size:2.4rem;letter-spacing:.26em;
+  color:var(--indigo-deep);border-right:3px solid var(--shu);
+  padding-right:16px;line-height:1.15;user-select:none;
+}
+.hero-copy{align-self:center}
+.hero-copy .eyebrow{font-size:.82rem;letter-spacing:.14em;color:var(--shu);font-weight:700;margin-bottom:8px}
+.hero-copy h1{font-size:1.65rem;font-weight:700;line-height:1.35;margin-bottom:8px}
+.hero-copy p{color:var(--ink-soft);font-size:1rem}
+.step-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
+.step-card{
+  background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);
+  padding:18px 20px;cursor:pointer;text-align:left;font-family:var(--font-kr);
+  transition:border-color .15s,transform .12s,box-shadow .15s;position:relative;
+}
+.step-card:hover{border-color:var(--indigo);transform:translateY(-2px);box-shadow:0 4px 12px rgba(36,38,43,.07)}
+.step-card .sc-no{font-size:.78rem;font-weight:700;letter-spacing:.12em;color:var(--shu)}
+.step-card .sc-name{font-size:1.25rem;font-weight:700;margin:2px 0}
+.step-card .sc-desc{font-size:.9rem;color:var(--ink-soft)}
+.step-card .sc-done{
+  position:absolute;top:14px;right:14px;
+  font-size:.75rem;font-weight:700;color:#fff;background:var(--indigo);
+  border-radius:6px;padding:3px 9px;
+}
+.result-entry{margin-top:16px;display:flex;justify-content:center}
+.tts-note{margin-top:18px;font-size:.88rem;color:var(--ink-soft);text-align:center}
+
+/* ---------- 공통 퀴즈 ---------- */
+.quiz-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:10px}
+.quiz-meta{font-size:.95rem;color:var(--ink-soft);font-weight:500}
+.quiz-meta b{color:var(--indigo-deep)}
+.stage-chip{
+  display:inline-block;background:var(--indigo);color:#fff;
+  font-size:.8rem;font-weight:700;border-radius:6px;
+  padding:3px 11px;margin-right:8px;vertical-align:1px;
+}
+.quit-link{
+  background:none;border:none;font-family:var(--font-kr);font-size:.9rem;
+  color:var(--ink-soft);cursor:pointer;text-decoration:underline;text-underline-offset:3px;
+}
+.quit-link:hover{color:var(--shu)}
+.history-strip{
+  display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;min-height:26px;
+}
+.hist-chip{
+  width:26px;height:26px;border-radius:8px;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:.85rem;font-weight:700;
+}
+.hist-chip.o{background:var(--ok-bg);color:var(--shu);border:1.5px solid rgba(206,58,46,.4)}
+.hist-chip.x{background:var(--ng-bg);color:var(--batsu);border:1.5px solid rgba(62,71,87,.35)}
+.hist-chip.s{background:var(--paper-deep);color:var(--ink-soft);border:1.5px solid var(--line)}
+.progress-track{height:7px;background:var(--paper-deep);border-radius:99px;overflow:hidden;margin-bottom:22px}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--indigo),var(--shu));border-radius:99px;transition:width .3s ease}
+
+.q-card{
+  position:relative;background:var(--card);
+  border:1.5px solid var(--line);border-radius:var(--radius);
+  padding:34px 28px 30px;box-shadow:0 2px 10px rgba(36,38,43,.05);
+}
+.q-tag{
+  display:inline-block;font-size:.78rem;font-weight:700;letter-spacing:.08em;
+  color:var(--indigo);border:1px solid var(--indigo);
+  border-radius:6px;padding:2px 10px;margin-bottom:14px;
+}
+.q-direction{font-size:1rem;color:var(--ink-soft);margin-bottom:12px}
+.q-visual{margin:6px 0 12px;text-align:center}
+.q-visual .emoji{font-size:5.2rem;line-height:1.2}
+.q-prompt{font-size:2.2rem;font-weight:700;line-height:1.5;margin-bottom:8px;word-break:keep-all}
+.q-prompt.jp{font-family:var(--font-jp)}
+.q-prompt.mid{font-size:1.6rem;font-weight:500}
+.q-prompt .blank{
+  display:inline-block;min-width:3em;border-bottom:3px solid var(--shu);
+  text-align:center;color:var(--shu);
+}
+.q-sub{font-size:1rem;color:var(--ink-soft);margin-bottom:6px}
+.q-audio-row{margin:8px 0 4px}
+.answer-row{display:flex;gap:10px;margin-top:22px}
+.answer-input{
+  flex:1;font-family:var(--font-jp);font-size:1.35rem;
+  padding:15px 18px;border:1.5px solid var(--line);border-radius:12px;
+  background:var(--paper);color:var(--ink);transition:border-color .15s,background .15s;
+}
+.answer-input::placeholder{color:#B4AFA3;font-size:1.05rem}
+.answer-input:focus{border-color:var(--indigo);background:#fff}
+.answer-input:disabled{opacity:.6}
+.submit-btn{white-space:nowrap}
+
+.judge-layer{position:absolute;top:14px;right:16px;width:92px;height:92px;pointer-events:none}
+.judge-layer svg{width:100%;height:100%}
+.judge-layer .stroke{fill:none;stroke-linecap:round;stroke-dasharray:300;stroke-dashoffset:300}
+.judge-layer.show-maru .stroke{stroke:var(--shu);stroke-width:9;animation:draw .45s ease-out forwards}
+.judge-layer.show-batsu .stroke{stroke:var(--batsu);stroke-width:9;animation:draw .35s ease-out forwards}
+.judge-layer.show-batsu .stroke.s2{animation-delay:.18s}
+@keyframes draw{to{stroke-dashoffset:0}}
+
+.feedback{margin-top:20px;border-radius:12px;padding:18px 20px;display:none;animation:fadeUp .25s ease both}
+.feedback.on{display:block}
+.feedback.ok{background:var(--ok-bg);border:1.5px solid rgba(206,58,46,.35)}
+.feedback.ng{background:var(--ng-bg);border:1.5px solid rgba(62,71,87,.3)}
+.feedback.neutral{background:var(--paper-deep);border:1.5px solid var(--line)}
+.feedback .fb-title{font-weight:700;font-size:1.1rem;margin-bottom:4px}
+.feedback.ok .fb-title{color:var(--shu)}
+.feedback.ng .fb-title{color:var(--batsu)}
+.feedback .fb-answer{font-size:1.2rem}
+.feedback .fb-answer .jp{font-weight:700}
+.feedback .fb-note{font-size:.95rem;color:var(--ink-soft);margin-top:8px}
+.next-row{margin-top:18px;display:none}
+.next-row.on{display:flex;justify-content:flex-end}
+
+/* 4지선다 */
+.opt-list{display:flex;flex-direction:column;gap:10px;margin-top:20px}
+.opt-btn{
+  display:flex;align-items:center;gap:14px;text-align:left;
+  background:var(--paper);border:1.5px solid var(--line);border-radius:12px;
+  padding:15px 18px;font-size:1.3rem;font-family:var(--font-jp);
+  cursor:pointer;color:var(--ink);transition:border-color .15s,background .15s;
+}
+.opt-btn:hover:not(:disabled){border-color:var(--indigo);background:#fff}
+.opt-btn:disabled{cursor:default}
+.opt-btn .opt-no{
+  flex-shrink:0;width:34px;height:34px;border-radius:50%;
+  background:var(--indigo);color:#fff;font-size:1rem;font-weight:700;
+  display:inline-flex;align-items:center;justify-content:center;font-family:var(--font-kr);
+}
+.opt-btn.correct{border-color:var(--shu);background:var(--ok-bg)}
+.opt-btn.correct .opt-no{background:var(--shu)}
+.opt-btn.wrong-pick{border-color:var(--batsu);background:var(--ng-bg)}
+.opt-btn.wrong-pick .opt-no{background:var(--batsu)}
+.opt-btn .opt-kr{font-family:var(--font-kr);font-size:.85rem;color:var(--ink-soft);display:block}
+
+/* 시계 SVG */
+.clock-wrap{display:flex;justify-content:center;margin:6px 0 10px}
+
+/* 일문작 */
+.compose-item{
+  background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);
+  padding:26px 24px;margin-bottom:16px;
+}
+.compose-item .ci-no{font-size:.8rem;font-weight:700;letter-spacing:.1em;color:var(--shu);margin-bottom:6px}
+.compose-item .ci-prompt{font-size:1.5rem;font-weight:700;line-height:1.5;margin-bottom:14px;word-break:keep-all}
+.compose-item textarea{
+  width:100%;min-height:110px;font-family:var(--font-jp);font-size:1.3rem;
+  padding:14px 16px;border:1.5px solid var(--line);border-radius:12px;
+  background:var(--paper);color:var(--ink);resize:vertical;line-height:1.7;
+}
+.compose-item textarea:focus{border-color:var(--indigo);background:#fff}
+.compose-item textarea[readonly]{opacity:.75;background:var(--paper-deep)}
+.ref-box{
+  background:var(--paper-deep);border:1.5px dashed var(--line);border-radius:12px;
+  padding:18px 20px;margin-bottom:18px;
+}
+.ref-box .rb-title{font-size:.85rem;font-weight:700;color:var(--indigo);letter-spacing:.08em;margin-bottom:8px}
+.ref-box .rb-body{font-family:var(--font-jp);font-size:1.15rem;line-height:1.9}
+.compose-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:8px}
+.locked-note{font-size:.95rem;color:var(--ink-soft);text-align:center;margin-top:14px}
+
+/* ---------- 결과(단계별) ---------- */
+.result-head{text-align:center;padding:26px 0 6px}
+.result-kicker{font-size:.85rem;font-weight:700;letter-spacing:.14em;color:var(--indigo);margin-bottom:14px}
+.result-stamp{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:136px;height:136px;border-radius:50%;
+  border:4px solid var(--shu);color:var(--shu);
+  font-family:var(--font-jp-serif);font-size:1.65rem;font-weight:700;
+  transform:rotate(-8deg);margin-bottom:16px;background:rgba(206,58,46,.04);
+}
+.result-score{font-size:2.3rem;font-weight:700}
+.result-score small{font-size:1.15rem;color:var(--ink-soft);font-weight:500}
+.result-sub{color:var(--ink-soft);margin-top:4px;font-size:1rem}
+.wrong-title{font-size:1.1rem;font-weight:700;margin:26px 0 12px;display:flex;align-items:center;gap:8px}
+.wrong-title::before{content:"";width:14px;height:3px;background:var(--shu);border-radius:2px}
+.wrong-item{background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:10px}
+.wrong-item .w-q{font-weight:700;font-size:1.15rem;margin-bottom:4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.wrong-item .w-mean{font-size:.95rem;color:var(--ink-soft);margin-bottom:8px}
+.wrong-item .w-row{font-size:1rem;display:flex;gap:8px;margin-top:4px;flex-wrap:wrap}
+.w-label{flex-shrink:0;font-size:.78rem;font-weight:700;padding:3px 9px;border-radius:6px;align-self:center}
+.w-label.mine{background:var(--ng-bg);color:var(--batsu)}
+.w-label.ans{background:var(--ok-bg);color:var(--shu)}
+.w-label.model{background:var(--paper-deep);color:var(--indigo)}
+.w-val{align-self:center}
+.w-val.jp{font-family:var(--font-jp)}
+.perfect-note{text-align:center;color:var(--ink-soft);margin-top:24px;font-size:1rem}
+.result-actions{margin-top:32px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+/* ---------- 학습 결과(종합) ---------- */
+.final-section{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:16px}
+.final-section h3{font-size:1.2rem;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.final-section h3 .fs-score{font-size:1rem;color:var(--shu);font-weight:700}
+.final-section .fs-empty{color:var(--ink-soft);font-size:.95rem}
+.final-section .fs-detail{margin-top:10px}
+.compose-view{background:var(--paper);border-radius:10px;padding:14px 16px;margin-top:8px}
+.compose-view .cv-q{font-size:.92rem;color:var(--ink-soft);margin-bottom:4px}
+.compose-view .cv-a{font-family:var(--font-jp);font-size:1.15rem;white-space:pre-wrap}
+#share-area{background:var(--paper);padding:10px;border-radius:var(--radius)}
+.share-note{font-size:.9rem;color:var(--ink-soft);text-align:center;margin-top:10px}
+
+@media (max-width:560px){
+  body{font-size:17px}
+  .home-hero{gap:18px;padding-top:20px}
+  .tategaki{font-size:1.85rem}
+  .step-cards{grid-template-columns:1fr}
+  .q-prompt{font-size:1.7rem}
+  .q-prompt.mid{font-size:1.3rem}
+  .answer-row{flex-direction:column}
+  .judge-layer{width:68px;height:68px;top:10px;right:12px}
+  .opt-btn{font-size:1.15rem}
+  .q-visual .emoji{font-size:4.2rem}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===== 메인 ===== -->
+  <section id="screen-home" class="screen active">
+    <div class="home-hero">
+      <div class="tategaki jp" aria-hidden="true">第五課<br>学習</div>
+      <div class="hero-copy">
+        <div class="eyebrow">STUDY QUIZ · 第5課 · LESSON 5</div>
+        <h1>5과 학습지 — 형용사 연결·명사 수식</h1>
+        <p>순서대로 진행해도 되고, 원하는 학습을 골라서 시작해도 돼요.</p>
+      </div>
+    </div>
+    <div class="step-cards">
+      <button class="step-card" data-go="vocab">
+        <div class="sc-no">STEP 1</div>
+        <div class="sc-name">단어 시험</div>
+        <div class="sc-desc">47문제 · 기본 + 그림 + 듣기</div>
+        <span class="sc-done" id="done-vocab" style="display:none">완료</span>
+      </button>
+      <button class="step-card" data-go="sentence">
+        <div class="sc-no">STEP 2</div>
+        <div class="sc-name">문장 시험</div>
+        <div class="sc-desc">8문제 · 문법 + 해석 + 일작</div>
+        <span class="sc-done" id="done-sentence" style="display:none">완료</span>
+      </button>
+      <button class="step-card" data-go="reinforce">
+        <div class="sc-no">STEP 3</div>
+        <div class="sc-name">강화 학습</div>
+        <div class="sc-desc">6문제 · 그림 + 4지선다 + 받아쓰기</div>
+        <span class="sc-done" id="done-reinforce" style="display:none">완료</span>
+      </button>
+      <button class="step-card" data-go="compose">
+        <div class="sc-no">STEP 4</div>
+        <div class="sc-name">일문작</div>
+        <div class="sc-desc">이어지는 이야기 4문장을 일본어로</div>
+        <span class="sc-done" id="done-compose" style="display:none">완료</span>
+      </button>
+    </div>
+    <div class="result-entry">
+      <button class="btn btn-ghost" data-go="final">오늘의 학습 결과 보기</button>
+    </div>
+    <div class="tts-note" id="tts-note"></div>
+  </section>
+
+  <!-- ===== 퀴즈 (단어/문장 공용) ===== -->
+  <section id="screen-quiz" class="screen">
+    <div class="quiz-top">
+      <div class="quiz-meta">
+        <span class="stage-chip" id="stage-chip">단어</span>
+        <b id="q-current">1</b> / <span id="q-total">0</span> · 맞은 개수 <b id="q-score">0</b>
+      </div>
+      <button class="quit-link" id="btn-quit" title="진행 중이던 문제는 저장되지 않아요">그만두기</button>
+    </div>
+    <div class="history-strip" id="history-strip"></div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+
+    <div class="q-card">
+      <div class="judge-layer" id="judge" aria-hidden="true">
+        <svg viewBox="0 0 100 100">
+          <circle class="stroke s1 maru-only" cx="50" cy="50" r="36"/>
+          <line class="stroke s1 batsu-only" x1="22" y1="22" x2="78" y2="78"/>
+          <line class="stroke s2 batsu-only" x1="78" y1="22" x2="22" y2="78"/>
+        </svg>
+      </div>
+      <span class="q-tag" id="q-tag">단어</span>
+      <div class="q-direction" id="q-direction"></div>
+      <div class="q-visual" id="q-visual"></div>
+      <div class="q-prompt" id="q-prompt"></div>
+      <div class="q-sub" id="q-sub"></div>
+      <div class="q-audio-row" id="q-audio-row"></div>
+      <div class="answer-row">
+        <input type="text" class="answer-input" id="answer-input"
+               autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
+               placeholder="답을 입력하세요" aria-label="답 입력">
+        <button class="btn btn-primary submit-btn" id="btn-submit">확인</button>
+      </div>
+      <div class="feedback" id="feedback" role="status">
+        <div class="fb-title" id="fb-title"></div>
+        <div class="fb-answer" id="fb-answer"></div>
+        <div class="fb-note" id="fb-note"></div>
+      </div>
+      <div class="next-row" id="next-row">
+        <button class="btn btn-ghost" id="btn-next">다음 문제 →&nbsp; <small>(Enter)</small></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 강화 학습 ===== -->
+  <section id="screen-reinforce" class="screen">
+    <div class="quiz-top">
+      <div class="quiz-meta">
+        <span class="stage-chip">STEP 3 · 강화</span>
+        <b id="r-current">1</b> / <span id="r-total">5</span>
+      </div>
+      <button class="quit-link" id="btn-quit-r" title="진행 중이던 문제는 저장되지 않아요">그만두기</button>
+    </div>
+    <div class="history-strip" id="r-history"></div>
+    <div class="progress-track"><div class="progress-fill" id="r-progress"></div></div>
+
+    <div class="q-card">
+      <div class="judge-layer" id="r-judge" aria-hidden="true">
+        <svg viewBox="0 0 100 100">
+          <circle class="stroke s1 maru-only" cx="50" cy="50" r="36"/>
+          <line class="stroke s1 batsu-only" x1="22" y1="22" x2="78" y2="78"/>
+          <line class="stroke s2 batsu-only" x1="78" y1="22" x2="22" y2="78"/>
+        </svg>
+      </div>
+      <span class="q-tag" id="r-tag"></span>
+      <div class="q-direction" id="r-direction"></div>
+      <div class="q-visual" id="r-visual"></div>
+      <div class="q-prompt mid" id="r-prompt"></div>
+      <div class="q-sub" id="r-sub"></div>
+      <div class="q-audio-row" id="r-audio-row"></div>
+      <div class="opt-list" id="r-options" style="display:none"></div>
+      <div class="answer-row" id="r-answer-row" style="display:none">
+        <input type="text" class="answer-input" id="r-input"
+               autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
+               placeholder="답을 입력하세요" aria-label="답 입력">
+        <button class="btn btn-primary submit-btn" id="r-submit">제출</button>
+      </div>
+      <div class="feedback" id="r-feedback" role="status">
+        <div class="fb-title" id="r-fb-title"></div>
+        <div class="fb-answer" id="r-fb-answer"></div>
+        <div class="fb-note" id="r-fb-note"></div>
+      </div>
+      <div class="next-row" id="r-next-row">
+        <button class="btn btn-ghost" id="r-next">다음 문제 →&nbsp; <small>(Enter)</small></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 일문작 ===== -->
+  <section id="screen-compose" class="screen">
+    <div class="quiz-top">
+      <div class="quiz-meta"><span class="stage-chip">STEP 4 · 일문작</span> 한국어 문장을 일본어로 써 보세요</div>
+      <button class="quit-link" id="btn-quit-c" title="작성 중이던 내용은 저장되지 않아요">그만두기</button>
+    </div>
+
+    <div class="ref-box">
+      <div class="rb-title">참고 회화문 (5과 본문)</div>
+      <div class="rb-body" id="ref-text"></div>
+      <div style="margin-top:10px"><button class="tts-btn small" id="ref-tts">🔊 예시문 듣기</button></div>
+    </div>
+
+    <div id="compose-list"></div>
+
+    <div class="compose-actions">
+      <button class="btn btn-primary" id="btn-compose-submit">제출하기</button>
+    </div>
+    <div class="locked-note" id="compose-locked" style="display:none">
+      제출 완료! 작성한 내용은 수정할 수 없어요. 스터디에서 함께 이야기해 보세요.
+    </div>
+    <div class="result-actions" id="compose-after" style="display:none">
+      <button class="btn btn-ghost" id="btn-compose-retry">다시 풀기</button>
+      <button class="btn btn-primary" id="btn-compose-final">오늘의 학습 결과 →</button>
+    </div>
+  </section>
+
+  <!-- ===== 단계별 결과 ===== -->
+  <section id="screen-stageresult" class="screen">
+    <div class="result-head">
+      <div class="result-kicker" id="sr-kicker"></div>
+      <div class="result-stamp jp" id="sr-stamp">合格</div>
+      <div class="result-score"><span id="sr-correct">0</span><small> / <span id="sr-total">0</span> 문제 정답</small></div>
+      <div class="result-sub" id="sr-sub"></div>
+    </div>
+    <div id="sr-wrong-area"></div>
+    <div class="perfect-note" id="sr-perfect" style="display:none">전부 정답! 대단해요 🎉</div>
+    <div class="result-actions">
+      <button class="btn btn-ghost" id="sr-retry">다시 풀기</button>
+      <button class="btn btn-primary" id="sr-next">다음 학습 하기 →</button>
+      <button class="btn btn-ghost" id="sr-home">메인으로</button>
+    </div>
+  </section>
+
+  <!-- ===== 학습 결과(종합) ===== -->
+  <section id="screen-final" class="screen">
+    <div id="share-area">
+      <div class="result-head">
+        <div class="result-kicker">오늘의 학습 결과 · 5과</div>
+        <div class="result-stamp jp" id="final-stamp">合格</div>
+        <div class="result-sub" id="final-date"></div>
+      </div>
+      <div id="final-sections"></div>
+    </div>
+    <div class="result-actions">
+      <button class="btn btn-primary" id="btn-share">이미지로 공유하기</button>
+      <button class="btn btn-ghost" id="btn-final-home">메인으로</button>
+    </div>
+    <div class="share-note" id="share-note"></div>
+  </section>
+
+</div>
+<script>
+/* ================= 데이터 ================= */
+/* SVG 일러스트 (직접 제작) */
+const SVG_CAR = `<div class="clock-wrap"><svg viewBox="0 0 260 140" width="255" role="img" aria-label="그림">
+<path d="M28 100 L36 68 Q40 56 54 56 L182 56 Q196 56 204 68 L226 96 L232 100 Z" fill="#CE3A2E" stroke="#24262B" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M60 68 L96 68 L96 92 L52 92 Z" fill="#BFE0E8" stroke="#24262B" stroke-width="2.8"/>
+<path d="M108 68 L172 68 Q182 68 188 76 L200 92 L108 92 Z" fill="#BFE0E8" stroke="#24262B" stroke-width="2.8"/>
+<rect x="24" y="98" width="212" height="14" rx="7" fill="#CE3A2E" stroke="#24262B" stroke-width="3.5"/>
+<circle cx="74" cy="114" r="20" fill="#3E4757" stroke="#24262B" stroke-width="3.5"/>
+<circle cx="74" cy="114" r="8" fill="#F6F3EC" stroke="#24262B" stroke-width="2.5"/>
+<circle cx="188" cy="114" r="20" fill="#3E4757" stroke="#24262B" stroke-width="3.5"/>
+<circle cx="188" cy="114" r="8" fill="#F6F3EC" stroke="#24262B" stroke-width="2.5"/>
+<circle cx="232" cy="86" r="6" fill="#F5C84C" stroke="#24262B" stroke-width="2.5"/>
+</svg></div>`;
+const SVG_UMBRELLA = `<div class="clock-wrap"><svg viewBox="0 0 200 170" width="185" role="img" aria-label="그림">
+<path d="M18 84 Q18 24 100 24 Q182 24 182 84 Z" fill="#3B6FB6" stroke="#24262B" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M18 84 Q34 70 50 84 Q66 70 82 84 Q100 70 118 84 Q134 70 150 84 Q166 70 182 84" fill="#5E93D6" stroke="#24262B" stroke-width="3"/>
+<line x1="100" y1="24" x2="100" y2="12" stroke="#24262B" stroke-width="4" stroke-linecap="round"/>
+<line x1="100" y1="84" x2="100" y2="132" stroke="#24262B" stroke-width="4.5" stroke-linecap="round"/>
+<path d="M100 132 Q100 152 80 152" fill="none" stroke="#24262B" stroke-width="4.5" stroke-linecap="round"/>
+</svg></div>`;
+const SVG_CAKE = `<div class="clock-wrap"><svg viewBox="0 0 220 160" width="215" role="img" aria-label="그림">
+<ellipse cx="110" cy="140" rx="86" ry="12" fill="#FFFFFF" stroke="#24262B" stroke-width="3"/>
+<rect x="38" y="96" width="144" height="40" fill="#F5DEB8" stroke="#24262B" stroke-width="3.2"/>
+<rect x="38" y="82" width="144" height="16" fill="#C9744A" stroke="#24262B" stroke-width="3.2"/>
+<path d="M38 82 Q50 70 62 82 Q74 70 86 82 Q98 70 110 82 Q122 70 134 82 Q146 70 158 82 Q170 70 182 82 L182 90 L38 90 Z" fill="#FBF1EF" stroke="#24262B" stroke-width="3"/>
+<circle cx="72" cy="74" r="8" fill="#CE3A2E" stroke="#24262B" stroke-width="2.6"/>
+<circle cx="110" cy="70" r="8" fill="#CE3A2E" stroke="#24262B" stroke-width="2.6"/>
+<circle cx="148" cy="74" r="8" fill="#CE3A2E" stroke="#24262B" stroke-width="2.6"/>
+<line x1="110" y1="62" x2="110" y2="36" stroke="#F5C84C" stroke-width="6" stroke-linecap="round"/>
+<path d="M110 36 Q104 26 110 20 Q116 26 110 36 Z" fill="#F08A4B" stroke="#24262B" stroke-width="1.8"/>
+</svg></div>`;
+const SVG_ROOM = `<div class="clock-wrap"><svg viewBox="0 0 260 160" width="255" role="img" aria-label="그림">
+<rect x="16" y="14" width="228" height="118" fill="#FFFDF5" stroke="#24262B" stroke-width="3.5"/>
+<line x1="16" y1="132" x2="244" y2="132" stroke="#24262B" stroke-width="3.5"/>
+<rect x="40" y="38" width="72" height="54" fill="#BFE0E8" stroke="#24262B" stroke-width="3"/>
+<line x1="76" y1="38" x2="76" y2="92" stroke="#24262B" stroke-width="2.4"/>
+<line x1="40" y1="65" x2="112" y2="65" stroke="#24262B" stroke-width="2.4"/>
+<circle cx="186" cy="42" r="17" fill="#F5C84C" stroke="#24262B" stroke-width="3"/>
+<line x1="186" y1="14" x2="186" y2="25" stroke="#24262B" stroke-width="3"/>
+<g stroke="#F5C84C" stroke-width="3.4" stroke-linecap="round">
+<line x1="160" y1="66" x2="152" y2="76"/><line x1="186" y1="70" x2="186" y2="82"/><line x1="212" y1="66" x2="220" y2="76"/>
+</g>
+<rect x="150" y="98" width="76" height="10" fill="#C9A574" stroke="#24262B" stroke-width="2.8"/>
+<line x1="158" y1="108" x2="158" y2="132" stroke="#24262B" stroke-width="2.8"/>
+<line x1="218" y1="108" x2="218" y2="132" stroke="#24262B" stroke-width="2.8"/>
+</svg></div>`;
+const SVG_TALL = `<div class="clock-wrap"><svg viewBox="0 0 220 170" width="200" role="img" aria-label="그림">
+<line x1="14" y1="150" x2="206" y2="150" stroke="#24262B" stroke-width="3"/>
+<g stroke="#24262B" stroke-width="3.4" fill="none" stroke-linecap="round">
+<circle cx="72" cy="34" r="18" fill="#FDE8C8"/>
+<path d="M72 52 L72 106"/><path d="M72 62 L48 84"/><path d="M72 62 L96 84"/>
+<path d="M72 106 L56 150"/><path d="M72 106 L88 150"/>
+</g>
+<circle cx="65" cy="32" r="2.4" fill="#24262B"/><circle cx="79" cy="32" r="2.4" fill="#24262B"/>
+<path d="M65 42 Q72 48 79 42" fill="none" stroke="#24262B" stroke-width="2.4"/>
+<g stroke="#24262B" stroke-width="3.4" fill="none" stroke-linecap="round">
+<circle cx="158" cy="80" r="15" fill="#FDE8C8"/>
+<path d="M158 95 L158 126"/><path d="M158 103 L140 118"/><path d="M158 103 L176 118"/>
+<path d="M158 126 L146 150"/><path d="M158 126 L170 150"/>
+</g>
+<circle cx="152" cy="78" r="2.2" fill="#24262B"/><circle cx="164" cy="78" r="2.2" fill="#24262B"/>
+<path d="M152 87 Q158 92 164 87" fill="none" stroke="#24262B" stroke-width="2.2"/>
+<g stroke="#CE3A2E" stroke-width="2.6" stroke-dasharray="5 4">
+<line x1="26" y1="16" x2="26" y2="150"/>
+</g>
+<path d="M20 16 L32 16 M20 150 L32 150" stroke="#CE3A2E" stroke-width="2.6"/>
+</svg></div>`;
+/* 강화학습용 */
+const SVG_CAR_BLACK = `<div class="clock-wrap"><svg viewBox="0 0 260 140" width="250" role="img" aria-label="그림">
+<path d="M28 100 L36 68 Q40 56 54 56 L182 56 Q196 56 204 68 L226 96 L232 100 Z" fill="#2B2E33" stroke="#24262B" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M60 68 L96 68 L96 92 L52 92 Z" fill="#BFE0E8" stroke="#24262B" stroke-width="2.8"/>
+<path d="M108 68 L172 68 Q182 68 188 76 L200 92 L108 92 Z" fill="#BFE0E8" stroke="#24262B" stroke-width="2.8"/>
+<rect x="24" y="98" width="212" height="14" rx="7" fill="#2B2E33" stroke="#24262B" stroke-width="3.5"/>
+<circle cx="74" cy="114" r="20" fill="#3E4757" stroke="#24262B" stroke-width="3.5"/>
+<circle cx="74" cy="114" r="8" fill="#F6F3EC" stroke="#24262B" stroke-width="2.5"/>
+<circle cx="188" cy="114" r="20" fill="#3E4757" stroke="#24262B" stroke-width="3.5"/>
+<circle cx="188" cy="114" r="8" fill="#F6F3EC" stroke="#24262B" stroke-width="2.5"/>
+</svg></div>`;
+const SVG_ROOM_DARK = `<div class="clock-wrap"><svg viewBox="0 0 200 160" width="200" role="img" aria-label="그림">
+<rect x="52" y="20" width="96" height="112" fill="#5A5F६6" stroke="#24262B" stroke-width="3.5"/>
+<rect x="52" y="20" width="96" height="112" fill="#565B63" stroke="#24262B" stroke-width="3.5"/>
+<line x1="52" y1="132" x2="148" y2="132" stroke="#24262B" stroke-width="3.5"/>
+<rect x="76" y="46" width="40" height="34" fill="#3A4048" stroke="#24262B" stroke-width="2.8"/>
+<line x1="96" y1="46" x2="96" y2="80" stroke="#24262B" stroke-width="2.2"/>
+<circle cx="100" cy="30" r="9" fill="#4A5058" stroke="#24262B" stroke-width="2.6"/>
+<line x1="100" y1="20" x2="100" y2="21" stroke="#24262B" stroke-width="3"/>
+<g stroke="#CE3A2E" stroke-width="2.6"><line x1="30" y1="140" x2="170" y2="140"/>
+<path d="M30 134 L30 146 M170 134 L170 146"/></g>
+<text x="100" y="156" font-size="13" font-weight="700" fill="#CE3A2E" text-anchor="middle" font-family="sans-serif">せまい</text>
+</svg></div>`;
+const SVG_UMBRELLA_SHORT = `<div class="clock-wrap"><svg viewBox="0 0 200 150" width="180" role="img" aria-label="그림">
+<path d="M28 80 Q28 30 100 30 Q172 30 172 80 Z" fill="#3B6FB6" stroke="#24262B" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M28 80 Q46 66 64 80 Q82 66 100 80 Q118 66 136 80 Q154 66 172 80" fill="#5E93D6" stroke="#24262B" stroke-width="3"/>
+<line x1="100" y1="30" x2="100" y2="20" stroke="#24262B" stroke-width="4" stroke-linecap="round"/>
+<line x1="100" y1="80" x2="100" y2="104" stroke="#24262B" stroke-width="4.5" stroke-linecap="round"/>
+<path d="M100 104 Q100 118 86 118" fill="none" stroke="#24262B" stroke-width="4.5" stroke-linecap="round"/>
+<g stroke="#CE3A2E" stroke-width="2.4" stroke-dasharray="5 4"><line x1="178" y1="30" x2="178" y2="118"/></g>
+<path d="M172 30 L184 30 M172 118 L184 118" stroke="#CE3A2E" stroke-width="2.4"/>
+<text x="150" y="142" font-size="13" font-weight="700" fill="#CE3A2E" font-family="sans-serif">みじかい</text>
+</svg></div>`;
+
+/* mode: "basic" | "pic" | "listen" */
+const VOCAB = [
+  {kana:"この", kr:"이", krAlt:["이~"], jpAlt:[], display:"この", mode:"basic"},
+  {kana:"しろい", kr:"하얗다", krAlt:["하얀","희다"], jpAlt:["白い"], display:"白い（しろい）", mode:"basic"},
+  {kana:"かるい", kr:"가볍다", krAlt:["가벼운"], jpAlt:["軽い"], display:"軽い（かるい）", mode:"basic"},
+  {kana:"いい", kr:"좋다", krAlt:["좋은"], jpAlt:["よい","良い"], display:"いい", mode:"basic"},
+  {kana:"そうですか", kr:"그렇습니까?", krAlt:["그렇습니까","그래요?","그래요"], jpAlt:[], display:"そうですか", mode:"basic"},
+  {kana:"でも", kr:"하지만", krAlt:["그렇지만","그러나"], jpAlt:[], display:"でも", mode:"basic"},
+  {kana:"ふるい", kr:"낡다", krAlt:["오래되다","낡은","오래된"], jpAlt:["古い"], display:"古い（ふるい）", mode:"basic"},
+  {kana:"どうですか", kr:"어떻습니까?", krAlt:["어떻습니까","어때요?","어때요"], jpAlt:[], display:"どうですか", mode:"basic"},
+  {kana:"あたらしい", kr:"새롭다", krAlt:["새로운","새것"], jpAlt:["新しい"], display:"新しい（あたらしい）", mode:"listen"},
+  {kana:"おもい", kr:"무겁다", krAlt:["무거운"], jpAlt:["重い"], display:"重い（おもい）", mode:"basic"},
+  {kana:"からい", kr:"맵다", krAlt:["매운"], jpAlt:["辛い"], display:"辛い（からい）", mode:"basic"},
+  {kana:"りょうり", kr:"요리", krAlt:[], jpAlt:["料理"], display:"料理（りょうり）", mode:"basic"},
+  {kana:"せがたかい", kr:"키가 크다", krAlt:["키가큰","키크다"], jpAlt:["背が高い"], display:"背が高い（せがたかい）", mode:"basic"},
+  {kana:"ひと", kr:"사람", krAlt:[], jpAlt:["人"], display:"人（ひと）", mode:"pic", svg:SVG_TALL},
+  {kana:"ジュース", kr:"주스", krAlt:[], jpAlt:[], display:"ジュース", mode:"basic"},
+  {kana:"おいしい", kr:"맛있다", krAlt:["맛있는"], jpAlt:["美味しい"], display:"おいしい", mode:"basic"},
+  {kana:"ひろい", kr:"넓다", krAlt:["넓은"], jpAlt:["広い"], display:"広い（ひろい）", mode:"basic"},
+  {kana:"あかるい", kr:"밝다", krAlt:["밝은"], jpAlt:["明るい"], display:"明るい（あかるい）", mode:"listen"},
+  {kana:"へや", kr:"방", krAlt:[], jpAlt:["部屋"], display:"部屋（へや）", mode:"pic", svg:SVG_ROOM},
+  {kana:"じしょ", kr:"사전", krAlt:[], jpAlt:["辞書"], display:"辞書（じしょ）", mode:"basic"},
+  {kana:"みせ", kr:"가게", krAlt:["상점"], jpAlt:["店"], display:"店（みせ）", mode:"basic"},
+  {kana:"どんな", kr:"어떤", krAlt:[], jpAlt:[], display:"どんな", mode:"basic"},
+  {kana:"かさ", kr:"우산", krAlt:[], jpAlt:["傘"], display:"傘（かさ）", mode:"pic", svg:SVG_UMBRELLA},
+  {kana:"あかい", kr:"빨갛다", krAlt:["빨간","붉다"], jpAlt:["赤い"], display:"赤い（あかい）", mode:"basic"},
+  {kana:"えいが", kr:"영화", krAlt:[], jpAlt:["映画"], display:"映画（えいが）", mode:"basic"},
+  {kana:"こわい", kr:"무섭다", krAlt:["무서운"], jpAlt:["怖い"], display:"怖い（こわい）", mode:"listen"},
+  {kana:"かんじ", kr:"한자", krAlt:[], jpAlt:["漢字"], display:"漢字（かんじ）", mode:"basic"},
+  {kana:"おおい", kr:"많다", krAlt:["많은"], jpAlt:["多い"], display:"多い（おおい）", mode:"basic"},
+  {kana:"くるま", kr:"자동차", krAlt:["차"], jpAlt:["車"], display:"車（くるま）", mode:"pic", svg:SVG_CAR},
+  {kana:"くろい", kr:"까맣다", krAlt:["검다","검은","까만"], jpAlt:["黒い"], display:"黒い（くろい）", mode:"basic"},
+  {kana:"おおきい", kr:"크다", krAlt:["큰"], jpAlt:["大きい"], display:"大きい（おおきい）", mode:"basic"},
+  {kana:"ケーキ", kr:"케이크", krAlt:[], jpAlt:[], display:"ケーキ", mode:"pic", svg:SVG_CAKE},
+  {kana:"あまい", kr:"달다", krAlt:["단","달콤하다"], jpAlt:["甘い"], display:"甘い（あまい）", mode:"basic"},
+  {kana:"その", kr:"그", krAlt:["그~"], jpAlt:[], display:"その", mode:"basic"},
+  {kana:"パソコン", kr:"컴퓨터", krAlt:["피씨","pc"], jpAlt:[], display:"パソコン", mode:"basic"},
+  {kana:"ちいさい", kr:"작다", krAlt:["작은"], jpAlt:["小さい"], display:"小さい（ちいさい）", mode:"basic"},
+  {kana:"せまい", kr:"좁다", krAlt:["좁은"], jpAlt:["狭い"], display:"狭い（せまい）", mode:"listen"},
+  {kana:"うるさい", kr:"시끄럽다", krAlt:["시끄러운"], jpAlt:[], display:"うるさい", mode:"basic"},
+  {kana:"おもしろい", kr:"재미있다", krAlt:["재밌다","재미있는"], jpAlt:["面白い"], display:"おもしろい", mode:"basic"},
+  {kana:"たかい", kr:"높다", krAlt:["높은"], jpAlt:["高い"], display:"高い（たかい）", mode:"basic",
+   nearMiss:{answers:["비싸다","비싼","비싸요"], msg:"「비싸다」도 高い의 뜻이 맞지만, 5과에서는 低い(낮다)의 반대말인 **높다**로 배웠어요. 이번 과 기준으로는 오답 처리합니다."}},
+  {kana:"ひくい", kr:"낮다", krAlt:["낮은"], jpAlt:["低い"], display:"低い（ひくい）", mode:"basic"},
+  {kana:"くらい", kr:"어둡다", krAlt:["어두운"], jpAlt:["暗い"], display:"暗い（くらい）", mode:"basic"},
+  {kana:"ながい", kr:"길다", krAlt:["긴"], jpAlt:["長い"], display:"長い（ながい）", mode:"basic"},
+  {kana:"みじかい", kr:"짧다", krAlt:["짧은"], jpAlt:["短い"], display:"短い（みじかい）", mode:"basic"},
+  {kana:"はやい", kr:"빠르다", krAlt:["빠른"], jpAlt:["早い","速い"], display:"早い（はやい）", mode:"basic"},
+  {kana:"つよい", kr:"강하다", krAlt:["강한","세다"], jpAlt:["強い"], display:"強い（つよい）", mode:"basic"},
+  {kana:"あおい", kr:"파랗다", krAlt:["파란","푸르다"], jpAlt:["青い"], display:"青い（あおい）", mode:"basic"}
+];
+
+const SENTENCE = [
+  {no:"문법 (1) 명사 수식", type:"compose",
+   direction:"다음 문장을 일본어로 써 보세요.",
+   prompt:"매운 요리입니다.",
+   segments:[["辛い","からい"],["料理","りょうり"],["です"]],
+   answerDisplay:"辛い料理です。",
+   tts:"からい りょうりです。", note:"い형용사 기본형 + 명사 : ~한 ~ (형태 변화 없이 그대로 붙여요)"},
+  {no:"문법 (2) 〜くて", type:"blank",
+   direction:"빈칸에 들어갈 말을 히라가나로 써 보세요.",
+   prompt:"このジュースは甘［　　］おいしいです。", promptIsJp:true,
+   sub:"뜻: 이 주스는 달고 맛있습니다.",
+   segments:[["くて"]],
+   answerDisplay:"くて",
+   tts:"この ジュースは あまくて おいしいです。", note:"어간 + くて : ~하고, ~해서 (い를 떼고 くて! 甘い→甘くて)"},
+  {no:"문법 (3) 지시어 + 명사", type:"blank",
+   direction:"빈칸에 들어갈 말을 써 보세요.",
+   prompt:"［　　　］白いケータイはキムさんのですか。", promptIsJp:true,
+   sub:"뜻: 이 하얀 핸드폰은 김 씨 것입니까?",
+   segments:[["この"]],
+   answerDisplay:"この",
+   tts:"この しろい ケータイは キムさんのですか。", note:"この(이) / その(그) / あの(저) / どの(어느) + 명사"},
+  {no:"문법 (4) どうですか", type:"compose",
+   direction:"다음 문장을 일본어로 써 보세요.",
+   prompt:"저 가게는 어떻습니까?",
+   segments:[["あの"],["店","みせ"],["は"],["どうですか"]],
+   answerDisplay:"あの店はどうですか。",
+   tts:"あの みせは どうですか。", note:"〜はどうですか : ~은/는 어떻습니까? (감상·의견을 물을 때)"},
+  {no:"응용 · 해석", type:"translate",
+   direction:"다음 문장을 한국어로 해석해 보세요.",
+   prompt:"広くて明るい部屋です。", promptIsJp:true,
+   segments:[["넓고"],["밝은"],["방입니다","방이에요","방입니다."]],
+   answerDisplay:"넓고 밝은 방입니다.",
+   tts:"ひろくて あかるい へやです。", note:"〜くて + 형용사 + 명사 : ~하고 ~한 ~"},
+  {no:"응용 · 일작", type:"compose",
+   direction:"다음 문장을 일본어로 써 보세요.",
+   prompt:"그 사전은 어떻습니까?",
+   segments:[["その"],["辞書","じしょ"],["は"],["どうですか"]],
+   answerDisplay:"その辞書はどうですか。",
+   tts:"その じしょは どうですか。", note:"その + 명사 : 그 ~"},
+  {no:"응용 · 일작", type:"compose",
+   direction:"다음 문장을 일본어로 써 보세요.",
+   prompt:"키가 큰 사람입니다.",
+   segments:[["背が高い","せがたかい"],["人","ひと"],["です"]],
+   answerDisplay:"背が高い人です。",
+   tts:"せが たかい ひとです。", note:"背が高い : 키가 크다 (통째로 하나의 표현)"},
+  {no:"응용 · 일작", type:"compose",
+   direction:"다음 문장을 일본어로 써 보세요. (〜くて를 사용하세요)",
+   prompt:"이 자동차는 크고 빨갛습니다.",
+   segments:[["この"],["車","くるま"],["は"],["大きくて","おおきくて"],["赤い","あかい"],["です"]],
+   answerDisplay:"この車は大きくて赤いです。",
+   tts:"この くるまは おおきくて あかいです。", note:"大きい → 大き<b>くて</b> (大きいくて는 틀림!)"}
+];
+
+/* 강화 학습 */
+const REINFORCE = [
+  {kind:"choice", tag:"그림 · 올바른 표현",
+   direction:"그림을 보고 올바른 표현을 고르세요.",
+   svg:SVG_CAR_BLACK,
+   options:[
+     {jp:"大きくて黒い車です。", correct:true},
+     {jp:"小さくて白い車です。"},
+     {jp:"大きいくて黒い車です。"},
+     {jp:"大きくて黒いの車です。"}
+   ],
+   answerDisplay:"大きくて黒い車です。（おおきくて くろい くるまです）",
+   note:"③은 大きい+くて가 틀림(大き<b>くて</b>), ④는 명사 앞에 の가 붙어서 틀려요."},
+  {kind:"choice", tag:"그림 · 틀린 표현",
+   direction:"그림을 보고, 이 방에 대한 설명으로 틀린 것을 고르세요.",
+   svg:SVG_ROOM_DARK,
+   options:[
+     {jp:"この部屋は狭いです。"},
+     {jp:"この部屋は暗いです。"},
+     {jp:"広くて明るい部屋です。", correct:true},
+     {jp:"この部屋は広くありません。"}
+   ],
+   answerDisplay:"③ 広くて明るい部屋です → 이 방은 狭くて暗い(좁고 어두운) 방!",
+   note:"狭い↔広い, 暗い↔明るい는 반대말 짝이에요. ④는 「넓지 않다」= 좁다는 뜻이라 맞는 표현."},
+  {kind:"choice", tag:"〜くて 연결",
+   direction:"「이 케이크는 달고 맛있습니다」의 일본어로 틀린 것을 고르세요.",
+   options:[
+     {jp:"このケーキは甘くておいしいです。"},
+     {jp:"甘くておいしいケーキです。"},
+     {jp:"このケーキは甘いです。おいしいです。"},
+     {jp:"このケーキは甘いくておいしいです。", correct:true}
+   ],
+   answerDisplay:"④ 甘いくて（×）→ 甘くて（○）",
+   note:"い형용사는 「い」를 떼고 くて를 붙여요. 참고로 いい는 <b>よくて</b>로 변신! (いくて는 틀림)"},
+  {kind:"write", tag:"듣고 쓰기",
+   direction:"음성을 듣고, 들은 문장을 일본어로 받아 적어 보세요. (히라가나로 써도 좋아요)",
+   tts:"この あかい かさは わたしのです。",
+   listenOnly:true,
+   fallbackText:"この 赤い かさは 私のです。",
+   model:"この赤い傘は私のです。（この あかい かさは わたしのです）",
+   modelKr:"이 빨간 우산은 제 것입니다."},
+  {kind:"write", tag:"그림 보고 쓰기",
+   direction:"그림을 보고 「〜くて」를 사용해서 우산을 설명해 보세요.",
+   svg:SVG_UMBRELLA_SHORT,
+   model:"短くて青い傘です。（みじかくて あおい かさです）",
+   modelKr:"짧고 파란 우산입니다. ※ 함정: 短いくて가 아니라 短くて!"},
+  {kind:"write", tag:"보고 쓰기",
+   direction:"다음 질문에 「〜くて」를 사용한 일본어 문장으로 답해 보세요.",
+   prompt:"山田さんのケータイはどうですか。", promptIsJp:true,
+   sub:"(힌트: 새것이지만 무겁습니다 → 新しい・重い)",
+   tts:"やまださんの ケータイは どうですか。",
+   model:"新しくて重いです。（あたらしくて おもいです）",
+   modelKr:"새것이고 무겁습니다. ※「新しいですが、重いです」(새것이지만 무겁습니다)도 좋아요."}
+];
+
+/* 일문작 — 이어지는 이야기 4문장 */
+const COMPOSE_INTRO = "아래는 이어지는 하나의 이야기예요. 한 문장씩 일본어로 옮겨 보세요.";
+const REF_TEXT = "山田：この白いケータイはキムさんのですか。　キム：はい、それは私のです。　山田：軽くていいですね。　キム：そうですか。でも、古いです。山田さんのケータイはどうですか。　山田：私のケータイは新しいですが、重いです。";
+const REF_TTS = "やまだ、この しろい ケータイは キムさんのですか。キム、はい、それは わたしのです。やまだ、かるくて いいですね。キム、そうですか。でも、ふるいです。やまださんの ケータイは どうですか。やまだ、わたしの ケータイは あたらしいですが、おもいです。";
+const COMPOSE_QS = [
+  "이 하얀 자동차는 제 것입니다.",
+  "작고 가볍습니다.",
+  "하지만 낡았습니다.",
+  "야마다 씨의 자동차는 어떻습니까?"
+];
+</script>
+<script>
+/* ================= 유틸 ================= */
+function normalize(s){
+  return (s||"")
+    .toLowerCase()
+    .replace(/[０-９ａ-ｚＡ-Ｚ]/g, ch => String.fromCharCode(ch.charCodeAt(0)-0xFEE0)) // 전각→반각
+    .replace(/[\s\u3000]/g,"")
+    .replace(/[。、，,.．・?？!！~〜「」『』()（）\[\]［］'"’”→]/g,"")
+    .trim();
+}
+function expandSegments(segments){
+  let acc = [""];
+  for(const seg of segments){
+    const next = [];
+    for(const a of acc) for(const opt of seg) next.push(a + opt);
+    acc = next;
+  }
+  return acc.map(normalize);
+}
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+const $ = id => document.getElementById(id);
+function showScreen(name){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  $("screen-"+name).classList.add("active");
+  window.scrollTo(0,0);
+}
+
+/* ================= sessionStorage ================= */
+const SS_KEYS = {vocab:"l5_vocab", sentence:"l5_sentence", reinforce:"l5_reinforce", compose:"l5_compose"};
+function saveStage(stage, data){ try{ sessionStorage.setItem(SS_KEYS[stage], JSON.stringify(data)); }catch(e){} }
+function loadStage(stage){ try{ const v=sessionStorage.getItem(SS_KEYS[stage]); return v?JSON.parse(v):null; }catch(e){ return null; } }
+function clearStage(stage){ try{ sessionStorage.removeItem(SS_KEYS[stage]); }catch(e){} }
+function refreshDoneBadges(){
+  for(const st of ["vocab","sentence","reinforce"]){
+    $("done-"+st).style.display = loadStage(st) ? "" : "none";
+  }
+  $("done-compose").style.display = loadStage("compose") ? "" : "none";
+}
+
+/* ================= TTS ================= */
+let jpVoice = null, ttsReady = false, jaVoices = [];
+function voiceScore(v){
+  const n = (v.name||"").toLowerCase();
+  let score = 0;
+  if(v.lang === "ja-JP") score += 10;
+  if(n.includes("google")) score += 8;          // Google 日本語 (크롬)
+  if(n.includes("natural")) score += 7;         // MS Nanami/Keita Natural
+  if(n.includes("neural")) score += 7;
+  if(n.includes("premium") || n.includes("enhanced")) score += 5;
+  if(n.includes("kyoko") || n.includes("o-ren") || n.includes("hattori")) score += 4; // macOS/iOS 상급
+  if(v.localService) score += 1;                 // 오프라인 동작 보장
+  return score;
+}
+function pickVoice(){
+  const vs = speechSynthesis.getVoices();
+  jaVoices = vs.filter(v=>v.lang && v.lang.toLowerCase().startsWith("ja"))
+               .sort((a,b)=>voiceScore(b)-voiceScore(a));
+  // Google 日本語 고정. 단, Google은 네트워크 음성이라 오프라인이면 로컬 음성으로 폴백
+  // (안 그러면 오프라인 크롬에서 Google이 목록엔 있는데 재생하면 무음이 되는 사고가 남)
+  const online = navigator.onLine !== false;
+  const googleVoice = jaVoices.find(v=>/google/i.test(v.name||""));
+  const localBest = jaVoices.find(v=>v.localService) || null;
+  // 오프라인일 땐 네트워크 음성은 후보에서 제외 (재생해도 무음이므로)
+  jpVoice = (online && googleVoice) || localBest || (online ? (jaVoices[0] || null) : null);
+  ttsReady = true;
+  if(jpVoice){
+    let note = "🔊 일본어 음성: " + jpVoice.name;
+    if(!online && googleVoice) note += " (오프라인이라 로컬 음성으로 대체 중 — 인터넷 연결 시 Google 음성으로 전환돼요)";
+    else if(!googleVoice) note += " (Google 日本語가 없는 기기라 대체 음성을 사용해요)";
+    $("tts-note").textContent = note;
+  }else{
+    $("tts-note").textContent = "🔇 이 기기에서 지금 사용 가능한 일본어 음성이 없어요. 듣기 문제는 표기를 보여주는 버튼으로 대체됩니다.";
+  }
+}
+// 네트워크 상태가 바뀌면 음성 재선택
+window.addEventListener("online", pickVoice);
+window.addEventListener("offline", pickVoice);
+if("speechSynthesis" in window){
+  pickVoice();
+  speechSynthesis.onvoiceschanged = pickVoice;
+}else{
+  $("tts-note").textContent = "🔇 이 브라우저는 음성 합성을 지원하지 않아요. 듣기 문제는 표기 보기로 대체됩니다.";
+  ttsReady = true;
+}
+function speak(text){
+  if(!("speechSynthesis" in window) || !jpVoice) return false;
+  // 재생 직전 재확인: 오프라인인데 네트워크 음성이 잡혀 있으면 로컬 음성으로 즉석 교체
+  if(navigator.onLine === false && !jpVoice.localService){
+    const local = jaVoices.find(v=>v.localService);
+    if(local) jpVoice = local; else return false;
+  }
+  speechSynthesis.cancel();
+  // 공백을 읽기 쉼표로 바꿔 끊어 읽기를 명확하게 (뭉개짐 완화)
+  const cleaned = text.replace(/[\s\u3000]+/g, "、").replace(/、{2,}/g, "、").replace(/^、|、$/g, "");
+  const u = new SpeechSynthesisUtterance(cleaned);
+  u.voice = jpVoice; u.lang = "ja-JP"; u.rate = 1.0; u.pitch = 1.0;
+  speechSynthesis.speak(u);
+  return true;
+}
+function makeTtsBtn(text, label){
+  const b = document.createElement("button");
+  b.className = "tts-btn small";
+  b.type = "button";
+  b.textContent = "🔊 " + (label || "듣기");
+  if(jpVoice){
+    b.addEventListener("click", e=>{ e.stopPropagation(); speak(text); });
+  }else{
+    b.disabled = true;
+    b.title = "이 기기에서 일본어 음성을 지원하지 않아요";
+  }
+  return b;
+}
+
+/* ================= 시계 SVG ================= */
+function clockSVG(h, m, size){
+  size = size || 190;
+  const hourAngle = ((h % 12) * 30 + m * 0.5) - 90;
+  const minAngle = (m * 6) - 90;
+  const rad = a => a * Math.PI / 180;
+  const hx = 50 + 24 * Math.cos(rad(hourAngle)), hy = 50 + 24 * Math.sin(rad(hourAngle));
+  const mx = 50 + 35 * Math.cos(rad(minAngle)),  my = 50 + 35 * Math.sin(rad(minAngle));
+  let ticks = "";
+  for(let i=0;i<12;i++){
+    const a = rad(i*30 - 90);
+    const x1 = 50 + 41*Math.cos(a), y1 = 50 + 41*Math.sin(a);
+    const x2 = 50 + 45*Math.cos(a), y2 = 50 + 45*Math.sin(a);
+    ticks += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#6B6E76" stroke-width="${i%3===0?3:1.5}" stroke-linecap="round"/>`;
+    const nx = 50 + 34.5*Math.cos(a), ny = 50 + 34.5*Math.sin(a);
+    const num = i===0?12:i;
+    ticks += `<text x="${nx.toFixed(1)}" y="${(ny+3.4).toFixed(1)}" font-size="9" font-weight="700" fill="#24262B" text-anchor="middle" font-family="sans-serif">${num}</text>`;
+  }
+  return `<div class="clock-wrap"><svg viewBox="0 0 100 100" width="${size}" height="${size}" role="img" aria-label="시계 그림">
+    <circle cx="50" cy="50" r="47" fill="#FFFFFF" stroke="#31517A" stroke-width="3.5"/>
+    ${ticks}
+    <line x1="50" y1="50" x2="${hx.toFixed(1)}" y2="${hy.toFixed(1)}" stroke="#24262B" stroke-width="5" stroke-linecap="round"/>
+    <line x1="50" y1="50" x2="${mx.toFixed(1)}" y2="${my.toFixed(1)}" stroke="#CE3A2E" stroke-width="3.2" stroke-linecap="round"/>
+    <circle cx="50" cy="50" r="3.4" fill="#24262B"/>
+  </svg></div>`;
+}
+
+/* ================= 단어/문장 퀴즈 엔진 ================= */
+let state = null;
+
+function buildVocabQuestions(){
+  return shuffle(VOCAB).map(w=>{
+    const meanShow = w.meanFull || w.kr;
+    if(w.mode==="pic"){
+      return {kind:"vocab", stage:"vocab", tag:"단어 · 그림",
+        direction:"그림을 보고 이 단어를 히라가나 또는 한자로 써 보세요.",
+        visual: w.svg || `<div class="emoji">${w.emoji}</div>`,
+        prompt:"", promptIsJp:false,
+        accepted:[normalize(w.kana), ...w.jpAlt.map(normalize)],
+        answerDisplay:w.display, note:"뜻: "+meanShow, meaning:meanShow,
+        ttsAfter:w.kana, wordRef:w};
+    }
+    if(w.mode==="listen"){
+      return {kind:"vocab", stage:"vocab", tag:"단어 · 듣기",
+        direction:"음성을 듣고, 이 단어의 뜻을 한국어로 써 보세요.",
+        listen:w.kana,
+        prompt:"", promptIsJp:false,
+        accepted:[normalize(w.kr), ...w.krAlt.map(normalize)],
+        answerDisplay:meanShow, note:"표기: "+w.display, meaning:meanShow,
+        ttsAfter:w.kana, wordRef:w};
+    }
+    const dir = Math.random() < 0.5 ? "kr2jp" : "jp2kr";
+    if(dir==="kr2jp"){
+      return {kind:"vocab", stage:"vocab", tag:"단어",
+        direction:"다음 단어를 히라가나/가타카나 또는 한자로 써 보세요.",
+        prompt:meanShow, promptIsJp:false,
+        accepted:[normalize(w.kana), ...w.jpAlt.map(normalize)],
+        answerDisplay:w.display, note:null, meaning:meanShow,
+        ttsAfter:w.kana, wordRef:w};
+    }
+    return {kind:"vocab", stage:"vocab", tag:"단어",
+      direction:"다음 단어의 뜻을 한국어로 써 보세요.",
+      prompt:w.kana, promptIsJp:true, listenBtn:w.kana,
+      accepted:[normalize(w.kr), ...w.krAlt.map(normalize)],
+      nearMiss:w.nearMiss || null,
+      answerDisplay:meanShow, note:"표기: "+w.display, meaning:meanShow,
+      ttsAfter:w.kana, wordRef:w};
+  });
+}
+function buildSentenceQuestions(){
+  return SENTENCE.map(g=>({kind:"sentence", stage:"sentence", tag:g.no,
+    direction:g.direction,
+    prompt:g.prompt, promptIsJp:!!g.promptIsJp,
+    sub:g.sub||null,
+    listenBtn:g.tts,
+    accepted:expandSegments(g.segments),
+    answerDisplay:g.answerDisplay, note:g.note, meaning:g.note,
+    ttsAfter:g.tts}));
+}
+
+function startStage(stage){
+  if(stage==="vocab"){
+    state = {stage, questions:buildVocabQuestions(), idx:0, correct:0, wrong:[], history:[], phase:"question"};
+  }else{
+    state = {stage, questions:buildSentenceQuestions(), idx:0, correct:0, wrong:[], history:[], phase:"question"};
+  }
+  $("stage-chip").textContent = stage==="vocab" ? "STEP 1 · 단어" : "STEP 2 · 문장";
+  showScreen("quiz");
+  renderQuestion();
+}
+
+function renderHistory(elId, history){
+  const strip = $(elId);
+  strip.innerHTML = "";
+  history.forEach(h=>{
+    const c = document.createElement("span");
+    c.className = "hist-chip " + h;
+    c.textContent = h==="o" ? "○" : (h==="x" ? "×" : "✓");
+    strip.appendChild(c);
+  });
+}
+
+function renderQuestion(){
+  const q = state.questions[state.idx];
+  $("q-current").textContent = state.idx+1;
+  $("q-total").textContent = state.questions.length;
+  $("q-score").textContent = state.correct;
+  $("progress-fill").style.width = (state.idx/state.questions.length*100)+"%";
+  renderHistory("history-strip", state.history);
+
+  $("q-tag").textContent = q.tag;
+  $("q-direction").textContent = q.direction;
+  $("q-visual").innerHTML = q.visual || "";
+
+  const promptEl = $("q-prompt");
+  promptEl.textContent = "";
+  promptEl.className = "q-prompt" + (q.promptIsJp?" jp":"") + (q.kind==="sentence"?" mid":"");
+  if(q.prompt && q.prompt.includes("［")){
+    q.prompt.split(/(［[　\s]*］)/).forEach(p=>{
+      if(/^［[　\s]*］$/.test(p)){
+        const b = document.createElement("span"); b.className="blank"; b.textContent="？";
+        promptEl.appendChild(b);
+      }else promptEl.appendChild(document.createTextNode(p));
+    });
+  }else promptEl.textContent = q.prompt || "";
+
+  $("q-sub").textContent = q.sub || "";
+
+  const audioRow = $("q-audio-row");
+  audioRow.innerHTML = "";
+  if(q.listen){
+    // 듣기 문제: 음성이 핵심
+    if(jpVoice){
+      const b = makeTtsBtn(q.listen, "문제 듣기");
+      b.classList.remove("small");
+      audioRow.appendChild(b);
+      setTimeout(()=>speak(q.listen), 350);
+    }else{
+      // 폴백: 표기 보여주기
+      const fb = document.createElement("button");
+      fb.className = "tts-btn"; fb.type="button";
+      fb.textContent = "👀 표기 보기 (음성 미지원 기기)";
+      fb.addEventListener("click", ()=>{
+        promptEl.textContent = q.wordRef.kana;
+        promptEl.className = "q-prompt jp";
+        fb.disabled = true;
+      });
+      audioRow.appendChild(fb);
+    }
+  }else if(q.listenBtn){
+    audioRow.appendChild(makeTtsBtn(q.listenBtn, "발음 듣기"));
+  }
+
+  const input = $("answer-input");
+  input.value = ""; input.disabled = false;
+  input.placeholder = q.accepted && /[가-힣]/.test(q.answerDisplay) && !q.promptIsJp && q.kind==="vocab" && q.listen ? "한국어로 입력" : "답을 입력하세요";
+  $("btn-submit").disabled = false;
+  const fbEl = $("feedback");
+  fbEl.className = "feedback";
+  fbEl.querySelectorAll("div:not(#fb-title):not(#fb-answer):not(#fb-note)").forEach(el=>el.remove());
+  $("next-row").className = "next-row";
+  $("judge").className = "judge-layer";
+  syncJudge("judge", null);
+  state.phase = "question";
+  input.focus();
+}
+function syncJudge(id, kind){
+  document.querySelectorAll("#"+id+" .maru-only").forEach(el=>el.style.display = kind==="maru"?"":"none");
+  document.querySelectorAll("#"+id+" .batsu-only").forEach(el=>el.style.display = kind==="batsu"?"":"none");
+}
+
+function submitAnswer(){
+  if(!state || state.phase!=="question") return;
+  const q = state.questions[state.idx];
+  const raw = $("answer-input").value;
+  if(!normalize(raw)){ $("answer-input").focus(); return; }
+  const ok = q.accepted.includes(normalize(raw));
+  // 「비슷하지만 이번 과 기준으로는 오답」인 답 감지 (예: 高い를 '비싸다'로 답한 경우)
+  let nearMissHit = null;
+  if(!ok && q.nearMiss && q.nearMiss.answers.some(a=>normalize(a)===normalize(raw))){
+    nearMissHit = q.nearMiss.msg;
+  }
+  state.phase = "feedback";
+  $("answer-input").disabled = true;
+  $("btn-submit").disabled = true;
+  state.history.push(ok?"o":"x");
+  renderHistory("history-strip", state.history);
+
+  syncJudge("judge", ok?"maru":"batsu");
+  $("judge").className = "judge-layer " + (ok?"show-maru":"show-batsu");
+
+  const fb = $("feedback");
+  fb.className = "feedback on " + (ok?"ok":"ng");
+  $("fb-title").textContent = ok ? "정답! ○" : (nearMissHit ? "아깝지만 오답 ✗" : "아쉬워요 ✗");
+  $("fb-answer").innerHTML = "";
+  const lb = document.createElement("span"); lb.textContent = "정답: ";
+  const ans = document.createElement("span"); ans.className="jp"; ans.textContent = q.answerDisplay;
+  $("fb-answer").append(lb, ans);
+  if(q.ttsAfter) $("fb-answer").append(document.createTextNode("  "), makeTtsBtn(q.ttsAfter));
+  $("fb-note").textContent = q.note || "";
+  if(nearMissHit){
+    const nm = document.createElement("div");
+    nm.style.cssText = "margin-top:10px;padding:12px 14px;background:#FFF8E8;border:1.5px solid #E0B84C;border-radius:10px;font-size:.95rem;line-height:1.6;color:#5C4A18";
+    nm.innerHTML = "⚠️ " + nearMissHit.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+    $("fb-note").parentNode.appendChild(nm);
+  }
+
+  if(ok){ state.correct++; $("q-score").textContent = state.correct; }
+  else{
+    state.wrong.push({prompt: q.prompt || (q.listen?"(듣기) "+q.wordRef.kana : "(그림) "+q.answerDisplay),
+      promptIsJp:q.promptIsJp, mine:raw.trim(),
+      answerDisplay:q.answerDisplay,
+      meaning:(q.meaning||"") + (nearMissHit ? " ／ ⚠️ " + nearMissHit.replace(/\*\*/g,"") : ""),
+      tts:q.ttsAfter||null, tag:q.tag});
+  }
+  $("next-row").className = "next-row on";
+  $("btn-next").innerHTML = (state.idx===state.questions.length-1)
+    ? "결과 보기 →&nbsp; <small>(Enter)</small>" : "다음 문제 →&nbsp; <small>(Enter)</small>";
+  $("btn-next").focus();
+}
+function nextQuestion(){
+  if(!state || state.phase!=="feedback") return;
+  if(state.idx === state.questions.length-1){ finishQuizStage(); return; }
+  state.idx++;
+  renderQuestion();
+}
+
+function stampFor(rate){
+  if(rate===1) return "満点";
+  if(rate>=0.8) return "合格";
+  if(rate>=0.5) return "頑張れ";
+  return "復習";
+}
+
+function finishQuizStage(){
+  const data = {correct:state.correct, total:state.questions.length,
+    wrong:state.wrong, history:state.history, savedAt:Date.now()};
+  saveStage(state.stage, data);
+  refreshDoneBadges();
+  renderStageResult(state.stage, data);
+}
+
+/* ================= 단계 결과 화면 ================= */
+let currentStageResult = null;
+function renderStageResult(stage, data){
+  currentStageResult = stage;
+  const names = {vocab:"STEP 1 완료 · 단어 시험 결과", sentence:"STEP 2 완료 · 문장 시험 결과", reinforce:"STEP 3 완료 · 강화 학습 결과"};
+  $("sr-kicker").textContent = names[stage];
+  const rate = data.total ? data.correct/data.total : 0;
+  $("sr-stamp").textContent = stampFor(rate);
+  $("sr-correct").textContent = data.correct;
+  $("sr-total").textContent = data.total;
+  $("sr-sub").textContent = `정답률 ${Math.round(rate*100)}%` + (stage==="reinforce" ? " (4지선다 기준 · 작성형은 학습 결과에서 확인)" : "");
+
+  const area = $("sr-wrong-area");
+  area.innerHTML = "";
+  const wrongs = data.wrong || [];
+  if(wrongs.length===0){
+    $("sr-perfect").style.display = "block";
+  }else{
+    $("sr-perfect").style.display = "none";
+    const t = document.createElement("div");
+    t.className = "wrong-title";
+    t.textContent = "틀린 문제 다시 보기";
+    area.appendChild(t);
+    wrongs.forEach(w=>area.appendChild(makeWrongItem(w)));
+  }
+  const nextMap = {vocab:["문장 시험", "sentence"], sentence:["강화 학습","reinforce"], reinforce:["일문작","compose"]};
+  $("sr-next").innerHTML = `다음 학습 하기 (${nextMap[stage][0]}) →`;
+  $("sr-retry").textContent = "다시 풀기";
+  showScreen("stageresult");
+}
+function makeWrongItem(w){
+  const item = document.createElement("div");
+  item.className = "wrong-item";
+  const qEl = document.createElement("div");
+  qEl.className = "w-q" + (w.promptIsJp?" jp":"");
+  qEl.textContent = w.prompt;
+  if(w.tts) qEl.appendChild(makeTtsBtn(w.tts));
+  const tag = document.createElement("span");
+  tag.style.cssText = "font-size:.75rem;font-weight:500;color:var(--ink-soft)";
+  tag.textContent = w.tag || "";
+  qEl.appendChild(tag);
+  item.appendChild(qEl);
+  if(w.meaning){
+    const m = document.createElement("div");
+    m.className = "w-mean"; m.textContent = "뜻/포인트: " + w.meaning;
+    item.appendChild(m);
+  }
+  const mine = document.createElement("div");
+  mine.className = "w-row";
+  mine.innerHTML = '<span class="w-label mine">내 답</span>';
+  const mv = document.createElement("span"); mv.className="w-val jp"; mv.textContent = w.mine || "(무응답)";
+  mine.appendChild(mv);
+  const ansR = document.createElement("div");
+  ansR.className = "w-row";
+  ansR.innerHTML = '<span class="w-label ans">정답</span>';
+  const av = document.createElement("span"); av.className="w-val jp"; av.textContent = w.answerDisplay;
+  ansR.appendChild(av);
+  item.append(mine, ansR);
+  return item;
+}
+</script>
+<script>
+/* ================= 강화 학습 ================= */
+let rState = null;
+function startReinforce(){
+  rState = {idx:0, correct:0, choiceTotal:0, wrong:[], writes:[], history:[], phase:"question"};
+  showScreen("reinforce");
+  renderReinforce();
+}
+function renderReinforce(){
+  const q = REINFORCE[rState.idx];
+  $("r-current").textContent = rState.idx+1;
+  $("r-total").textContent = REINFORCE.length;
+  $("r-progress").style.width = (rState.idx/REINFORCE.length*100)+"%";
+  renderHistory("r-history", rState.history);
+
+  $("r-tag").textContent = q.tag;
+  $("r-direction").textContent = q.direction;
+  $("r-visual").innerHTML = q.clock ? clockSVG(q.clock[0], q.clock[1]) : (q.svg || "");
+  const promptEl = $("r-prompt");
+  promptEl.textContent = q.prompt || "";
+  promptEl.className = "q-prompt mid" + (q.promptIsJp?" jp":"");
+  $("r-sub").textContent = q.sub || "";
+
+  const audioRow = $("r-audio-row");
+  audioRow.innerHTML = "";
+  if(q.listenOnly){
+    if(jpVoice){
+      const b = makeTtsBtn(q.tts, "문제 듣기"); b.classList.remove("small");
+      audioRow.appendChild(b);
+      setTimeout(()=>speak(q.tts), 350);
+    }else{
+      const fb = document.createElement("button");
+      fb.className = "tts-btn"; fb.type="button";
+      fb.textContent = "👀 표기 보기 (음성 미지원 기기)";
+      fb.addEventListener("click", ()=>{
+        promptEl.textContent = q.fallbackText;
+        promptEl.className = "q-prompt mid jp";
+        fb.disabled = true;
+      });
+      audioRow.appendChild(fb);
+    }
+  }else if(q.tts){
+    audioRow.appendChild(makeTtsBtn(q.tts, "발음 듣기"));
+  }
+
+  const optList = $("r-options");
+  const ansRow = $("r-answer-row");
+  optList.innerHTML = "";
+  $("r-feedback").className = "feedback";
+  $("r-next-row").className = "next-row";
+  $("r-judge").className = "judge-layer";
+  syncJudge("r-judge", null);
+  rState.phase = "question";
+
+  if(q.kind==="choice"){
+    optList.style.display = "flex";
+    ansRow.style.display = "none";
+    const order = shuffle(q.options.map((o,i)=>({...o, origIdx:i})));
+    rState.currentOrder = order;
+    order.forEach((opt, i)=>{
+      const b = document.createElement("button");
+      b.className = "opt-btn"; b.type="button";
+      const no = document.createElement("span"); no.className="opt-no"; no.textContent = i+1;
+      const body = document.createElement("span");
+      body.textContent = opt.jp;
+      if(opt.kr){
+        const kr = document.createElement("span"); kr.className="opt-kr"; kr.textContent = opt.kr;
+        body.appendChild(kr);
+      }
+      b.append(no, body);
+      b.addEventListener("click", ()=>pickOption(i));
+      optList.appendChild(b);
+    });
+  }else{
+    optList.style.display = "none";
+    ansRow.style.display = "flex";
+    const input = $("r-input");
+    input.value = ""; input.disabled = false; input.readOnly = false;
+    $("r-submit").disabled = false;
+    input.focus();
+  }
+}
+function pickOption(pickedIdx){
+  if(rState.phase!=="question") return;
+  const q = REINFORCE[rState.idx];
+  const order = rState.currentOrder;
+  const picked = order[pickedIdx];
+  const ok = !!picked.correct;
+  rState.phase = "feedback";
+  rState.choiceTotal++;
+  rState.history.push(ok?"o":"x");
+  renderHistory("r-history", rState.history);
+
+  const btns = $("r-options").querySelectorAll(".opt-btn");
+  btns.forEach((b,i)=>{
+    b.disabled = true;
+    if(order[i].correct) b.classList.add("correct");
+    else if(i===pickedIdx) b.classList.add("wrong-pick");
+  });
+
+  syncJudge("r-judge", ok?"maru":"batsu");
+  $("r-judge").className = "judge-layer " + (ok?"show-maru":"show-batsu");
+
+  const fb = $("r-feedback");
+  fb.className = "feedback on " + (ok?"ok":"ng");
+  $("r-fb-title").textContent = ok ? "정답! ○" : "아쉬워요 ✗";
+  $("r-fb-answer").innerHTML = "";
+  const lb = document.createElement("span"); lb.textContent = "정답: ";
+  const ans = document.createElement("span"); ans.className="jp"; ans.textContent = q.answerDisplay;
+  $("r-fb-answer").append(lb, ans);
+  $("r-fb-note").textContent = q.note || "";
+
+  if(ok) rState.correct++;
+  else rState.wrong.push({prompt:q.direction + (q.clock?` (시계: ${q.clock[0]}:${String(q.clock[1]).padStart(2,"0")})`:""),
+    promptIsJp:false, mine:picked.jp, answerDisplay:q.answerDisplay, meaning:q.note, tag:q.tag});
+
+  $("r-next-row").className = "next-row on";
+  $("r-next").innerHTML = (rState.idx===REINFORCE.length-1)
+    ? "결과 보기 →&nbsp; <small>(Enter)</small>" : "다음 문제 →&nbsp; <small>(Enter)</small>";
+  $("r-next").focus();
+}
+function submitWrite(){
+  if(rState.phase!=="question") return;
+  const q = REINFORCE[rState.idx];
+  const raw = $("r-input").value;
+  if(!normalize(raw)){ $("r-input").focus(); return; }
+  rState.phase = "feedback";
+  $("r-input").disabled = true;
+  $("r-submit").disabled = true;
+  rState.history.push("s"); // 제출됨
+  renderHistory("r-history", rState.history);
+  rState.writes.push({tag:q.tag, direction:q.direction,
+    clock:q.clock||null, svg:q.svg||null, prompt:q.prompt||null, tts:q.tts||null,
+    mine:raw.trim(), model:q.model, modelKr:q.modelKr});
+
+  const fb = $("r-feedback");
+  fb.className = "feedback on neutral";
+  $("r-fb-title").textContent = "제출 완료 ✓";
+  $("r-fb-answer").textContent = "이 문제의 모범 답은 '오늘의 학습 결과'에서 공개돼요.";
+  $("r-fb-note").textContent = "스터디에서 서로의 답을 보며 함께 이야기해 보세요.";
+
+  $("r-next-row").className = "next-row on";
+  $("r-next").innerHTML = (rState.idx===REINFORCE.length-1)
+    ? "결과 보기 →&nbsp; <small>(Enter)</small>" : "다음 문제 →&nbsp; <small>(Enter)</small>";
+  $("r-next").focus();
+}
+function nextReinforce(){
+  if(!rState || rState.phase!=="feedback") return;
+  if(rState.idx===REINFORCE.length-1){
+    const data = {correct:rState.correct, total:rState.choiceTotal,
+      wrong:rState.wrong, writes:rState.writes, history:rState.history, savedAt:Date.now()};
+    saveStage("reinforce", data);
+    refreshDoneBadges();
+    renderStageResult("reinforce", data);
+    return;
+  }
+  rState.idx++;
+  renderReinforce();
+}
+
+/* ================= 일문작 ================= */
+function startCompose(){
+  $("ref-text").textContent = REF_TEXT;
+  const list = $("compose-list");
+  list.innerHTML = "";
+  const intro = document.createElement("div");
+  intro.className = "ref-box";
+  intro.innerHTML = '<div class="rb-title">오늘의 이야기</div>';
+  const introBody = document.createElement("div");
+  introBody.style.cssText = "font-size:1.25rem;font-weight:700;line-height:1.9;word-break:keep-all";
+  introBody.textContent = COMPOSE_QS.join(" ");
+  const introDesc = document.createElement("div");
+  introDesc.style.cssText = "font-size:.92rem;color:var(--ink-soft);margin-top:8px";
+  introDesc.textContent = COMPOSE_INTRO;
+  intro.append(introBody, introDesc);
+  list.appendChild(intro);
+  const saved = loadStage("compose");
+  COMPOSE_QS.forEach((qText, i)=>{
+    const item = document.createElement("div");
+    item.className = "compose-item";
+    const no = document.createElement("div"); no.className="ci-no"; no.textContent = "문제 " + (i+1);
+    const p = document.createElement("div"); p.className="ci-prompt"; p.textContent = qText;
+    const ta = document.createElement("textarea");
+    ta.id = "compose-ta-" + i;
+    ta.placeholder = "일본어로 작성해 보세요 (히라가나로 써도 좋아요)";
+    if(saved){ ta.value = saved.answers[i] || ""; ta.readOnly = true; }
+    item.append(no, p, ta);
+    list.appendChild(item);
+  });
+  const locked = !!saved;
+  $("btn-compose-submit").style.display = locked ? "none" : "";
+  $("compose-locked").style.display = locked ? "" : "none";
+  $("compose-after").style.display = locked ? "flex" : "none";
+  showScreen("compose");
+}
+let composeArmed = false;
+function submitCompose(){
+  const answers = COMPOSE_QS.map((_,i)=>$("compose-ta-"+i).value.trim());
+  const btn = $("btn-compose-submit");
+  if(answers.every(a=>!a)){
+    btn.textContent = "한 문제 이상 작성해 주세요!";
+    setTimeout(()=>{ btn.textContent = "제출하기"; composeArmed = false; }, 1800);
+    return;
+  }
+  if(!composeArmed){
+    composeArmed = true;
+    btn.textContent = "제출 후엔 수정 불가! 한 번 더 누르면 제출돼요";
+    setTimeout(()=>{ if(composeArmed){ btn.textContent = "제출하기"; composeArmed = false; } }, 4000);
+    return;
+  }
+  composeArmed = false;
+  btn.textContent = "제출하기";
+  saveStage("compose", {answers, savedAt:Date.now()});
+  refreshDoneBadges();
+  COMPOSE_QS.forEach((_,i)=>{ $("compose-ta-"+i).readOnly = true; });
+  $("btn-compose-submit").style.display = "none";
+  $("compose-locked").style.display = "";
+  $("compose-after").style.display = "flex";
+}
+
+/* ================= 학습 결과(종합) ================= */
+const STAGE_NAMES = {vocab:"단어 시험", sentence:"문장 시험", reinforce:"강화 학습", compose:"일문작"};
+function renderFinal(){
+  const now = new Date();
+  $("final-date").textContent = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,"0")}.${String(now.getDate()).padStart(2,"0")} · 5과 형용사 연결`;
+
+  let totalCorrect = 0, totalCount = 0;
+  const secs = $("final-sections");
+  secs.innerHTML = "";
+
+  for(const stage of ["vocab","sentence","reinforce","compose"]){
+    const data = loadStage(stage);
+    const sec = document.createElement("div");
+    sec.className = "final-section";
+    const h = document.createElement("h3");
+    h.textContent = STAGE_NAMES[stage];
+    sec.appendChild(h);
+
+    if(!data){
+      const empty = document.createElement("div");
+      empty.className = "fs-empty";
+      empty.textContent = "미응시 — 메인에서 시작할 수 있어요.";
+      sec.appendChild(empty);
+      const go = document.createElement("button");
+      go.className = "btn btn-ghost"; go.style.cssText="margin-top:10px;padding:9px 18px;font-size:.92rem";
+      go.textContent = "풀러 가기 →";
+      go.addEventListener("click", ()=>routeTo(stage));
+      sec.appendChild(go);
+      secs.appendChild(sec);
+      continue;
+    }
+
+    if(stage==="compose"){
+      const sc = document.createElement("span"); sc.className="fs-score"; sc.textContent="제출 완료";
+      h.appendChild(sc);
+      const det = document.createElement("div"); det.className="fs-detail";
+      COMPOSE_QS.forEach((qText,i)=>{
+        const v = document.createElement("div"); v.className="compose-view";
+        const q = document.createElement("div"); q.className="cv-q"; q.textContent = (i+1)+". "+qText;
+        const a = document.createElement("div"); a.className="cv-a"; a.textContent = data.answers[i] || "(작성 안 함)";
+        v.append(q,a); det.appendChild(v);
+      });
+      sec.appendChild(det);
+    }else{
+      const sc = document.createElement("span"); sc.className="fs-score";
+      sc.textContent = `${data.correct}/${data.total} (${data.total?Math.round(data.correct/data.total*100):0}%)`;
+      h.appendChild(sc);
+      totalCorrect += data.correct; totalCount += data.total;
+
+      const det = document.createElement("div"); det.className="fs-detail";
+      if(data.wrong && data.wrong.length){
+        const t = document.createElement("div"); t.className="wrong-title";
+        t.textContent = "틀린 문제 (" + data.wrong.length + ")";
+        det.appendChild(t);
+        data.wrong.forEach(w=>det.appendChild(makeWrongItem(w)));
+      }else{
+        const p = document.createElement("div"); p.className="fs-empty"; p.textContent="전부 정답! 🎉";
+        det.appendChild(p);
+      }
+      if(stage==="reinforce" && data.writes && data.writes.length){
+        const t2 = document.createElement("div"); t2.className="wrong-title";
+        t2.textContent = "작성형 — 내 답과 모범 답";
+        det.appendChild(t2);
+        data.writes.forEach(w=>{
+          const item = document.createElement("div");
+          item.className = "wrong-item";
+          const qEl = document.createElement("div"); qEl.className="w-q";
+          qEl.textContent = w.direction;
+          if(w.tts) qEl.appendChild(makeTtsBtn(w.tts));
+          item.appendChild(qEl);
+          if(w.clock) item.insertAdjacentHTML("beforeend", clockSVG(w.clock[0], w.clock[1], 120));
+          else if(w.svg) item.insertAdjacentHTML("beforeend", w.svg);
+          if(w.prompt){
+            const pr = document.createElement("div"); pr.className="w-mean jp"; pr.textContent = w.prompt;
+            item.appendChild(pr);
+          }
+          const mine = document.createElement("div"); mine.className="w-row";
+          mine.innerHTML = '<span class="w-label mine">내 답</span>';
+          const mv = document.createElement("span"); mv.className="w-val jp"; mv.textContent = w.mine;
+          mine.appendChild(mv);
+          const model = document.createElement("div"); model.className="w-row";
+          model.innerHTML = '<span class="w-label model">모범 답</span>';
+          const mo = document.createElement("span"); mo.className="w-val jp"; mo.textContent = w.model;
+          model.appendChild(mo);
+          item.append(mine, model);
+          if(w.modelKr){
+            const kr = document.createElement("div"); kr.className="w-mean"; kr.textContent = w.modelKr;
+            item.appendChild(kr);
+          }
+          det.appendChild(item);
+        });
+      }
+      sec.appendChild(det);
+    }
+    secs.appendChild(sec);
+  }
+
+  $("final-stamp").textContent = totalCount ? stampFor(totalCorrect/totalCount) : "学習";
+  showScreen("final");
+}
+
+function shareImage(){
+  const note = $("share-note");
+  if(typeof html2canvas === "undefined"){
+    note.textContent = "이미지 라이브러리를 불러오지 못했어요. 화면을 스크린샷으로 저장해 주세요!";
+    return;
+  }
+  note.textContent = "이미지 생성 중...";
+  html2canvas($("share-area"), {backgroundColor:"#F6F3EC", scale:2}).then(canvas=>{
+    canvas.toBlob(blob=>{
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "일본어_5과_학습결과.png";
+      a.click();
+      URL.revokeObjectURL(a.href);
+      note.textContent = "이미지가 저장됐어요! 스터디방에 공유해 보세요 🎉";
+    });
+  }).catch(()=>{
+    note.textContent = "이미지 생성에 실패했어요. 화면을 스크린샷으로 저장해 주세요!";
+  });
+}
+
+/* ================= 라우팅·이벤트 ================= */
+function routeTo(stage){
+  if(stage==="vocab"||stage==="sentence"){
+    const saved = loadStage(stage);
+    if(saved){ renderStageResult(stage, saved); } else { startStage(stage); }
+  }else if(stage==="reinforce"){
+    const saved = loadStage("reinforce");
+    if(saved){ renderStageResult("reinforce", saved); } else { startReinforce(); }
+  }else if(stage==="compose"){
+    startCompose();
+  }else if(stage==="final"){
+    renderFinal();
+  }
+}
+document.querySelectorAll("[data-go]").forEach(b=>{
+  b.addEventListener("click", ()=>routeTo(b.dataset.go));
+});
+$("btn-submit").addEventListener("click", submitAnswer);
+$("btn-next").addEventListener("click", nextQuestion);
+$("r-submit").addEventListener("click", submitWrite);
+$("r-next").addEventListener("click", nextReinforce);
+$("btn-compose-submit").addEventListener("click", submitCompose);
+let composeRetryArmed = false;
+$("btn-compose-retry").addEventListener("click", ()=>{
+  const btn = $("btn-compose-retry");
+  if(!composeRetryArmed){
+    composeRetryArmed = true;
+    btn.textContent = "제출한 내용이 지워져요! 한 번 더 누르면 초기화";
+    setTimeout(()=>{ if(composeRetryArmed){ btn.textContent = "다시 풀기"; composeRetryArmed = false; } }, 4000);
+    return;
+  }
+  composeRetryArmed = false;
+  btn.textContent = "다시 풀기";
+  clearStage("compose"); refreshDoneBadges(); startCompose();
+});
+$("btn-compose-final").addEventListener("click", ()=>renderFinal());
+for(const id of ["btn-quit","btn-quit-r","btn-quit-c"]){
+  $(id).addEventListener("click", ()=>{
+    if(window.speechSynthesis) speechSynthesis.cancel();
+    showScreen("home");
+  });
+}
+let retryArmed = false;
+$("sr-retry").addEventListener("click", ()=>{
+  const stage = currentStageResult;
+  const btn = $("sr-retry");
+  if(!retryArmed){
+    retryArmed = true;
+    btn.textContent = "결과가 지워져요! 한 번 더 누르면 다시 풀기";
+    setTimeout(()=>{ if(retryArmed){ btn.textContent = "다시 풀기"; retryArmed = false; } }, 4000);
+    return;
+  }
+  retryArmed = false;
+  btn.textContent = "다시 풀기";
+  clearStage(stage); refreshDoneBadges();
+  if(stage==="reinforce") startReinforce(); else startStage(stage);
+});
+$("sr-next").addEventListener("click", ()=>{
+  const nextMap = {vocab:"sentence", sentence:"reinforce", reinforce:"compose"};
+  routeTo(nextMap[currentStageResult]);
+});
+$("sr-home").addEventListener("click", ()=>showScreen("home"));
+$("btn-share").addEventListener("click", shareImage);
+$("btn-final-home").addEventListener("click", ()=>showScreen("home"));
+$("ref-tts").addEventListener("click", ()=>{
+  if(!speak(REF_TTS)) $("ref-tts").disabled = true;
+});
+if(!("speechSynthesis" in window)) $("ref-tts").disabled = true;
+
+/* IME 조합 중 Enter 무시 + 버블링 차단 */
+function bindEnterSubmit(inputId, submitFn){
+  $(inputId).addEventListener("keydown", e=>{
+    if(e.key !== "Enter") return;
+    if(e.isComposing || e.keyCode === 229) return;
+    e.preventDefault();
+    e.stopPropagation();
+    submitFn();
+  });
+}
+bindEnterSubmit("answer-input", submitAnswer);
+bindEnterSubmit("r-input", submitWrite);
+document.addEventListener("keydown", e=>{
+  if(e.key !== "Enter") return;
+  if(e.isComposing || e.keyCode === 229) return;
+  if(e.target === $("answer-input") || e.target === $("r-input") || e.target.tagName === "TEXTAREA") return;
+  if($("screen-quiz").classList.contains("active") && state && state.phase==="feedback"){
+    e.preventDefault(); nextQuestion();
+  }else if($("screen-reinforce").classList.contains("active") && rState && rState.phase==="feedback"){
+    e.preventDefault(); nextReinforce();
+  }
+});
+
+refreshDoneBadges();
+</script>
+</body>
+</html>
