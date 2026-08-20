@@ -223,6 +223,7 @@
         <button class="level-tab" data-level="N3">N3</button>
         <button class="level-tab" data-level="N2">N2</button>
         <button class="level-tab" data-level="N1">N1</button>
+        <button class="level-tab" data-level="Radical">부수</button>
       </div>
 
       <div class="view-tabs">
@@ -243,6 +244,68 @@
 
 
     <script>
+      const RADICAL_DECK_DATA = [
+        { ch: 1, shape: "氵", orig: "水", mean: "물, 액체", ex: "海, 河, 池, 洗, 泳, 温, 酒", link: "💧 물·액체" },
+        { ch: 1, shape: "亻", orig: "人", mean: "사람", ex: "休, 体, 住, 使, 仕, 作", link: "👤 사람의 행동·상태" },
+        { ch: 1, shape: "扌", orig: "手", mean: "손", ex: "持, 打, 投, 押, 拾, 指", link: "✋ 손동작" },
+        { ch: 1, shape: "忄", orig: "心", mean: "마음", ex: "性, 情, 怒, 怖, 悲, 快", link: "❤️ 감정·마음" },
+        { ch: 1, shape: "木", orig: "木", mean: "나무", ex: "林, 森, 校, 橋, 村, 枝", link: "🌳 나무·목재" },
+        { ch: 1, shape: "口", orig: "口", mean: "입, 구멍", ex: "味, 呼, 吸, 唱, 君, 問", link: "👄 입·말·소리" },
+        { ch: 1, shape: "糸/糹", orig: "糸", mean: "실, 연결", ex: "紙, 組, 終, 結, 線, 細", link: "🧵 실·연결" },
+        { ch: 1, shape: "言/訁", orig: "言", mean: "말", ex: "話, 語, 読, 記, 説, 調", link: "💬 말·언어" },
+        { ch: 1, shape: "艹", orig: "艸", mean: "풀", ex: "花, 草, 茶, 菜, 荷, 薬", link: "🌱 식물" },
+        { ch: 1, shape: "辶", orig: "辵", mean: "가다, 이동", ex: "道, 近, 遠, 送, 進, 退", link: "🚶 이동·길" },
+        { ch: 1, shape: "土", orig: "土", mean: "흙, 땅", ex: "地, 場, 坂, 城, 塔", link: "🌍 땅·장소" },
+        { ch: 1, shape: "火/灬", orig: "火", mean: "불, 열", ex: "灯, 炎, 焼, 熱, 無", link: "🔥 불·열" },
+        
+        { ch: 2, shape: "日", orig: "日", mean: "해, 날", ex: "明, 時, 昨, 晴, 暑", link: "시간·날·빛" },
+        { ch: 2, shape: "月", orig: "月 / 肉", mean: "달 / 몸", ex: "朝, 期 / 肝, 胃, 腕", link: "시간 또는 신체" },
+        { ch: 2, shape: "目", orig: "目", mean: "눈", ex: "見, 眼, 眠, 直", link: "눈·보기" },
+        { ch: 2, shape: "耳", orig: "耳", mean: "귀", ex: "聞, 聴, 職", link: "듣기" },
+        { ch: 2, shape: "足/⻊", orig: "足", mean: "발", ex: "路, 跳, 踊, 踏", link: "발·걷기·이동" },
+        { ch: 2, shape: "力", orig: "力", mean: "힘", ex: "男, 助, 動, 勉, 勝", link: "힘·노력" },
+        { ch: 2, shape: "刀/刂", orig: "刀", mean: "칼", ex: "切, 別, 刻, 利, 制", link: "자르기·분리" },
+        { ch: 2, shape: "貝", orig: "貝", mean: "조개 → 재물", ex: "買, 費, 貨, 貸, 貴", link: "돈·거래" },
+        { ch: 2, shape: "金/釒", orig: "金", mean: "금속, 쇠", ex: "銀, 鉄, 鍵, 鉛, 鏡", link: "금속·도구" },
+        { ch: 2, shape: "車", orig: "車", mean: "수레, 차", ex: "転, 軽, 輪, 輸", link: "탈것·이동" },
+        { ch: 2, shape: "田", orig: "田", mean: "논", ex: "男, 町, 界, 畑", link: "농업·토지" },
+        { ch: 2, shape: "山", orig: "山", mean: "산", ex: "岩, 島, 岸, 崎", link: "지형" },
+        { ch: 2, shape: "雨", orig: "雨", mean: "비", ex: "雪, 雲, 電, 雷", link: "날씨·하늘" },
+        { ch: 2, shape: "宀", orig: "宀", mean: "지붕, 집", ex: "家, 室, 安, 宿, 客", link: "집·건물·공간" },
+        { ch: 2, shape: "門", orig: "門", mean: "문", ex: "開, 閉, 間, 聞, 関", link: "문·출입·안팎" },
+
+        { ch: 3, shape: "犭", orig: "犬", mean: "개 → 동물", ex: "犬, 猫, 狐, 独, 狩", link: "🐕 동물" },
+        { ch: 3, shape: "魚", orig: "魚", mean: "물고기", ex: "魚, 鮮, 鯨, 鯉", link: "🐟 물고기·생선" },
+        { ch: 3, shape: "鳥", orig: "鳥", mean: "새", ex: "鳥, 鳴, 鶏, 鴨", link: "🐦 새" },
+        { ch: 3, shape: "虫", orig: "虫", mean: "벌레", ex: "蚊, 蛇, 蝶, 蜂", link: "🐛 벌레·작은 생물" },
+        { ch: 3, shape: "女", orig: "女", mean: "여자", ex: "好, 妹, 姉, 始, 婚", link: "여성·가족" },
+        { ch: 3, shape: "子", orig: "子", mean: "아이", ex: "学, 字, 孫, 存", link: "아이·자녀" },
+        { ch: 3, shape: "肉/月", orig: "肉", mean: "살, 신체", ex: "胃, 腸, 肝, 肺, 腕", link: "🫀 신체 기관" },
+        { ch: 3, shape: "骨", orig: "骨", mean: "뼈", ex: "骨, 髄", link: "뼈·신체" },
+        { ch: 3, shape: "歯", orig: "歯", mean: "이", ex: "齢", link: "치아·나이" },
+        { ch: 3, shape: "首", orig: "首", mean: "머리, 목", ex: "首, 道", link: "머리·목" },
+
+        { ch: 4, shape: "衣/衤", orig: "衣", mean: "옷", ex: "初, 装, 被, 補", link: "옷·의복" },
+        { ch: 4, shape: "食/飠", orig: "食", mean: "먹다, 음식", ex: "飲, 飯, 館, 養", link: "음식·식사" },
+        { ch: 4, shape: "示/礻", orig: "示", mean: "보이다, 제사", ex: "神, 社, 祭, 福", link: "신·제사" },
+        { ch: 4, shape: "广", orig: "广", mean: "건물, 집", ex: "店, 度, 庫, 広", link: "건물·장소" },
+        { ch: 4, shape: "石", orig: "石", mean: "돌", ex: "研, 破, 磁, 確", link: "돌·광물" },
+        { ch: 4, shape: "竹/⺮", orig: "竹", mean: "대나무", ex: "笑, 答, 箱, 筆, 等", link: "대나무·도구" },
+        { ch: 4, shape: "王/玉", orig: "玉", mean: "구슬, 옥", ex: "理, 現, 球, 珠", link: "구슬·보석" },
+        { ch: 4, shape: "皿", orig: "皿", mean: "그릇", ex: "盤, 皿, 盛, 益", link: "그릇·접시" },
+        { ch: 4, shape: "米", orig: "米", mean: "쌀", ex: "粉, 精, 糖, 粒", link: "쌀·곡물" },
+        { ch: 4, shape: "豆", orig: "豆", mean: "콩, 그릇", ex: "豆, 豊, 頭", link: "콩·제기" },
+        { ch: 4, shape: "酉", orig: "酉", mean: "술, 발효", ex: "酒, 酔, 酢, 醤", link: "술·발효" },
+        { ch: 4, shape: "革", orig: "革", mean: "가죽", ex: "靴, 鞄, 革", link: "가죽" },
+        { ch: 4, shape: "弓", orig: "弓", mean: "활", ex: "引, 強, 弱, 張", link: "활·무기" },
+        { ch: 4, shape: "矢", orig: "矢", mean: "화살", ex: "短, 知, 矢", link: "화살" },
+        { ch: 4, shape: "舟/⾈", orig: "舟", mean: "배", ex: "船, 航, 舟", link: "배" },
+        { ch: 4, shape: "馬", orig: "馬", mean: "말", ex: "駅, 験, 騎", link: "말·동물" },
+        { ch: 4, shape: "牛/牜", orig: "牛", mean: "소", ex: "物, 特, 牧", link: "소·동물" },
+        { ch: 4, shape: "羊", orig: "羊", mean: "양", ex: "美, 群, 着", link: "양·동물" },
+        { ch: 4, shape: "豕", orig: "豕", mean: "돼지", ex: "家, 豚, 象", link: "돼지·동물" }
+      ];
+
       let VOCAB = [];
       let FURIGANA = {};
       let RADICALS = {};
@@ -338,7 +401,7 @@
         chArray.forEach((ch) => {
           const btn = document.createElement("button");
           btn.className = "chip" + (state.chapters.has(ch) ? " active" : "");
-          btn.textContent = "챕터 " + ch;
+          btn.textContent = state.level === "Radical" ? ch + "단계" : "챕터 " + ch;
           btn.onclick = () => {
             if (state.chapters.has(ch)) { if (state.chapters.size > 1) state.chapters.delete(ch); } 
             else { state.chapters.add(ch); }
@@ -373,14 +436,14 @@
               <button class="toggle-btn" data-mode="random">랜덤</button>
             </div>
           </div>
-          <div class="panel-row">
+          <div class="panel-row" ${state.level === 'Radical' ? 'style="display:none;"' : ''}>
             <span class="panel-label">방향</span>
             <div class="toggle-group">
               <button class="toggle-btn" data-dir="kr-jp">한글 → 일본어</button>
               <button class="toggle-btn" data-dir="jp-kr">일본어 → 한글</button>
             </div>
           </div>
-          <div class="panel-row">
+          <div class="panel-row" ${state.level === 'Radical' ? 'style="display:none;"' : ''}>
             <span class="panel-label">단어 저장</span>
             <div class="save-row-panel" id="panelSaveRow"></div>
           </div>
@@ -726,6 +789,55 @@
         if (state.view === "appendix") { renderAppendixView(); return; }
         const area = document.getElementById("deckArea");
         if (state.deck.length === 0) { area.innerHTML = '<div class="empty">챕터를 하나 이상 선택하세요.</div>'; return; }
+        
+        if (state.level === "Radical") {
+          const w = state.deck[state.index];
+          const pct = ((state.index + 1) / state.deck.length) * 100;
+          
+          let title = "부수";
+          if (w.ch === 1) title = "1단계 — 반드시 익히기";
+          else if (w.ch === 2) title = "2단계 — 굉장히 자주 나옴";
+          else if (w.ch === 3) title = "3단계 — 동물·신체 계열";
+          else if (w.ch === 4) title = "4단계 — 생활 밀착형";
+
+          const radicalCardHtml = `
+            <span class="tag">${title}</span>
+            <div style="display: flex; flex-direction: column; width: 100%; text-align: left; padding: 20px 0; gap: 16px; margin-top: 16px;">
+              <div style="display: flex; align-items: baseline; justify-content: center; gap: 16px; margin-bottom: 8px;">
+                <span style="font-size: 80px; font-weight: 700; color: var(--text-main);">${w.shape}</span>
+              </div>
+              <div style="background: var(--bg-sub); padding: 20px; border-radius: 8px; font-size: 16px; line-height: 1.6; color: var(--text-main);">
+                <div style="display: flex; margin-bottom: 12px;"><span style="color: var(--text-soft); width: 100px; font-weight: 600; flex-shrink: 0;">원래 한자</span> <span style="font-weight: 700; font-size: 18px;">${w.orig}</span></div>
+                <div style="display: flex; margin-bottom: 12px;"><span style="color: var(--text-soft); width: 100px; font-weight: 600; flex-shrink: 0;">의미</span> <span>${w.mean}</span></div>
+                <div style="display: flex; margin-bottom: 12px;"><span style="color: var(--text-soft); width: 100px; font-weight: 600; flex-shrink: 0;">자주 보이는 예</span> <span style="word-break: keep-all;">${w.ex}</span></div>
+                <div style="display: flex; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-light);"><span style="color: var(--text-soft); width: 100px; font-weight: 600; flex-shrink: 0;">연결하기</span> <span style="font-weight: 600; color: var(--text-main);">${w.link}</span></div>
+              </div>
+            </div>
+          `;
+
+          area.innerHTML = `
+            <div class="progress-row"><span>${state.index + 1} / ${state.deck.length}</span><span>${state.mode === "random" ? "랜덤" : "순서대로"}</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+            <div class="deck-layout">
+              <button class="nav-btn" id="prevBtn" aria-label="이전 단어">←</button>
+              <div class="stage">
+                <div class="card" style="cursor: default; transform: none; border-radius: 8px; background: var(--bg-main); border: 1px solid var(--border-light); display: flex; flex-direction: column; align-items: center; padding: 24px 32px; position: relative; height: auto; min-height: 420px;">
+                  ${radicalCardHtml}
+                </div>
+              </div>
+              <button class="nav-btn" id="nextBtn" aria-label="다음 단어">→</button>
+            </div>
+            <div class="footer-actions">
+              <button class="text-btn" id="shuffleBtn">다시 섞기</button>
+            </div>
+          `;
+          
+          document.getElementById("prevBtn").onclick = () => go(-1);
+          document.getElementById("nextBtn").onclick = () => go(1);
+          document.getElementById("shuffleBtn").onclick = () => { state.deck = shuffle(state.deck); state.index = 0; render(); };
+          return;
+        }
+
         const w = state.deck[state.index];
         const pct = ((state.index + 1) / state.deck.length) * 100;
         const frontIsKr = state.dir === "kr-jp";
@@ -787,6 +899,15 @@
       }
 
       async function loadLevelData() {
+        if (state.level === "Radical") {
+          VOCAB = RADICAL_DECK_DATA;
+          state.chapters = new Set([1, 2, 3, 4]);
+          state.savedFlipped.clear();
+          renderPanel();
+          buildDeck();
+          return;
+        }
+
         if (!cachedVocab[state.level]) {
           try {
             const res = await fetch(`data/JLPT-${state.level}/vocabulary.json`);
